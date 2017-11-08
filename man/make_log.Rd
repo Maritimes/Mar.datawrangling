@@ -20,8 +20,8 @@ loaded, as well as what filters were applied.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{giddyup}},
-  \code{\link{make_oracle_cxn}}, \code{\link{self_filter}},
+  \code{\link{get_data}}, \code{\link{make_oracle_cxn}},
+  \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{

@@ -647,8 +647,6 @@ load_datasources <- function(db=NULL){
          #not sure I can reference same table 3 different times like this
          "VESSELS" = list(pk_fields=c("VR_NUMBER"),
                                  fk_fields=c("VR_NUMBER")),
-         "GEARS" = list(pk_fields=c("FV_GEAR_CODE"),
-                                 fk_fields=c("GEAR_CODE")),
          "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
                                  fk_fields=c("HAIL_IN_CALL_ID")),
          combine = "ALL"
@@ -720,8 +718,8 @@ load_datasources <- function(db=NULL){
          combine = "ALL"
        ),
        "GEARS" = list(
-         "MON_DOCS" = list(pk_fields=c("GEAR_CODE"),
-                                 fk_fields=c("FV_GEAR_CODE"))
+         "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
+                                 fk_fields=c("GEAR_CODE"))
        ),
        "SPECIES" = list(
          "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),

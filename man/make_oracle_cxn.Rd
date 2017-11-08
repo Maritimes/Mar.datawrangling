@@ -36,8 +36,8 @@ allows connection via RODBC or ROracle, depending on the value of usepkg.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{giddyup}},
-  \code{\link{make_log}}, \code{\link{self_filter}},
+  \code{\link{get_data}}, \code{\link{make_log}},
+  \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{

@@ -52,9 +52,8 @@ data frame.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{giddyup}},
-  \code{\link{make_log}}, \code{\link{make_oracle_cxn}},
-  \code{\link{self_filter}}
+  \code{\link{get_data}}, \code{\link{make_log}},
+  \code{\link{make_oracle_cxn}}, \code{\link{self_filter}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

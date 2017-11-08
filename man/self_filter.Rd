@@ -31,8 +31,8 @@ Count the rows in all of the tables for this dataset
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{giddyup}},
-  \code{\link{make_log}}, \code{\link{make_oracle_cxn}},
+  \code{\link{get_data}}, \code{\link{make_log}},
+  \code{\link{make_oracle_cxn}},
   \code{\link{summarize_catches}}
 }
 \author{
