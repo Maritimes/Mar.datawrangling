@@ -193,8 +193,8 @@ assess_privacy <- function(
       POLY.agg.name = paste0(file_id,'screened_areas_', ts)
       this.df.name = paste0(file_id,'2MinGrid_', ts)
 
-      if(show.plot | save.image){
-        if (save.image) {
+      if(show.plot | save.plot){
+        if (save.plot) {
           plot.new()
           png(paste0(this.df.name,'.png'), width = 1600, height=1600)
           plot(POLY.agg, col=NA, border="gray85")
@@ -205,7 +205,7 @@ assess_privacy <- function(
         breaks <- classInt::classIntervals(show.this@data[[plotcol]], n = nclasses, style = "fisher", unique = TRUE)$brks
         plot(show.this, main = fun, col = cols[findInterval(show.this@data[[plotcol]], breaks, all.inside = TRUE)], border = NA, add=T)
         plot(POLY.agg, border = "gray85", add=T, col = ifelse(is.na(POLY.agg$CAN_SHOW),"grey65", ifelse(POLY.agg$CAN_SHOW == "YES", NA, "red")))
-        if (save.image) dev.off()
+        if (save.plot) dev.off()
       }
 
 
