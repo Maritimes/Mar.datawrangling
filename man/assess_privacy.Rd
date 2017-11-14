@@ -65,7 +65,7 @@ polygons that should be checked for sufficient unique values of the
 sens.fields.  If NULL, NAFO zones will be used.  Otherwise, a path to any 
 polygon shapefile can be provided.}
 
-\item{agg.poly.field}{default is \code{}.  This identifies the field within 
+\item{agg.poly.field}{default is \code{NULL}.  This identifies the field within 
 the shapefile provided to agg.poly.shp that should be used to check for 
 sufficient unique values of the sens.fields.}
 

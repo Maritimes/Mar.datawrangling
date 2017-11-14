@@ -47,10 +47,16 @@ clip_by_poly <- function(db = NULL, df=NULL,
     data = df,
     proj4string = CRS('+init=epsg:4326')
   )
-  #extract the full path and name of the shapefile 
-  ogrPath = dirname(clip.poly)
-  ogrLayer = sub('\\.shp$', '', basename(clip.poly))
-  clip.poly_this <- readOGR(dsn = ogrPath, layer = ogrLayer, verbose = FALSE)
+  
+  if (class(clip.poly)=="character"){
+    #extract the full path and name of the shapefile 
+    ogrPath = dirname(clip.poly)
+    ogrLayer = sub('\\.shp$', '', basename(clip.poly))
+    clip.poly_this <- readOGR(dsn = ogrPath, layer = ogrLayer, verbose = FALSE)
+  }else if(class(clip.poly)=="SpatialPolygonsDataFrame"){
+    clip.poly_this = clip.poly
+  }
+
   if (is.na(proj4string(clip.poly_this))) {
     cat('\nNo projection found for input shapefile - assuming geographic.')
     proj4string(clip.poly_this) = CRS("+init=epsg:4326")
