@@ -1020,13 +1020,13 @@ load_datasources <- function(db=NULL){
         "TAGS" = list(pk_fields=c("TSTATID"),
                       fk_fields=c("TSTATID"))
       ),
-      "TRINFO" = list(
-        "SCALE" = list(pk_fields=c("LOGID"),
-                       fk_fields=c("LOGID")),
-        "TAGS" = list(pk_fields=c("LOGID"),
-                      fk_fields=c("LOGID")),
-        combine = "OR"
-      ),
+      # "TRINFO" = list(
+      #   "SCALE" = list(pk_fields=c("LOGID"),
+      #                  fk_fields=c("LOGID")),
+      #   "TAGS" = list(pk_fields=c("LOGID"),
+      #                 fk_fields=c("LOGID")),
+      #   combine = "OR"
+      # ),
       "TLETTER" = list(
         "TAGS" = list(pk_fields=c("TLETID"),
                       fk_fields=c("TLETID"))

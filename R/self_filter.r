@@ -37,7 +37,7 @@ self_filter <- function(db = NULL, looponce = FALSE, debug = FALSE) {
            "missing" = " & ")
   }
   while (loopagain == TRUE) {
-    #only loop once (for QC)
+    #only loop once (for QC)If there are scripts
 
     #as long as the number of rows in all tables is changes in a loop, filters are being applied
     #only stop looping when the rows are consistent
