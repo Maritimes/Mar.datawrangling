@@ -9,6 +9,7 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @importFrom stats setNames
 #' @importFrom lubridate ymd_hms
+#' @importFrom lubridate year
 #' @importFrom geosphere distGeo
 #' @export
 #' @note data is not added to the global environment by this function - changes are made, saved, and
@@ -292,6 +293,20 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       save( LOG_EFRT_STD_INFO, file=file.path(data.dir, "MARFIS.LOG_EFRT_STD_INFO.RData"), compress=TRUE)
     }
     #rm(LOG_EFRT_STD_INFO, envir = .GlobalEnv)
+  }
+  
+  if (db == 'asef'){
+    data(ASEF.TRINFO, envir = .GlobalEnv)
+    TRINFO$RLYEAR <- year(TRINFO$RLDATE)
+    cat("\nTRINFO: RLYEAR added so it can be used in filtering")
+    save( TRINFO, file=file.path(data.dir, "ASEF.TRINFO.RData"), compress=TRUE)
+    data(ASEF.RCSITE, envir = .GlobalEnv)
+    if (!'LATITUDE' %in% colnames(RCSITE)){
+      RCSITE$LATITUDE = (as.numeric(substr(RCSITE$SLAT,1,2))+(RCSITE$SLAT - as.numeric(substr(RCSITE$SLAT,1,2))*100)/60)
+      RCSITE$LONGITUDE = (as.numeric(substr(RCSITE$SLONG,1,2))+(RCSITE$SLONG - as.numeric(substr(RCSITE$SLONG,1,2))*100)/60)*-1
+      cat(paste("\nRCSITE:  Converted DDMM coordinates to DDDD.DD ..."))
+      save( RCSITE, file=file.path(data.dir, "ASEF.RCSITE.RData"), compress=TRUE)
+    }
   }
   
   saveit <- function(x, data.dir, db){

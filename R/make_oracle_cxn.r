@@ -26,7 +26,6 @@ make_oracle_cxn <- function(usepkg = 'rodbc',
                             fn.oracle.username ="_none_",
                             fn.oracle.password="_none_",
                             fn.oracle.dsn="_none_") {
-
   use.roracle <-function(oracle.dsn, oracle.username, oracle.password){
     oracle_cxn <-tryCatch(
       {

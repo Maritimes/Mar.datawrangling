@@ -1000,10 +1000,143 @@ load_datasources <- function(db=NULL){
       )
     )
   )
+  asef = list(
+    db="asef",
+    name="Atlantic Salmon Enumeration Facilities",
+    schema = "ASEF",
+    desc= "...",
+    tables = c('TTYPES','TSTAT','TRINFO','TLETTER','TEMPDEPTH','TCOLORS','TAGS',
+               'SEX','SCARS','SCALE','ROWNAMES','RCSITE','OTYPES','ORIGINS','METHODS','GEAR'),
+    table_cat = "TRINFO",
+    table_det = "TTYPES", #not really relevant for this db
+    table_pos = "RCSITE",
+    field_default = "WGTO",
+    joins = list(
+      "TTYPES" = list(
+        "TAGS" = list(pk_fields=c("TTYPEID"),
+                      fk_fields=c("TTYPEID"))
+      ),
+      "TSTAT" = list(
+        "TAGS" = list(pk_fields=c("TSTATID"),
+                      fk_fields=c("TSTATID"))
+      ),
+      "TRINFO" = list(
+        "SCALE" = list(pk_fields=c("LOGID"),
+                       fk_fields=c("LOGID")),
+        "TAGS" = list(pk_fields=c("LOGID"),
+                      fk_fields=c("LOGID")),
+        combine = "OR"
+      ),
+      "TLETTER" = list(
+        "TAGS" = list(pk_fields=c("TLETID"),
+                      fk_fields=c("TLETID"))
+      ),
+      "TEMPDEPTH" = list(
+        "TRINFO" = list(pk_fields=c("CSITE"),
+                        fk_fields=c("CSITE"))
+      ),
+      "TCOLORS" = list(
+        "TAGS" = list(pk_fields=c("TCOLORID"),
+                      fk_fields=c("TCOLORID"))
+      ),
+      "TAGS" = list(
+        "TRINFO" = list(pk_fields=c("LOGID"),
+                        fk_fields=c("LOGID")),
+        "TSTAT" = list(pk_fields=c("TSTATID"),
+                       fk_fields=c("TSTATID")),
+        "TTYPES" = list(pk_fields=c("TTYPEID"),
+                        fk_fields=c("TTYPEID")),
+        "TCOLORS" = list(pk_fields=c("TCOLORID"),
+                         fk_fields=c("TCOLORID")),
+        "TLETTER" = list(pk_fields=c("TLETID"),
+                         fk_fields=c("TLETID")),
+        
+        combine = "OR"
+      ),
+      "SEX" = list(
+        "TRINFO" = list(pk_fields=c("SEXID"),
+                        fk_fields=c("SEXID"))
+      ),
+      # "SCARS" = list(
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #   combine = "OR"
+      # ),
+      "SCALE" = list(
+        "TRINFO" = list(pk_fields=c("LOGID"),
+                        fk_fields=c("LOGID"))
+        #SORIGID?  SOTYPID?
+      ),
+      # "ROWNAMES" = list(
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #   combine = "OR"
+      # ),
+      # "RCSITE" = list(
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #   "" = list(pk_fields=c(""),
+      #             fk_fields=c("")),
+      #     combine = "OR"
+      #   ),
+      "OTYPES" = list(
+        "TRINFO" = list(pk_fields=c("OTYPEID"),
+                        fk_fields=c("VOTYPEID"))
+      ),
+      "ORIGINS" = list(
+        "TRINFO" = list(pk_fields=c("ORIGINID"),
+                        fk_fields=c("VORIGINID"))
+      ),
+      "METHODS" = list(
+        "TRINFO" = list(pk_fields=c("METHID"),
+                        fk_fields=c("METHID"))
+      ),
+      "GEAR" = list(
+        "TRINFO" = list(pk_fields=c("GEARID"),
+                        fk_fields=c("GEARID"))
+      )
+    ),
+    filters = list(
+      "Site" = list(filt_tab = "RCSITE",
+                    filt_field = c("SITEID"),
+                    filt_disp = c("SDESCRIPTION","SITEID"),
+                    filt_ord = 1
+      ),
+      "Origin" = list(filt_tab = "ORIGINS",
+                      filt_field = c("ORIGINID"),
+                      filt_disp = c("ODESCRIPTION","ORIGINID"),
+                      filt_ord = 1
+      ),
+      "Type" = list(filt_tab = "OTYPES",
+                    filt_field = "OTYPEID",
+                    filt_disp = c("ODESCRIPTION","OTYPEID"),
+                    filt_ord = 1
+      ),
+      "Tag Colours" = list(filt_tab = "TCOLORS",
+                           filt_field = c("TCOLORID"),
+                           filt_disp = c("TCDESCRIPTION","TCOLORID"),
+                           filt_ord = 1
+      ),
+      "RC Year" = list(filt_tab = "TRINFO",
+                       filt_field = c("RCYEAR"),
+                       filt_disp = c("RCYEAR"),
+                       filt_ord = 1
+      ),
+      "RL Year" = list(filt_tab = "TRINFO",
+                       filt_field = c("RLYEAR"),
+                       filt_disp = c("RLYEAR"),
+                       filt_ord = 1
+      )
+    )
+  )
   
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
-                     isdb=isdb, 
-                     marfis=marfis, comland86=comland86, comland67=comland67)
+                     isdb=isdb, marfis=marfis, comland86=comland86, 
+                     comland67=comland67, asef=asef)
   
   
   generic_filts = list(
