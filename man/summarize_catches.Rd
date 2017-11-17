@@ -6,7 +6,7 @@
 \usage{
 summarize_catches(db = NULL, morph_dets = FALSE, gear_dets = FALSE,
   keep_nullsets = FALSE, valid.coords = FALSE, quiet = FALSE,
-  drop.na.cols = TRUE)
+  drop.na.cols = TRUE, debug = FALSE)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -41,6 +41,9 @@ user.  If \code{quiet=TRUE}, these notifications are not shown.}
 
 \item{drop.na.cols}{default is \code{TRUE}.  If TRUE, any columns that are
 do not have any values in them will be dropped.}
+
+\item{debug}{default is \code{FALSE}.  If TRUE, messages describing the 
+merging steps will be printed out}
 }
 \value{
 a data frame, and if \code{req.coords=TRUE}, a message indicating how

@@ -27,6 +27,8 @@
 #' user.  If \code{quiet=TRUE}, these notifications are not shown.
 #' @param drop.na.cols default is \code{TRUE}.  If TRUE, any columns that are
 #' do not have any values in them will be dropped.
+#' @param debug default is \code{FALSE}.  If TRUE, messages describing the 
+#' merging steps will be printed out
 #' @return a data frame, and if \code{req.coords=TRUE}, a message indicating how
 #' many positions were lost due to the constraint.
 #' @family dfo_extractions

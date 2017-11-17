@@ -68,10 +68,6 @@ polygon shapefile can be provided.}
 \item{agg.poly.field}{default is \code{NULL}.  This identifies the field within 
 the shapefile provided to agg.poly.shp that should be used to check for 
 sufficient unique values of the sens.fields.}
-
-\item{create.shps}{default is \code{FALSE}.   This controls whether or not to
-create a shapefile of the NAFO zones showing the aggregated data (and whether or not 
-data within each zone can be shown at all.}
 }
 \value{
 a SpatialPolygonsDataFrame, and generates a shapefile

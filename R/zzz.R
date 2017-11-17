@@ -1,5 +1,5 @@
 .onAttach <- function(libname, pkgname) {
-  packageStartupMessage(paste0("###\nVersion: ", utils::packageDescription('Mar.datawrangling')$Version))
+  packageStartupMessage(paste0("Version: ", utils::packageDescription('Mar.datawrangling')$Version))
     #packageStartupMessage("")
 }
 .onLoad <- function(libname, pkgname){

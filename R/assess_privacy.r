@@ -48,9 +48,6 @@
 #' @param agg.poly.field default is \code{NULL}.  This identifies the field within 
 #' the shapefile provided to agg.poly.shp that should be used to check for 
 #' sufficient unique values of the sens.fields.
-#' @param create.shps default is \code{FALSE}.   This controls whether or not to
-#' create a shapefile of the NAFO zones showing the aggregated data (and whether or not 
-#' data within each zone can be shown at all.
 #' @param nclasses default is \code{4} This is how many discrete classes you 
 #' want to use to categorize data on the output plot.
 #' @return a SpatialPolygonsDataFrame, and generates a shapefile
