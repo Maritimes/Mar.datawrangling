@@ -1005,11 +1005,11 @@ load_datasources <- function(db=NULL){
     name="Atlantic Salmon Enumeration Facilities",
     schema = "ASEF",
     desc= "...",
-    tables = c('TTYPES','TSTAT','TRINFO','TLETTER','TEMPDEPTH','TCOLORS','TAGS',
-               'SEX','SCARS','SCALE','ROWNAMES','RCSITE','OTYPES','ORIGINS','METHODS','GEAR'),
+    tables = c('TTYPES','TSTAT','TRINFO','TLETTER','TCOLORS','TAGS',
+               'SEX','SCALE','RCSITE','OTYPES','ORIGINS','METHODS','GEAR'),
     table_cat = "TRINFO",
-    table_det = "TTYPES", #not really relevant for this db
-    table_pos = "RCSITE",
+   #table_det = "ROWNAMES", #table_det not really relevant for this db - using table can't join
+    table_pos = "TRINFO",
     field_default = "WGTO",
     joins = list(
       "TTYPES" = list(
@@ -1020,21 +1020,20 @@ load_datasources <- function(db=NULL){
         "TAGS" = list(pk_fields=c("TSTATID"),
                       fk_fields=c("TSTATID"))
       ),
-      # "TRINFO" = list(
-      #   "SCALE" = list(pk_fields=c("LOGID"),
-      #                  fk_fields=c("LOGID")),
-      #   "TAGS" = list(pk_fields=c("LOGID"),
-      #                 fk_fields=c("LOGID")),
-      #   combine = "OR"
-      # ),
+      "TRINFO" = list(
+          "OTYPES" = list(pk_fields=c("VOTYPEID"),
+                          fk_fields=c("OTYPEID")),
+          "ORIGINS" = list(pk_fields=c("VORIGINID"),
+                          fk_fields=c("ORIGINID"))
+       ),
       "TLETTER" = list(
         "TAGS" = list(pk_fields=c("TLETID"),
                       fk_fields=c("TLETID"))
       ),
-      "TEMPDEPTH" = list(
-        "TRINFO" = list(pk_fields=c("CSITE"),
-                        fk_fields=c("CSITE"))
-      ),
+      # "TEMPDEPTH" = list(
+      #   "TRINFO" = list(pk_fields=c("CSITE"),
+      #                   fk_fields=c("CSITE"))
+      # ),
       "TCOLORS" = list(
         "TAGS" = list(pk_fields=c("TCOLORID"),
                       fk_fields=c("TCOLORID"))
@@ -1069,20 +1068,20 @@ load_datasources <- function(db=NULL){
                         fk_fields=c("LOGID"))
         #SORIGID?  SOTYPID?
       ),
-      # "ROWNAMES" = list(
+       # "ROWNAMES" = list(
+       #   "" = list(pk_fields=c(""),
+       #             fk_fields=c(""))
       #   "" = list(pk_fields=c(""),
       #             fk_fields=c("")),
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
-      #   combine = "OR"
-      # ),
-      # "RCSITE" = list(
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
+      # #   combine = "OR"
+      #  ),
+       "RCSITE" = list(
+         "TRINFO" = list(pk_fields=c("SITEID"),
+                   fk_fields=c("CSITE"))
       #   "" = list(pk_fields=c(""),
       #             fk_fields=c("")),
       #     combine = "OR"
-      #   ),
+         ),
       "OTYPES" = list(
         "TRINFO" = list(pk_fields=c("OTYPEID"),
                         fk_fields=c("VOTYPEID"))
