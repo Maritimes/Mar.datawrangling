@@ -38,7 +38,8 @@ summarize_catches <- function(db=NULL,
                               keep_nullsets = FALSE,
                               valid.coords = FALSE,
                               quiet = FALSE,
-                              drop.na.cols = TRUE){
+                              drop.na.cols = TRUE,
+                              debug=FALSE){
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   #create place to make a bunch of temporary duplicate data
   summ = new.env()
@@ -94,11 +95,15 @@ summarize_catches <- function(db=NULL,
     return(merged)
   }
   #ensure that tables that can be linked to the primary table are done first
+  if(length(tab_foreign)>0){
   for (m in 1:length(tab_foreign)){
+    if (debug) cat(paste0("PRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')\n"))
     all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, keep_nullsets)
+  }
   }
   z=1
   while (length(joiners)>0 & z <= length(joiners)){
+
     all = ds_all[[.GlobalEnv$db]]$joins[names(ds_all[[.GlobalEnv$db]]$joins) %in% joiners]
     all_names = names(sapply(all, names))
     if (length(setdiff(all_names, joiners))!=0) warning("The tables remaining to be joined do not match the join information in the data_sources.")
@@ -110,6 +115,11 @@ summarize_catches <- function(db=NULL,
         names(all_this) = joinTable
           if (all(fk %in% colnames(all_recs))){
             names(all_this[[1]]) = c("fk_fields","pk_fields")
+            #if (debug) cat(nrow(all_recs))
+            if (debug) cat(paste0("\tTrying merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",pk,"', by.y='",fk, "')\n"))
+            
+            
+            #if (debug) browser()
             all_recs = doMerge(all_recs, all_this, morph_dets, keep_nullsets)
             joiners = joiners[!joiners %in% joinTable]
             z=1
