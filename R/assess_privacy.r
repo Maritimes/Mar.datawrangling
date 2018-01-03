@@ -59,6 +59,7 @@
 #' @importFrom sp coordinates
 #' @importFrom sp proj4string
 #' @importFrom sp over
+#' @importFrom sp merge
 #' @importFrom classInt classIntervals
 #' @importFrom RColorBrewer brewer.pal
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
@@ -142,12 +143,12 @@ assess_privacy <- function(
     if (nrow(POLY.agg.sens[POLY.agg.sens$TOTUNIQUE>=rule.of,])>0) POLY.agg.sens[POLY.agg.sens$TOTUNIQUE>=rule.of,]$CAN_SHOW <- 'YES'
     if (nrow(POLY.agg.sens[POLY.agg.sens$TOTUNIQUE<rule.of,])>0) POLY.agg.sens[POLY.agg.sens$TOTUNIQUE< rule.of,]$CAN_SHOW <- 'NO'
     POLY.agg = merge(POLY.agg, POLY.agg.sens)
-    POLY.agg = merge(agg.poly, POLY.agg)
+    
     rm(POLY.agg.sens) 
   }else{
     POLY.agg$CAN_SHOW = 'YES'
+    POLY.agg = sp::merge(agg.poly,POLY.agg)
   }
-
   allowed.areas  = POLY.agg[!is.na(POLY.agg$CAN_SHOW) & POLY.agg$CAN_SHOW=='YES',agg.poly.field]@data[[agg.poly.field]]
   allowed.areas.sp = agg.poly[agg.poly@data[[agg.poly.field]] %in% allowed.areas,]
 
@@ -160,9 +161,10 @@ assess_privacy <- function(
     grid2Min.allowed <- grid2Min[allowed.areas.sp,]
     
     #step 1 -- figure out which grid each point is in.
-    join <- over(df.allowed, grid2Min.allowed)
+    join <- sp::over(df.allowed, grid2Min.allowed)
     join$ORD_df <- seq.int(nrow(join)) 
-    test <- merge(df.allowed,join)    
+    
+    test <- sp::merge(df.allowed,join)    
     
     #step 2 -- aggregate the points by the grids
     grid.agg = as.data.frame(as.list(aggregate(
