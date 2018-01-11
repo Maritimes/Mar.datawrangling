@@ -53,8 +53,7 @@ included in the checks.  Please make very sure you correctly identify such field
 }
 \seealso{
 Other general_use: \code{\link{cleanup}},
-  \code{\link{clip_by_poly}}, \code{\link{df_qc_spatial}},
-  \code{\link{df_to_sp}},
+  \code{\link{clip_by_poly}},
   \code{\link{prepare_shape_fields}},
   \code{\link{save_catches}}, \code{\link{save_data}}
 }

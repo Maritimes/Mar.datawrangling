@@ -3,9 +3,9 @@
 #' data frame.
 #' @param db default is \code{NULL}. This identifies the dataset you are working 
 #' with.
-#' @param valid.coords default is FALSE.  This uses \code{df_qc_spatial()} to
-#' remove coordinates that are not valid.  If TRUE and no valid records remain,
-#' this function will abort.
+#' @param valid.coords default is FALSE.  This uses 
+#' \code{Mar.utils::df.qc.spatial()} to remove coordinates that are not valid.  
+#' If TRUE and no valid records remain, this function will abort.
 #' @param keep_nullsets default is FALSE.  In many cases, in addition to the
 #' catch, it is also useful to know where fishing occurred that did not result
 #' in catches.  this is especially true for most survey-type data.
@@ -31,6 +31,7 @@
 #' merging steps will be printed out
 #' @return a data frame, and if \code{req.coords=TRUE}, a message indicating how
 #' many positions were lost due to the constraint.
+#' @importFrom Mar.utils df_qc_spatial
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -139,7 +140,7 @@ summarize_catches <- function(db=NULL,
   gc()
   if (drop.na.cols) all_recs[sapply(all_recs, function(x) all(is.na(x)))] <- NULL
   if (valid.coords == TRUE) {
-    all_recs_spat = df_qc_spatial(all_recs)
+    all_recs_spat = Mar.utils::df_qc_spatial(all_recs)
     if (NROW(all_recs_spat)==0) stop("\nNone of your records has valid coordinates...")
     if (!quiet) cat(paste0("\nYou indicated you only wanted data with valid coordinates.  ",NROW(all_recs) - NROW(all_recs_spat)," of ",NROW(all_recs)," records were lost due to this constraint"))
     all_recs = all_recs_spat

@@ -52,8 +52,7 @@ the required tables prior to attempting an extraction.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{make_log}}, \code{\link{make_oracle_cxn}},
-  \code{\link{self_filter}},
+  \code{\link{make_log}}, \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{

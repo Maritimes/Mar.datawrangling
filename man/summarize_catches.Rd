@@ -31,9 +31,9 @@ in catches.  this is especially true for most survey-type data.
 Note that for industry fishing (i.e. ISDB and MARFIS), the null sets will
 actually just consist of all sets that met your filter criteria.}
 
-\item{valid.coords}{default is FALSE.  This uses \code{df_qc_spatial()} to
-remove coordinates that are not valid.  If TRUE and no valid records remain,
-this function will abort.}
+\item{valid.coords}{default is FALSE.  This uses 
+\code{Mar.utils::df.qc.spatial()} to remove coordinates that are not valid.  
+If TRUE and no valid records remain, this function will abort.}
 
 \item{quiet}{default is \code{FALSE}.  If coordinates are required
 (\code{valid.coords=TRUE}), the script default is to report issues to the
@@ -56,7 +56,7 @@ data frame.
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
   \code{\link{get_data}}, \code{\link{make_log}},
-  \code{\link{make_oracle_cxn}}, \code{\link{self_filter}}
+  \code{\link{self_filter}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

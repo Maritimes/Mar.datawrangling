@@ -21,7 +21,6 @@ understood and are not simply truncated.
 \seealso{
 Other general_use: \code{\link{aggregator}},
   \code{\link{cleanup}}, \code{\link{clip_by_poly}},
-  \code{\link{df_qc_spatial}}, \code{\link{df_to_sp}},
   \code{\link{save_catches}}, \code{\link{save_data}}
 }
 \author{

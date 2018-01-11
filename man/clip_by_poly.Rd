@@ -44,8 +44,7 @@ since the use of distances requires projecting the data.
 }
 \seealso{
 Other general_use: \code{\link{aggregator}},
-  \code{\link{cleanup}}, \code{\link{df_qc_spatial}},
-  \code{\link{df_to_sp}},
+  \code{\link{cleanup}},
   \code{\link{prepare_shape_fields}},
   \code{\link{save_catches}}, \code{\link{save_data}}
 }

@@ -62,6 +62,7 @@
 #' @importFrom sp merge
 #' @importFrom classInt classIntervals
 #' @importFrom RColorBrewer brewer.pal
+#' @importFrom Mar.utils df_qc_spatial
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @note If sensitive fields have names that are 
 #' different than what is provided in the \code{sen.fields}, they will not be detected, or 
@@ -89,7 +90,7 @@ assess_privacy <- function(
                          "length" =4,
                          "sum" =5)
   
-  df = df_qc_spatial(df, lat.field, lon.field, FALSE)
+  df = Mar.utils::df_qc_spatial(df, lat.field, lon.field, FALSE)
   sp::coordinates(df) = c(lon.field, lat.field)
   sp::proj4string(df) = sp::CRS("+proj=longlat +datum=WGS84")
 
@@ -181,7 +182,6 @@ assess_privacy <- function(
     #step 3 -- append the aggregated data back onto the grid 
     grid2Min.allowed@data <- data.frame(grid2Min.allowed@data, grid.agg[match(grid2Min.allowed@data[,"ORD_gr"], grid.agg[,"ORD_gr"]),])
     grid2Min.allowed@data$ORD_gr.1 <- NULL
-    
     test =   grid2Min.allowed[!is.na(grid2Min.allowed[[plotcol]]),]
 
        if (nrow(df.allowed@data)){
@@ -196,14 +196,14 @@ assess_privacy <- function(
         if (save.plot) {
           plot.new()
           png(paste0(this.df.name,'.png'), width = 1600, height=1600)
-          plot(POLY.agg, col=NA, border="gray85")
+          sp::plot(POLY.agg, col=NA, border="gray85")
         }else{
-          plot(POLY.agg, col=NA, border=NA)
+          sp::plot(POLY.agg, col=NA, border=NA)
         }
         cols <- RColorBrewer::brewer.pal(n = nclasses, name = "Blues")
         breaks <- classInt::classIntervals(show.this@data[[plotcol]], n = nclasses, style = "fisher", unique = TRUE)$brks
-        plot(show.this, main = fun, col = cols[findInterval(show.this@data[[plotcol]], breaks, all.inside = TRUE)], border = NA, add=T)
-        plot(POLY.agg, border = "gray85", add=T, col = ifelse(is.na(POLY.agg$CAN_SHOW),"grey65", ifelse(POLY.agg$CAN_SHOW == "YES", NA, "red")))
+        sp::plot(show.this, main = fun, col = cols[findInterval(show.this@data[[plotcol]], breaks, all.inside = TRUE)], border = NA, add=T)
+        sp::plot(POLY.agg, border = "gray85", add=T, col = ifelse(is.na(POLY.agg$CAN_SHOW),"grey65", ifelse(POLY.agg$CAN_SHOW == "YES", NA, "red")))
         if (save.plot) dev.off()
       }
 

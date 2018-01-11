@@ -38,6 +38,7 @@
 #' @importFrom lubridate day
 #' @importFrom lubridate ymd
 #' @importFrom utils data
+#' @importFrom Mar.utils make_oracle_cxn
 #' @export
 get_data <-function(db = NULL,
                     usepkg = 'rodbc',

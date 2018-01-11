@@ -24,6 +24,7 @@
 #' @importFrom sp SpatialPointsDataFrame
 #' @importFrom sp spTransform
 #' @importFrom rgdal readOGR
+#' @importFrom Mar.utils df_qc_spatial
 #' @return spatialPointsDataFrame
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
@@ -41,7 +42,7 @@ clip_by_poly <- function(db = NULL, df=NULL,
   if (!is.null(db)) {
     df = get(ds_all[[.GlobalEnv$db]]$table_pos)
   } 
-  df=df_qc_spatial(df)
+  df=Mar.utils::df_qc_spatial(df)
   df.sp = SpatialPointsDataFrame(
     coords = df[, c(lon.field, lat.field)],
     data = df,

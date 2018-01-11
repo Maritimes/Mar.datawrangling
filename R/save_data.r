@@ -22,6 +22,7 @@
 #' @importFrom rgdal writeOGR
 #' @importFrom sp SpatialPoints
 #' @importFrom utils write.csv
+#' @importFrom Mar.utils df_qc_spatial
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -48,7 +49,7 @@ records necessarily have positions and will not be visible in your shapefile")
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
 
    if ('shp' %in% formats){
-    df.sp = df_qc_spatial(df, lat.field, lon.field)
+    df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(
         coords = df.sp[, c(lon.field, lat.field)],
         data = df.sp,
