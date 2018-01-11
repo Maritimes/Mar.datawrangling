@@ -44,9 +44,8 @@ since the use of distances requires projecting the data.
 }
 \seealso{
 Other general_use: \code{\link{aggregator}},
-  \code{\link{cleanup}},
-  \code{\link{prepare_shape_fields}},
-  \code{\link{save_catches}}, \code{\link{save_data}}
+  \code{\link{cleanup}}, \code{\link{save_catches}},
+  \code{\link{save_data}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

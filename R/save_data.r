@@ -23,6 +23,7 @@
 #' @importFrom sp SpatialPoints
 #' @importFrom utils write.csv
 #' @importFrom Mar.utils df_qc_spatial
+#' @importFrom Mar.utils prepare_shape_fields
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -55,7 +56,7 @@ records necessarily have positions and will not be visible in your shapefile")
         data = df.sp,
         proj4string = sp::CRS(df.crs)
       )
-    df.sp = prepare_shape_fields(df.sp)
+    df.sp = Mar.utils::prepare_shape_fields(df.sp)
     if (nrow(df.sp@data) != nrow(df)) {
       cat(paste0(nrow(df)-nrow(df.sp@data), " records were lost from the shapefile due to invalid coordinates\n"))
     }

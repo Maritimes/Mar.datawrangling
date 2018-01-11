@@ -23,6 +23,7 @@
 #' @importFrom sp proj4string
 #' @importFrom sp SpatialPointsDataFrame
 #' @importFrom sp spTransform
+#' @importFrom sp proj4string<-
 #' @importFrom rgdal readOGR
 #' @importFrom Mar.utils df_qc_spatial
 #' @return spatialPointsDataFrame
