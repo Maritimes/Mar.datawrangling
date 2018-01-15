@@ -43,9 +43,9 @@ WGS84. FYI, during buffering, the polygon is briefly converted to UTMZone20, and
 since the use of distances requires projecting the data.
 }
 \seealso{
-Other general_use: \code{\link{aggregator}},
-  \code{\link{cleanup}}, \code{\link{save_catches}},
-  \code{\link{save_data}}
+Other general_use: \code{\link{cleanup}},
+  \code{\link{get_isdbTripSet}},
+  \code{\link{save_catches}}, \code{\link{save_data}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

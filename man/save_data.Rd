@@ -42,9 +42,9 @@ This function takes either a dataframe or all of the data you've filtered, and r
 or a shapefile for continued analysis
 }
 \seealso{
-Other general_use: \code{\link{aggregator}},
-  \code{\link{cleanup}}, \code{\link{clip_by_poly}},
-  \code{\link{save_catches}}
+Other general_use: \code{\link{cleanup}},
+  \code{\link{clip_by_poly}},
+  \code{\link{get_isdbTripSet}}, \code{\link{save_catches}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

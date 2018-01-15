@@ -41,9 +41,9 @@ This function takes all of the data you've filtered, and rolls it up into a csv 
 or a shapefile for continued analysis
 }
 \seealso{
-Other general_use: \code{\link{aggregator}},
-  \code{\link{cleanup}}, \code{\link{clip_by_poly}},
-  \code{\link{save_data}}
+Other general_use: \code{\link{cleanup}},
+  \code{\link{clip_by_poly}},
+  \code{\link{get_isdbTripSet}}, \code{\link{save_data}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
