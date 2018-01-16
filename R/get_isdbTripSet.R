@@ -8,9 +8,12 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 get_isdbTripSet <- function(FS_ID=NULL){
-  FS = ISFISHSETS[ISFISHSETS$FISHSET_ID %in% FS_ID,c("FISHSET_ID","TRIP_ID", "SET_NO")]
-  TR = ISTRIPS[ISTRIPS$TRIP_ID %in% FS$TRIP_ID, c("TRIP_ID","TRIP")]
+  tmp=new.env()
+  data(list = list("ISDB.ISFISHSETS", "ISDB.ISTRIPS"),envir = tmp)
+  FS = tmp$ISFISHSETS[tmp$ISFISHSETS$FISHSET_ID %in% FS_ID,c("FISHSET_ID","TRIP_ID", "SET_NO")]
+  TR = tmp$ISTRIPS[tmp$ISTRIPS$TRIP_ID %in% FS$TRIP_ID, c("TRIP_ID","TRIP")]
   res=merge(FS,TR)
   res = res[, c("FISHSET_ID","TRIP","SET_NO")]
+  tmp<-NULL
   return(res)
 }
