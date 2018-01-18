@@ -1133,33 +1133,68 @@ load_datasources <- function(db=NULL){
     silver hake, white hake, witch flounder and yellowtail flounder. Prey items 
     are identified to their lowest possible taxonomic level given levels of 
     digestion.",
-    tables = c("SDINF","SDDET","SDGEAR","SDDIGEST","SDFULLNESS","SDITEM","SDPRED","SDSOURCE","SDSTO","SDTECH","SDTRIPS"),
+    tables = c("SDINF","SDDET","SDGEAR","SDDIGEST","SDFULLNESS","SDITEM","SDPRED","SDSOURCE","SDSTO","SDTECH"),
     table_cat = "SDSTO",
     table_det = "SDDET",
     table_pos = "SDINF",
     field_default = "PNUM",
     joins = list(
-      "SDTRIPS" = list(
+      "SDINF" = list(
         "SDSOURCE" = list(pk_fields=c("DATASOURCE"),
-                          fk_fields=c("DATASOURCE"))
+                          fk_fields=c("DATASOURCE")),
+        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION"),
+                       fk_fields=c("DATASOURCE","MISSION")),
+        combine = "ALL"
       ),
+      "SDDET" = list(
+        "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO")),
+        "SDSOURCE" = list(pk_fields=c("DATASOURCE"),
+                          fk_fields=c("DATASOURCE")),
+        "SDPRED" = list(pk_fields=c("SPEC"),
+                        fk_fields=c("SPEC")),
+        combine = "AND"
+      ),
+      "SDSTO" = list(
+        "SDDET" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX")),
+        
+        "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO")),
+        "SDPRED" = list(pk_fields=c("SPEC"),
+                        fk_fields=c("SPEC")),
+        "SDITEM" = list(pk_fields=c("PREYSPECCD"),
+                       fk_fields=c("PREYSPECCD")),
+        combine = "ALL"
+      ),
+      "SDDET" = list(
+        "SDPRED" = list(pk_fields=c("SPEC"),
+                        fk_fields=c("SPEC")),
+        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX")),
+        combine = "ALL"
+      ),
+      "SDPRED" = list(
+        "SDSTO" = list(pk_fields=c("SPEC"),
+                       fk_fields=c("SPEC")),
+        "SDDET" = list(pk_fields=c("SPEC"),
+                        fk_fields=c("SPEC")),
+        combine = "OR"
+      ),
+      "SDITEM" = list(
+        "SDSTO" = list(pk_fields=c("PREYSPECCD"),
+                       fk_fields=c("PREYSPECCD"))
+      ),
+      
       "SDSOURCE" = list(
         "SDSTO" = list(pk_fields=c("DATASOURCE"),
-                          fk_fields=c("DATASOURCE"))
-      ),
-      "SDTRIPS" = list(
-        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION"),
-                       fk_fields=c("DATASOURCE","MISSION"))
-      ),
-      "SDINF" = list(
-        "SDTRIPS" = list(pk_fields=c("DATASOURCE","MISSION"),
-                       fk_fields=c("DATASOURCE","MISSION"))
-       ),
-      "SDDET" = list(
-        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","FSHNO"),
-                     fk_fields=c("DATASOURCE","MISSION","SETNO","FSHNO")),
+                          fk_fields=c("DATASOURCE")),
+        "SDDET" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX")),
+        
         "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
-                       fk_fields=c("DATASOURCE","MISSION","SETNO"))
+                       fk_fields=c("DATASOURCE","MISSION","SETNO")),
+        combine = "OR"
       ),
       "SDDIGEST" = list(
         "SDSTO" = list(pk_fields=c("DIGESTION"),
@@ -1168,28 +1203,6 @@ load_datasources <- function(db=NULL){
       "SDFULLNESS" = list(
         "SDDET" = list(pk_fields=c("FULLNESS"),
                        fk_fields=c("FULLNESS"))
-      ),
-      "SDPRED" = list(
-        "SDSTO" = list(pk_fields=c("SPEC"),
-                       fk_fields=c("SPEC"))
-      ),
-      "SDSTO" = list(
-        "SDDET" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
-                       fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"))
-      ),
-      "SDITEM" = list(
-        "SDSTO" = list(pk_fields=c("PREYSPECCD"),
-                       fk_fields=c("PREYSPECCD")
-        )
-      ),
-      "SDSTO" = list(
-        "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
-                         fk_fields=c("DATASOURCE","MISSION","SETNO")),
-        "SDPRED" = list(pk_fields=c("SPEC"),
-                         fk_fields=c("SPEC")),
-        "SDITEM" = list(pk_fields=c("PREYSPECCD"),
-                        fk_fields=c("PREYSPECCD")),
-        combine = "AND"
       )
     ),
     filters = list(
@@ -1198,7 +1211,7 @@ load_datasources <- function(db=NULL){
                        filt_disp = c("YEAR"),
                        filt_ord = 1
       ),
-      "Mission" = list(filt_tab = "SDTRIPS",
+      "Mission" = list(filt_tab = "SDINF",
                     filt_field = c("MISSION"),
                     filt_disp = c("MISSION"),
                     filt_ord = 1

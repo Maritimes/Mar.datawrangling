@@ -29,5 +29,6 @@ This will take a moment...\n")
   orig = new.env()
   data(list = these.tables.prefixed, envir =  orig)
   sapply(ds_all[[db]]$tables, get_orphans)
+  return(invisible())
 }
 

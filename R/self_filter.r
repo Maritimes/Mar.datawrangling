@@ -93,5 +93,5 @@ data_load(list_tables(db='x')) to re-load the data")
   cat("Filtering completed\n")
   elapsed = timer.start - proc.time()
   cat(paste0("\n",round(elapsed[3], 0) * -1," seconds elapsed\n"))
-  return(NULL)
+  return(invisible(NULL))
 }
