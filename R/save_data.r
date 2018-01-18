@@ -68,5 +68,5 @@ records necessarily have positions and will not be visible in your shapefile")
   if ('rds' %in% formats){
     saveRDS(df, paste0(fn,".rds"))
   }
-  return(df)
+  return(invisible(df))
 }

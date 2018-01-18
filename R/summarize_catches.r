@@ -145,5 +145,5 @@ summarize_catches <- function(db=NULL,
     if (!quiet) cat(paste0("\nYou indicated you only wanted data with valid coordinates.  ",NROW(all_recs) - NROW(all_recs_spat)," of ",NROW(all_recs)," records were lost due to this constraint"))
     all_recs = all_recs_spat
   }
-  return(all_recs)
+  return(invisible(all_recs))
 }
