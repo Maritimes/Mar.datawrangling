@@ -21,6 +21,15 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   these.tables.prefixed = paste0(prefix,".",these.tables)
   
   cat("\nApplying tweaks ...")
+  if (db == 'stomach'){
+    data(STOMACH.SDINF, envir = .GlobalEnv)
+    if (!'YEAR' %in% colnames(SDINF)){
+      SDINF$YEAR = year(SDINF$SDATE)
+      save(SDINF, file=file.path(data.dir, "STOMACH.SDINF.RData"), compress=TRUE)
+      cat("\nSDINF:  For convenience, added a YEAR field")
+    }
+    rm(SDINF, envir = .GlobalEnv)
+  }
   if (db == 'isdb'){
     #'the following are special data handling processes specific to the ISDB tables
     data(ISDB.ISFISHSETS, envir = .GlobalEnv)

@@ -552,6 +552,10 @@ load_datasources <- function(db=NULL){
          "GSVESP70" = list(pk_fields=c("VESEL"),
                                  fk_fields=c("VESEL"))
        ),
+       "GSSEXP70" = list(
+         "GSDETP70" = list(pk_fields=c("SEXCODE"),
+                           fk_fields=c("FSEX"))
+       ),
        "GSCATP70" = list(
          "GSINFP70" = list(pk_fields=c("MISSION","SETNO"),
                                  fk_fields=c("MISSION","SETNO")),
@@ -1056,31 +1060,13 @@ load_datasources <- function(db=NULL){
         "TRINFO" = list(pk_fields=c("SEXID"),
                         fk_fields=c("SEXID"))
       ),
-      # "SCARS" = list(
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
-      #   combine = "OR"
-      # ),
       "SCALE" = list(
         "TRINFO" = list(pk_fields=c("LOGID"),
                         fk_fields=c("LOGID"))
-        #SORIGID?  SOTYPID?
       ),
-       # "ROWNAMES" = list(
-       #   "" = list(pk_fields=c(""),
-       #             fk_fields=c(""))
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
-      # #   combine = "OR"
-      #  ),
        "RCSITE" = list(
          "TRINFO" = list(pk_fields=c("SITEID"),
                    fk_fields=c("CSITE"))
-      #   "" = list(pk_fields=c(""),
-      #             fk_fields=c("")),
-      #     combine = "OR"
          ),
       "OTYPES" = list(
         "TRINFO" = list(pk_fields=c("OTYPEID"),
@@ -1133,9 +1119,120 @@ load_datasources <- function(db=NULL){
     )
   )
   
+  stomach = list (
+    db="stomach",
+    name = "MFD_STOMACH",
+    schema = "MFD_STOMACH",
+    desc = "Maritimes Region Food Habits Database consists of >156,000 stomachs 
+    for 68 predator species from 21 data sources focussed on NAFO division 4VWX, 
+    but does include limited information from NAFO divisions 3OP, 4T and 5YZ.  
+    Data spans four decades (1958-1969; 1981-1990, 1991-1998 and 1999-2008) with 
+    two species having data from all time periods (cod and haddock) and five 
+    more with data in three of four time periods.  Predator species with >5000 
+    stomachs include American plaice, Atlantic cod, haddock, pollock, redfish, 
+    silver hake, white hake, witch flounder and yellowtail flounder. Prey items 
+    are identified to their lowest possible taxonomic level given levels of 
+    digestion.",
+    tables = c("SDINF","SDDET","SDGEAR","SDDIGEST","SDFULLNESS","SDITEM","SDPRED","SDSOURCE","SDSTO","SDTECH","SDTRIPS"),
+    table_cat = "SDSTO",
+    table_det = "SDDET",
+    table_pos = "SDINF",
+    field_default = "PNUM",
+    joins = list(
+      "SDTRIPS" = list(
+        "SDSOURCE" = list(pk_fields=c("DATASOURCE"),
+                          fk_fields=c("DATASOURCE"))
+      ),
+      "SDSOURCE" = list(
+        "SDSTO" = list(pk_fields=c("DATASOURCE"),
+                          fk_fields=c("DATASOURCE"))
+      ),
+      "SDTRIPS" = list(
+        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION"),
+                       fk_fields=c("DATASOURCE","MISSION"))
+      ),
+      "SDINF" = list(
+        "SDTRIPS" = list(pk_fields=c("DATASOURCE","MISSION"),
+                       fk_fields=c("DATASOURCE","MISSION"))
+       ),
+      "SDDET" = list(
+        "SDSTO" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","FSHNO"),
+                     fk_fields=c("DATASOURCE","MISSION","SETNO","FSHNO")),
+        "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO"))
+      ),
+      "SDDIGEST" = list(
+        "SDSTO" = list(pk_fields=c("DIGESTION"),
+                         fk_fields=c("DIGESTION"))
+      ),
+      "SDFULLNESS" = list(
+        "SDDET" = list(pk_fields=c("FULLNESS"),
+                       fk_fields=c("FULLNESS"))
+      ),
+      "SDPRED" = list(
+        "SDSTO" = list(pk_fields=c("SPEC"),
+                       fk_fields=c("SPEC"))
+      ),
+      "SDSTO" = list(
+        "SDDET" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
+                       fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"))
+      ),
+      "SDITEM" = list(
+        "SDSTO" = list(pk_fields=c("PREYSPECCD"),
+                       fk_fields=c("PREYSPECCD")
+        )
+      ),
+      "SDSTO" = list(
+        "SDINF" = list(pk_fields=c("DATASOURCE","MISSION","SETNO"),
+                         fk_fields=c("DATASOURCE","MISSION","SETNO")),
+        "SDPRED" = list(pk_fields=c("SPEC"),
+                         fk_fields=c("SPEC")),
+        "SDITEM" = list(pk_fields=c("PREYSPECCD"),
+                        fk_fields=c("PREYSPECCD")),
+        combine = "AND"
+      )
+    ),
+    filters = list(
+      "Year" = list(filt_tab = "SDINF",
+                       filt_field = c("YEAR"),
+                       filt_disp = c("YEAR"),
+                       filt_ord = 1
+      ),
+      "Mission" = list(filt_tab = "SDTRIPS",
+                    filt_field = c("MISSION"),
+                    filt_disp = c("MISSION"),
+                    filt_ord = 1
+      ),
+      "Data Source" = list(filt_tab = "SDSOURCE",
+                      filt_field = c("DATASOURCE"),
+                      filt_disp = c("DATASOURCE"),
+                      filt_ord = 1
+      ),
+      "Predator Species" = list(filt_tab = "SDPRED",
+                           filt_field = c("SPEC"),
+                           filt_disp = c("DESCRIPTION","SPEC"),
+                           filt_ord = 1
+      ),
+      "Prey Species" = list(filt_tab = "SDITEM",
+                                filt_field = c("PREYSPECCD"),
+                                filt_disp = c("PREYSPECIES","PREYSPECCD"),
+                                filt_ord = 1
+      ),
+      "Prey Species Group" = list(filt_tab = "SDITEM",
+                            filt_field = c("PREYITEMCD"),
+                            filt_disp = c("PREYITEM","PREYITEMCD"),
+                            filt_ord = 1
+      )
+    )
+  )
+  
+  
+  
+  
+  
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
                      isdb=isdb, marfis=marfis, comland86=comland86, 
-                     comland67=comland67, asef=asef)
+                     comland67=comland67, asef=asef, stomach=stomach)
   
   
   generic_filts = list(
