@@ -36,7 +36,7 @@ get_isdbTripSet <- function(FS_ID=NULL, data.dir=NULL){
   FS = tmp$ISFISHSETS[tmp$ISFISHSETS$FISHSET_ID %in% FS_ID,c("FISHSET_ID","TRIP_ID", "SET_NO")]
   TR = tmp$ISTRIPS[tmp$ISTRIPS$TRIP_ID %in% FS$TRIP_ID, c("TRIP_ID","TRIP")]
   res=merge(FS,TR)
-  res = res[, c("FISHSET_ID","TRIP","SET_NO")]
+  res = res[, c("FISHSET_ID","TRIP_ID","TRIP","SET_NO")]
   tmp<-NULL
   return(res)
 }
