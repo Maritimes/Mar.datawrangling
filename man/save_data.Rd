@@ -43,8 +43,7 @@ or a shapefile for continued analysis
 }
 \seealso{
 Other general_use: \code{\link{cleanup}},
-  \code{\link{clip_by_poly}},
-  \code{\link{get_isdbTripSet}}, \code{\link{save_catches}}
+  \code{\link{clip_by_poly}}, \code{\link{get_isdbTripSet}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
