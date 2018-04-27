@@ -63,13 +63,12 @@ get_data_custom<-function(db=NULL,
       break("Can't find or access specified table")
     }else{
       cat(paste0("\nExtracting ",tables[i],"...\n"))
-      table_naked = gsub(paste0(prefix,"."),"",tables[i])
+      table_naked = table_naked1 = gsub(paste0(prefix,"."),"",tables[i])
       qry = paste0("SELECT * from ", theschema, ".",table_naked)
-      assign(table_naked, thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))
-
- 
-      save(table_naked, file=file.path(data.dir, paste0(prefix,".",tables[i],".RData")), compress=TRUE)
-      cat(paste("Got",tables[i],"\n"))
+      res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
+      assign(table_naked, res)
+      save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
+      cat(paste("Got", tables[i],"\n"))
       assign(x = tables[i],value = get(table_naked), envir = .GlobalEnv)
       cat(paste0("Loaded ",tables[i],"\n"))
     }
