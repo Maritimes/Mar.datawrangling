@@ -55,7 +55,7 @@ data frame.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{make_log}},
+  \code{\link{get_data_custom}}, \code{\link{get_data}},
   \code{\link{self_filter}}
 }
 \author{

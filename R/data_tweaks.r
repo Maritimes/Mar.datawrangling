@@ -22,18 +22,17 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   
   cat("\nApplying tweaks ...")
   if (db == 'stomach'){
-    data(STOMACH.SDINF, envir = .GlobalEnv)
+   load(file.path(data.dir,"STOMACH.SDINF.RData"), envir = .GlobalEnv)
     if (!'YEAR' %in% colnames(SDINF)){
       SDINF$YEAR = year(SDINF$SDATE)
       save(SDINF, file=file.path(data.dir, "STOMACH.SDINF.RData"), compress=TRUE)
       cat("\nSDINF:  For convenience, added a YEAR field")
     }
-    rm(SDINF, envir = .GlobalEnv)
   }
   if (db == 'isdb'){
     #'the following are special data handling processes specific to the ISDB tables
-    data(ISDB.ISFISHSETS, envir = .GlobalEnv)
-    data(ISDB.ISCATCHES, envir = .GlobalEnv)
+   load(file.path(data.dir,"ISDB.ISFISHSETS.RData"), envir = .GlobalEnv)
+   load(file.path(data.dir,"ISDB.ISCATCHES.RData"), envir = .GlobalEnv)
     if (!'S_EST_NUM_CAUGHT' %in% colnames(ISCATCHES)){
       ISFISHSETS.directed=ISFISHSETS[c("FISHSET_ID","SET_NO","SPECSCD_ID")]  #keep only the field identifying the sought spp for each set
       ISCATCHES.directed = merge(ISCATCHES,ISFISHSETS.directed, by.x=c("FISHSET_ID","SET_NO","SPECCD_ID"), by.y=c("FISHSET_ID","SET_NO","SPECSCD_ID")) #get the catches of directed for each set
@@ -41,13 +40,10 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       names(ISCATCHES.directed) <- c("FISHSET_ID", "SET_NO","SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
       ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID","SET_NO"), by.y=c("FISHSET_ID","SET_NO")) #get the catches of directed for each set
       save( ISCATCHES, file=file.path(data.dir, "ISDB.ISCATCHES.RData"), compress=TRUE)
-      rm(ISFISHSETS.directed, envir = .GlobalEnv)
-      rm(ISCATCHES.directed, envir = .GlobalEnv)
       cat("\nISCATCHES: Added directed species catch numbers and weights onto each record......")
     }
-    #rm(ISCATCHES)
     
-    data(ISDB.ISSETPROFILE_WIDE, envir = .GlobalEnv)
+   load(file.path(data.dir,"ISDB.ISSETPROFILE_WIDE.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(ISSETPROFILE_WIDE) |
         !'LONGITUDE' %in% colnames(ISSETPROFILE_WIDE)){
       
@@ -79,12 +75,11 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     }
     
     save( ISSETPROFILE_WIDE, file=file.path(data.dir, "ISDB.ISSETPROFILE_WIDE.RData"), compress=TRUE)
-    #rm(ISSETPROFILE_WIDE)
   }
   if (db == 'rv'){
     #'the following are special data handling processes specific to the rv tables (beyond
     #'getting the whole table)
-    data(RV.GSINF, envir = .GlobalEnv)
+   load(file.path(data.dir,"RV.GSINF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(GSINF)){
       GSINF$LATITUDE = (as.numeric(substr(GSINF$SLAT,1,2))+(GSINF$SLAT - as.numeric(substr(GSINF$SLAT,1,2))*100)/60)
       GSINF$LONGITUDE = (as.numeric(substr(GSINF$SLONG,1,2))+(GSINF$SLONG - as.numeric(substr(GSINF$SLONG,1,2))*100)/60)*-1
@@ -93,12 +88,11 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat(paste("\nGSINF:  Converted DDMM coordinates to DDDD.DD ..."))
       save( GSINF, file=file.path(data.dir, "RV.GSINF.RData"), compress=TRUE)
     }
-    #rm(GSINF, envir = .GlobalEnv)
   }
   if (db == 'rvp70'){
     #'the following are special data handling processes specific to the rvp70 tables (beyond
     #'getting the whole table)
-    data(RVP70.GSINFP70, envir = .GlobalEnv)
+   load(file.path(data.dir,"RVP70.GSINFP70.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(GSINFP70)){
       GSINFP70$LATITUDE = (as.numeric(substr(GSINFP70$SLAT,1,2))+(GSINFP70$SLAT - as.numeric(substr(GSINFP70$SLAT,1,2))*100)/60)
       GSINFP70$LONGITUDE = (as.numeric(substr(GSINFP70$SLONG,1,2))+(GSINFP70$SLONG - as.numeric(substr(GSINFP70$SLONG,1,2))*100)/60)*-1
@@ -107,10 +101,9 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat(paste("\nGSINFP70:  Converted DDMM coordinates to DDDD.DD ..."))
       save( GSINFP70, file=file.path(data.dir, "RVP70.GSINFP70.RData"), compress=TRUE)
     }
-    #rm(GSINFP70, envir = .GlobalEnv)
   }
   if (db == 'chid'){
-    data(CHID.DSINF, envir = .GlobalEnv)
+   load(file.path(data.dir,"CHID.DSINF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(DSINF)){
       DSINF$LATITUDE = (as.numeric(substr(DSINF$SLAT,1,2))+(DSINF$SLAT - as.numeric(substr(DSINF$SLAT,1,2))*100)/60)
       DSINF$LONGITUDE = (as.numeric(substr(DSINF$SLONG,1,2))+(DSINF$SLONG - as.numeric(substr(DSINF$SLONG,1,2))*100)/60)*-1
@@ -127,10 +120,9 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       
       save( DSINF, file=file.path(data.dir, "CHID.DSINF.RData"), compress=TRUE)
     }
-    #rm(DSINF, envir = .GlobalEnv)
   }
   if (db == 'redfish'){
-    data(REDFISH.RFINF, envir = .GlobalEnv)
+   load(file.path(data.dir,"REDFISH.RFINF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(RFINF)){
       RFINF$LATITUDE = (as.numeric(substr(RFINF$SLAT,1,2))+(RFINF$SLAT - as.numeric(substr(RFINF$SLAT,1,2))*100)/60)
       RFINF$LONGITUDE = (as.numeric(substr(RFINF$SLONG,1,2))+(RFINF$SLONG - as.numeric(substr(RFINF$SLONG,1,2))*100)/60)*-1
@@ -147,22 +139,21 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat("\nRFINF: Added a season field")
       save( RFINF, file=file.path(data.dir, "REDFISH.RFINF.RData"), compress=TRUE)
     }
-    #rm(RFINF, envir = .GlobalEnv)
   }
   if (db == 'comland86'){
-    data("COMLAND86.PROVINCES", envir = .GlobalEnv)
+   load(file.path(data.dir,"COMLAND86.PROVINCES.RData"), envir = .GlobalEnv)
     PROVINCES$PROV_CODE <- as.character(PROVINCES$PROV_CODE)
     cat("\nPROVINCES: Changed provinces codes to characters so they can be used in filtering")
     save( PROVINCES, file=file.path(data.dir, "COMLAND86.PROVINCES.RData"), compress=TRUE)
   }
   if (db == 'comland67'){
-    data("COMLAND67.PROVINCES", envir = .GlobalEnv)
+   load(file.path(data.dir,"COMLAND67.PROVINCES.RData"), envir = .GlobalEnv)
     PROVINCES$PROV_CODE <- as.character(PROVINCES$PROV_CODE)
     cat("\nPROVINCES: Changed provinces codes to characters so they can be used in filtering")
     save( PROVINCES, file=file.path(data.dir, "COMLAND67.PROVINCES.RData"), compress=TRUE)
   }
   if (db == 'marfis'){
-    data(MARFIS.HAIL_IN_CALLS, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.HAIL_IN_CALLS.RData"), envir = .GlobalEnv)
     HAIL_IN_CALLS$CUSER <- NULL
     HAIL_IN_CALLS$CDATE <- NULL
     HAIL_IN_CALLS$UUSER <- NULL
@@ -170,24 +161,21 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     save(HAIL_IN_CALLS, file=file.path(data.dir, "MARFIS.HAIL_IN_CALLS.RData"), compress=TRUE)
     rm(HAIL_IN_CALLS, envir = .GlobalEnv)
     
-    data(MARFIS.LOG_SPC_STD_INFO, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.LOG_SPC_STD_INFO.RData"), envir = .GlobalEnv)
     LOG_SPC_STD_INFO$CUSER <- NULL
     LOG_SPC_STD_INFO$CDATE <- NULL
     LOG_SPC_STD_INFO$UUSER <- NULL
     LOG_SPC_STD_INFO$UDATE <- NULL
     save(LOG_SPC_STD_INFO, file=file.path(data.dir, "MARFIS.LOG_SPC_STD_INFO.RData"), compress=TRUE)
-    #rm(LOG_SPC_STD_INFO, envir = .GlobalEnv)
     
-    data(MARFIS.MON_DOCS, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.MON_DOCS.RData"), envir = .GlobalEnv)
     MON_DOCS$CUSER <- NULL
     MON_DOCS$CDATE <- NULL
     MON_DOCS$UUSER <- NULL
     MON_DOCS$UDATE <- NULL
     save(MON_DOCS, file=file.path(data.dir, "MARFIS.MON_DOCS.RData"), compress=TRUE)
-    #rm(MON_DOCS, envir = .GlobalEnv)
     
-    
-    data(MARFIS.PRO_SPC_INFO, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.PRO_SPC_INFO.RData"), envir = .GlobalEnv)
     PRO_SPC_INFO$FV_GEAR_CODE <-NULL
     PRO_SPC_INFO$SSF_SPECIES_CODE <-NULL
     PRO_SPC_INFO$SSF_SPECIES_SIZE_CODE <-NULL
@@ -211,9 +199,8 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
     cat("\nPRO_SPC_INFO: Ensured correct year for lobster data (i.e. LANDED_DATE)") 
     save( PRO_SPC_INFO, file=file.path(data.dir, "MARFIS.PRO_SPC_INFO.RData"), compress=TRUE)
-    #rm(PRO_SPC_INFO, envir = .GlobalEnv)
     
-    data(MARFIS.GEARS, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.GEARS.RData"), envir = .GlobalEnv)
     names(GEARS)[names(GEARS) == "DESC_ENG"] <- "GEAR"
     GEARS$DESC_FRE <- NULL
     GEARS$CUSER <- NULL
@@ -221,8 +208,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     GEARS$UUSER <- NULL
     GEARS$UDATE <- NULL
     save(GEARS, file=file.path(data.dir, "MARFIS.GEARS.RData"), compress=TRUE)
-    #rm(GEARS, envir = .GlobalEnv)
-    data(MARFIS.SPECIES, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.SPECIES.RData"), envir = .GlobalEnv)
     names(SPECIES)[names(SPECIES) == "DESC_ENG"] <- "SPECIES_NAME"
     names(SPECIES)[names(SPECIES) == "SPECIES_ABBREV_ENG"] <- "SPECIES_ABBREV"
     names(SPECIES)[names(SPECIES) == "LICENCE_DESC_ENG"] <- "LICENCE_DESC"
@@ -234,8 +220,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     SPECIES$UUSER <- NULL
     SPECIES$UDATE <- NULL
     save(SPECIES, file=file.path(data.dir, "MARFIS.SPECIES.RData"), compress=TRUE)
-    #rm(SPECIES, envir = .GlobalEnv)
-    data(MARFIS.CATCH_USAGES, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.CATCH_USAGES.RData"), envir = .GlobalEnv)
     names(CATCH_USAGES)[names(CATCH_USAGES) == "DESC_ENG"] <- "CATCH_USAGE"
     CATCH_USAGES$DESC_FRE <- NULL
     CATCH_USAGES$ABBREV_FRE <- NULL
@@ -245,29 +230,25 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     CATCH_USAGES$UUSER <- NULL
     CATCH_USAGES$UDATE <- NULL
     save(CATCH_USAGES, file=file.path(data.dir, "MARFIS.CATCH_USAGES.RData"), compress=TRUE)
-    #rm(CATCH_USAGES, envir = .GlobalEnv)
-    data(MARFIS.SPECIES_CATEGORIES, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.SPECIES_CATEGORIES.RData"), envir = .GlobalEnv)
     names(SPECIES_CATEGORIES)[names(SPECIES_CATEGORIES) == "DESC_ENG"] <- "SPECIES_CATEGORY"
     save(SPECIES_CATEGORIES, file=file.path(data.dir, "MARFIS.SPECIES_CATEGORIES.RData"), compress=TRUE)
-    #rm(SPECIES_CATEGORIES, envir = .GlobalEnv)
-    data(MARFIS.AREAS, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.AREAS.RData"), envir = .GlobalEnv)
     names(AREAS)[names(AREAS) == "DESC_ENG"] <- "FISHING_AREA"
     AREAS$CUSER <- NULL
     AREAS$CDATE <- NULL
     AREAS$UUSER <- NULL
     AREAS$UDATE <- NULL
     save(AREAS, file=file.path(data.dir, "MARFIS.AREAS.RData"), compress=TRUE)
-    #rm(AREAS, envir = .GlobalEnv)
-    data(MARFIS.NAFO_UNIT_AREAS, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.NAFO_UNIT_AREAS.RData"), envir = .GlobalEnv)
     names(NAFO_UNIT_AREAS)[names(NAFO_UNIT_AREAS) == "AREA"] <- "NAFO_AREA"
     NAFO_UNIT_AREAS$CUSER <- NULL
     NAFO_UNIT_AREAS$CDATE <- NULL
     NAFO_UNIT_AREAS$UUSER <- NULL
     NAFO_UNIT_AREAS$UDATE <- NULL
     save(NAFO_UNIT_AREAS, file=file.path(data.dir, "MARFIS.NAFO_UNIT_AREAS.RData"), compress=TRUE)
-    #rm(NAFO_UNIT_AREAS, envir = .GlobalEnv)
     
-    data(MARFIS.LOG_EFRT_STD_INFO, envir = .GlobalEnv)
+   load(file.path(data.dir,"MARFIS.LOG_EFRT_STD_INFO.RData"), envir = .GlobalEnv)
     #these are foreign keys to other tables
     LOG_EFRT_STD_INFO$FV_FISHING_AREA_ID <-NULL
     LOG_EFRT_STD_INFO$FV_NAFO_UNIT_AREA_ID <-NULL
@@ -301,15 +282,14 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat(paste("\nLOG_EFRT_STD_INFO:  Converted DDMM coordinates to DDDD.DD and added coord fields..."))
       save( LOG_EFRT_STD_INFO, file=file.path(data.dir, "MARFIS.LOG_EFRT_STD_INFO.RData"), compress=TRUE)
     }
-    #rm(LOG_EFRT_STD_INFO, envir = .GlobalEnv)
   }
   
   if (db == 'asef'){
-    data(ASEF.TRINFO, envir = .GlobalEnv)
+   load(file.path(data.dir,"ASEF.TRINFO.RData"), envir = .GlobalEnv)
     TRINFO$RLYEAR <- year(TRINFO$RLDATE)
     cat("\nTRINFO: RLYEAR added so it can be used in filtering")
     save( TRINFO, file=file.path(data.dir, "ASEF.TRINFO.RData"), compress=TRUE)
-    data(ASEF.RCSITE, envir = .GlobalEnv)
+   load(file.path(data.dir,"ASEF.RCSITE.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(RCSITE)){
       RCSITE$LATITUDE = (as.numeric(substr(RCSITE$SLAT,1,2))+(RCSITE$SLAT - as.numeric(substr(RCSITE$SLAT,1,2))*100)/60)
       RCSITE$LONGITUDE = (as.numeric(substr(RCSITE$SLONG,1,2))+(RCSITE$SLONG - as.numeric(substr(RCSITE$SLONG,1,2))*100)/60)*-1
@@ -322,6 +302,5 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     this.table.prefixed = paste0(prefix,".",x)
     save(list=x, file=file.path(data.dir, paste0(this.table.prefixed,".RData")))
   }
-  
-  sapply(activity_log[["tables"]], saveit, data.dir, db)
+  sapply(ds_all[[.GlobalEnv$db]]$tables, saveit, data.dir, db)
 }

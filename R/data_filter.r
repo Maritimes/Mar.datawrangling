@@ -36,8 +36,6 @@
 #' @export
 #' @note This line is here to prevent an error message claiming the export is mult-line
 data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
-  if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
-  this.filter = make_log(refresh.data)
   filters = ds_all[[.GlobalEnv$db]]$filters
   
   get_location <- function() {
@@ -263,7 +261,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
     self_filter(db) 
   }
   if (refresh.data) sapply(ds_all[[.GlobalEnv$db]]$tables, simplify=TRUE, get_data)
-  if (activity_log$filterno<4 & safe == TRUE)cat("
+  if (safe == TRUE)cat("
 The following step removes filtering options that would result in no records 
 being returned.  It is performed even before any selections are made since many 
 of the code tables have values that never show up in the actual data.  It is 
@@ -291,15 +289,8 @@ if (safe==TRUE)self_filter(db)
       #if a filter was used, apply it and then remove it
       if (nrow(checkApply[[2]]) > 0) {
         deBloat(checkApply)
-        if (length(checkApply[[1]][[1]]$filt_field) == 1) {
-          activity_log[[this.filter]][[checkApply[[1]][[1]]$filt_field]] = checkApply[2]
-        }else{
-          activity_log[[this.filter]][[paste(checkApply[[1]][[1]]$filt_field, collapse="_")]] = paste(checkApply[[2]],collapse="_")
-        }
-        assign("activity_log", activity_log, envir = .GlobalEnv)
         filters[filtIndex] = NULL
       }
     }
   }
-  #return(activity_log)
 }

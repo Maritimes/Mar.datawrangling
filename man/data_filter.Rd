@@ -53,8 +53,8 @@ create the select list, and order it as specified
 Vessels are a pain - replace special chars and remove spaces
 }
 \seealso{
-Other dfo_extractions: \code{\link{get_data}},
-  \code{\link{make_log}}, \code{\link{self_filter}},
+Other dfo_extractions: \code{\link{get_data_custom}},
+  \code{\link{get_data}}, \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{

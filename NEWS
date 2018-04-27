@@ -1,6 +1,10 @@
-Mar.datawrangling 2018.01.18 
+Mar.datawrangling 
 ==============
 
 Changes:
-
+2018.04.27
+* Adds function to extract other tables from known dbs
+* Fixes issues with using custom data directory
+* Removes poorlyconceived activity_log
+2018.01.18 
 * Added stomach database
