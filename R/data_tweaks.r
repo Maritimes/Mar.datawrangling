@@ -24,7 +24,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   if (db == 'stomach'){
    load(file.path(data.dir,"STOMACH.SDINF.RData"), envir = .GlobalEnv)
     if (!'YEAR' %in% colnames(SDINF)){
-      SDINF$YEAR = year(SDINF$SDATE)
+      SDINF$YEAR = lubridate::year(SDINF$SDATE)
       save(SDINF, file=file.path(data.dir, "STOMACH.SDINF.RData"), compress=TRUE)
       cat("\nSDINF:  For convenience, added a YEAR field")
     }
@@ -67,9 +67,9 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     }
     if (!'YEAR' %in% colnames(ISSETPROFILE_WIDE)){
       ISSETPROFILE_WIDE$YEAR  =
-        year(as.POSIXct(ifelse(year(ISSETPROFILE_WIDE$DATE_TIME1)>2500,
-                               ifelse(year(ISSETPROFILE_WIDE$DATE_TIME2)>2500,
-                                      ifelse(year(ISSETPROFILE_WIDE$DATE_TIME3)>2500,
+        lubridate::year(as.POSIXct(ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME1)>2500,
+                               ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME2)>2500,
+                                      ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME3)>2500,
                                              ISSETPROFILE_WIDE$DATE_TIME4, ISSETPROFILE_WIDE$DATE_TIME3), ISSETPROFILE_WIDE$DATE_TIME2), ISSETPROFILE_WIDE$DATE_TIME1), origin = "1970-01-01"))
       cat("\nISSETPROFILE_WIDE:  For convenience, added YEAR fields from first non-NA value from p1-p4 positions")
     }
@@ -110,7 +110,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       DSINF$ELATITUDE = (as.numeric(substr(DSINF$ELAT,1,2))+(DSINF$ELAT - as.numeric(substr(DSINF$ELAT,1,2))*100)/60)
       DSINF$ELONGITUDE = (as.numeric(substr(DSINF$ELONG,1,2))+(DSINF$ELONG - as.numeric(substr(DSINF$ELONG,1,2))*100)/60)*-1
       cat(paste("\nDSINF:  Converted DDMM coordinates to DDDD.DD ..."))
-      DSINF$YEAR = year(DSINF$SDATE)
+      DSINF$YEAR = lubridate::year(DSINF$SDATE)
       cat("\nDSINF: Added a year field")
       months <- strptime(DSINF$SDATE, format='%Y-%m-%d %H:%M')$mon +1
       indx <- stats::setNames( rep(c('Winter', 'Spring', 'Summer', 'Fall'),each=3), c(12,1:11))
@@ -129,7 +129,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       RFINF$ELATITUDE = (as.numeric(substr(RFINF$ELAT,1,2))+(RFINF$ELAT - as.numeric(substr(RFINF$ELAT,1,2))*100)/60)
       RFINF$ELONGITUDE = (as.numeric(substr(RFINF$ELONG,1,2))+(RFINF$ELONG - as.numeric(substr(RFINF$ELONG,1,2))*100)/60)*-1
       cat(paste("\nRFINF:  Converted DDMM coordinates to DDDD.DD ..."))
-      RFINF$YEAR = year(RFINF$SDATE)
+      RFINF$YEAR = lubridate::year(RFINF$SDATE)
       cat("\nRFINF: Added a year field")
       
       months <- strptime(RFINF$SDATE, format='%Y-%m-%d %H:%M')$mon +1
@@ -193,10 +193,10 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     PRO_SPC_INFO$CDATE <- NULL
     PRO_SPC_INFO$YEAR <- NA
     PRO_SPC_INFO$YEAR[!is.na(PRO_SPC_INFO$DATE_FISHED)]  = 
-      year(as.POSIXct(PRO_SPC_INFO$DATE_FISHED[!is.na(PRO_SPC_INFO$DATE_FISHED)], origin = "1970-01-01"))
+      lubridate::year(as.POSIXct(PRO_SPC_INFO$DATE_FISHED[!is.na(PRO_SPC_INFO$DATE_FISHED)], origin = "1970-01-01"))
     cat("\nPRO_SPC_INFO: Added a year field")
     PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700] =
-      year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
+      lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
     cat("\nPRO_SPC_INFO: Ensured correct year for lobster data (i.e. LANDED_DATE)") 
     save( PRO_SPC_INFO, file=file.path(data.dir, "MARFIS.PRO_SPC_INFO.RData"), compress=TRUE)
     
@@ -286,7 +286,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   
   if (db == 'asef'){
    load(file.path(data.dir,"ASEF.TRINFO.RData"), envir = .GlobalEnv)
-    TRINFO$RLYEAR <- year(TRINFO$RLDATE)
+    TRINFO$RLYEAR <- lubridate::year(TRINFO$RLDATE)
     cat("\nTRINFO: RLYEAR added so it can be used in filtering")
     save( TRINFO, file=file.path(data.dir, "ASEF.TRINFO.RData"), compress=TRUE)
    load(file.path(data.dir,"ASEF.RCSITE.RData"), envir = .GlobalEnv)
@@ -300,7 +300,9 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   
   saveit <- function(x, data.dir, db){
     this.table.prefixed = paste0(prefix,".",x)
-    save(list=x, file=file.path(data.dir, paste0(this.table.prefixed,".RData")))
+    save(list=x, file=file.path(data.dir, paste0(this.table.prefixed,".RData")), compress = TRUE)
+
   }
-  sapply(ds_all[[.GlobalEnv$db]]$tables, saveit, data.dir, db)
+  #save the objects in the environment that are known tables - these have been tweaked
+  sapply(ds_all[[.GlobalEnv$db]]$tables[ds_all[[.GlobalEnv$db]]$tables %in% objects()], saveit, data.dir, db)
 }

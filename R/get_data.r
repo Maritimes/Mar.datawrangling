@@ -47,6 +47,9 @@ get_data <-function(db = NULL,
                     fn.oracle.username ="_none_",
                     fn.oracle.password="_none_",
                     fn.oracle.dsn="_none_"){
+  #remove possible trailing slash from data.dir path
+  if (substring(data.dir, nchar(data.dir))=="/") data.dir = substr(data.dir, 1, nchar(data.dir)-1)
+  
   if (is.null(db)) {
     # Prompt for choice if no db selected ------------------------------------
     ds_nms = data.frame(list(names = unlist(lapply(ds_all, "[[", "name")), 
@@ -101,7 +104,8 @@ get_data <-function(db = NULL,
       }
     }
     else if (action == "extract") {
-      cat(paste0("\nExtracting ", tables, " ..."))
+      cat(paste0("\nExtracting ", tables, "... "))
+      
       add.where = "1=1"
       if (tables %in% names(ds_all[[.GlobalEnv$db]]$table_err_roracle)) {
         this = ds_all[[.GlobalEnv$db]]$table_err_roracle[[tables]]
@@ -114,11 +118,12 @@ get_data <-function(db = NULL,
                    \tThis\\These are from ", this$comments, "\n                   
                    \tIf this is critical, use RODBC instead of ROracle\n"))
       }
-      table_naked = gsub(paste0(prefix, "."), "", tables)
+      table_naked = table_naked1 = gsub(paste0(prefix, "."), "", tables)
       qry = paste0("SELECT * from ", theschema, ".", table_naked, 
                    " WHERE ", add.where)
-      assign(table_naked, thecmd(oracle_cxn, qry, rows_at_time = 1))
-      save(list = table_naked, file = file.path(data.dir, paste0(tables, ".RData")))
+      res= thecmd(oracle_cxn, qry, rows_at_time = 1)
+      assign(table_naked, res)
+      save(list = table_naked1, file = file.path(data.dir, paste0(tables, ".RData")))
       cat(paste("Got", tables))
     }
   }
@@ -128,11 +133,11 @@ get_data <-function(db = NULL,
   ## extract the tables -------------------------------------------------
   ## apply the necessary tweaks -----------------------------------------
   try_extract <- function(usepkg, tables) {
-    oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
+    oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
     if (!is.list(oracle_cxn)) {
       tries = 0
       while (tries < 2 & !(is.list(oracle_cxn))) {
-        oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
+        oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
         tries = tries + 1
       }
       if (oracle_cxn == -1) 
@@ -148,17 +153,18 @@ Please ask the db custodian to grant you access to the tables listed above, and 
     cat("\n\nStarting extractions... ")
     timer.start = proc.time()
     sapply(tables, oracle_activity, oracle_cxn[[2]], oracle_cxn[[1]], ds_all[[.GlobalEnv$db]]$schema, toupper(db), "extract")
-    elapsed = timer.start - proc.time()
+     elapsed = timer.start - proc.time()
     cat(paste("\n\nExtraction completed in", round(elapsed[3], 0) * -1, "seconds"))
-    data_tweaks()
+    data_tweaks(data.dir = data.dir)
   }
   # load the data -------------------------------------------------------
   try_load <- function(tables, data.dir) {
     loadit <- function(x, data.dir) {
-      this = file.path(data.dir,paste0(x,".RData"))
-      load(file =this, envir = .GlobalEnv)
+      this = paste0(x,".RData")
+      thisP = file.path(data.dir,this)
+      load(file =thisP, envir = .GlobalEnv)
       cat(paste0("\nLoaded ", x, "... "))
-      fileAge = file.info(this)$mtime
+      fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 0)
       cat(paste0(" (Data modified ", fileAge, " days ago.)"))
       if (fileAge > 90) 
@@ -171,29 +177,41 @@ Please ask the db custodian to grant you access to the tables listed above, and 
     cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
   }
   # run the function/decide what to do ----------------------------------
-  status = local_table_status_check()
   reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
-  if (length(status[[1]]) == 0 & force.extract == F) {
-    try_load(reqd, data.dir)
-  }
-  else if (force.extract == T) {
-    try_extract(usepkg, reqd)
-    try_load(reqd, data.dir)
-  }
-  else {
-    cat(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:\n"))
-    cat(status[[1]])
-    choice = toupper(readline(prompt = "Press 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
-    print(choice)
-    if (toupper(choice) == "C") {
-      stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
-    }
-    else if (toupper(choice) == "A") {
-      try_extract(usepkg, reqd)
+  if (dir.exists(data.dir)==TRUE){
+    status = local_table_status_check()
+    if (length(status[[1]]) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
     }
-    else {
-      try_extract(usepkg, status[[1]])
+    else if (force.extract == T) {
+      try_extract(usepkg, reqd)
+      try_load(reqd, data.dir)
+    } else {
+      cat(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:\n"))
+      cat(status[[1]])
+      choice = toupper(readline(prompt = "Press 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
+      print(choice)
+      if (toupper(choice) == "C") {
+        stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
+      }
+      else if (toupper(choice) == "A") {
+        try_extract(usepkg, reqd)
+        try_load(reqd, data.dir)
+      }
+      else {
+        try_extract(usepkg, status[[1]])
+        try_load(reqd, data.dir)
+      }
+    }
+  }else{
+    cat(paste0("\nWarning: The specified data.dir ('", data.dir, "') does not exist.\n"))
+    goahead = toupper(readline(prompt = "Type 'y' to create this folder and extract the data into it.  Press any other key to cancel the operation. \n"))
+    print(goahead)
+    if (toupper(goahead) != "Y") {
+      stop("Cancelled.")
+    }else {
+      dir.create(data.dir)
+      try_extract(usepkg, reqd)
       try_load(reqd, data.dir)
     }
   }

@@ -14,8 +14,8 @@ cleanup <- function(db=NULL, var.like = NULL){
     rm(list = ls(pattern=var.like, envir = .GlobalEnv), envir = .GlobalEnv)
   } 
   if (!is.null(db)) {
-    tables = ds_all[[.GlobalEnv$db]]$tables
-    if (exists(as.character(paste0("zzz_orph_",ds_all[[.GlobalEnv$db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[.GlobalEnv$db]]$tables))
+    tables = ds_all[[db]]$tables
+    if (exists(as.character(paste0("zzz_orph_",ds_all[[db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[db]]$tables))
     rm(list = tables, envir = .GlobalEnv)
   }
   
