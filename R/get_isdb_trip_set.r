@@ -1,4 +1,4 @@
-#' @title get_isdbTripSet
+#' @title get_isdb_trip_set
 #' @description This function takes  one or more FISHSET_IDs and returns the 
 #' name and set number for the FISHSET_ID.
 #' @param FS_ID default is \code{NULL}. This is one or more FISHSET_IDs for 
@@ -10,7 +10,7 @@
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_isdbTripSet <- function(FS_ID=NULL, data.dir=NULL){
+get_isdb_trip_set <- function(FS_ID=NULL, data.dir=NULL){
   tmp=new.env()
   fs="ISDB.ISFISHSETS.RData"
   tr="ISDB.ISTRIPS.RData"
