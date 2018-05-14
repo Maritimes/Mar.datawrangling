@@ -51,7 +51,6 @@ records necessarily have positions and will not be visible in your shapefile")
   fn = paste(name,"_",ts,sep="" )
   #id posix and date fields
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
-  browser()
    if ('shp' %in% formats){
     df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(
