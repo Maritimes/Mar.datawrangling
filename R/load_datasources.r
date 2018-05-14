@@ -603,6 +603,75 @@ load_datasources <- function(db=NULL){
     )
      )
   )
+  
+  meso_gully = list(
+    db="meso_gully",
+    name="...",
+    schema = "MESO_GULLY",
+    desc= "...",
+    tables = c('GSSPECIES','GSCAT','GSINF','GSDET','GSGEAR','GSXTYPE','GSMGT'),
+    table_cat = "GSCAT",
+    table_det = "GSDET", 
+    table_pos = "GSINF",
+    field_default = "TOTWGT",
+    joins = list(
+      "GSINF" = list(
+        "GSXTYPE" = list(pk_fields=c("XTYPE"),
+                              fk_fields=c("TYPE")),
+        "GSGEAR" = list(pk_fields=c("GEAR"),
+                         fk_fields=c("GEAR")),
+        "GSMGT" = list(pk_fields = c("AREA"),
+                        fk_fields=c("STRAT"))
+      ),
+      "GSSPECIES" = list(
+        "GSCAT" = list(pk_fields=c("CODE"),
+                             fk_fields=c("SPEC")),
+        "GSDET" = list(pk_fields=c("CODE"),
+                             fk_fields=c("SPEC")),
+        combine = "OR"
+      ),
+      "GSDET" = list(
+        "GSCAT" = list(pk_fields=c("MISSION","SETNO","SPEC"),
+                             fk_fields=c("MISSION","SETNO","SPEC"))
+      ),
+      "GSCAT" = list(
+        "GSINF" = list(pk_fields=c("MISSION","SETNO"),
+                       fk_fields=c("MISSION","SETNO"))
+    )
+    ,
+    filters = list(
+      "Species Caught (by name)" = list(filt_tab = "GSSPECIES",
+                                        filt_field = c("CODE"),
+                                        filt_disp = c("COMM","CODE"),
+                                        filt_ord = 1
+      ),
+      "Species Caught (by code)" = list(filt_tab = "GSSPECIES",
+                                        filt_field = c("CODE"),
+                                        filt_disp = c("COMM","CODE"),
+                                        filt_ord = 2
+      ),
+      "Gear" = list(filt_tab = "GSGEAR",
+                    filt_field = c("GEARDESC"),
+                    filt_disp = c("GEARDESC"),
+                    filt_ord = 1
+      ),
+      "Year" = list(filt_tab = "GSINF",
+                    filt_field = c("YEAR"),
+                    filt_disp = c("YEAR"),
+                    filt_ord = 1
+      ),
+      "Cruise" = list(filt_tab = "GSINF",
+                      filt_field = c("MISSION"),
+                      filt_disp = c("MISSION"),
+                      filt_ord = 1
+      ),
+      "Area" = list(filt_tab = "GSMGT",
+                      filt_field = c("UNIT"),
+                      filt_disp = c("UNIT"),
+                      filt_ord = 1
+      )
+    )
+))
   meso = list(
     db="meso",
     name="...",
@@ -1392,7 +1461,7 @@ load_datasources <- function(db=NULL){
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
                      isdb=isdb, marfis=marfis, comland86=comland86, 
                      comland67=comland67, asef=asef, stomach=stomach, 
-                     inshore=inshore, meso=meso)
+                     inshore=inshore, meso=meso, meso_gully = meso_gully)
   
   
   generic_filts = list(
