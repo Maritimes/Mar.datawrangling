@@ -75,7 +75,8 @@ get_data <-function(db = NULL,
     prefixed.localTables = gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", localTables))
     prefixed.reqdTables = paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables)
     reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
-    missingTables = sort(setdiff(paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables), prefixed.reqdTables))
+
+    missingTables = sort(setdiff(prefixed.reqdTables, prefixed.localTables))
     missingTables.clean = gsub("*.*?\\.", "", missingTables)
     results = list(missingTables, missingTables.clean)
     return(results)
@@ -182,8 +183,7 @@ Please ask the db custodian to grant you access to the tables listed above, and 
     status = local_table_status_check()
     if (length(status[[1]]) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
-    }
-    else if (force.extract == T) {
+    } else if (length(status[[1]]) == 0 & force.extract == T) {
       try_extract(usepkg, reqd)
       try_load(reqd, data.dir)
     } else {

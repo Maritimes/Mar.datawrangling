@@ -513,7 +513,97 @@ load_datasources <- function(db=NULL){
       )
     )
   )
-  
+  inshore = list(
+    db="inshore",
+    name="...",
+    schema = "MFD_INSHORE",
+    desc= "...",
+    tables = c('INS_DET','INS_CAT','INS_INF','INS_LF','INS_SPECIES','INS_GEAR_CODES',
+               'INS_LOCATION_CODES','INS_TOW_STATUS_CODES', 'INS_AREA_CODES'),
+    table_cat = "INS_CAT",
+    table_det = "INS_DET", 
+    table_pos = "INS_INF",
+    field_default = "WGT",
+    joins = list(
+      "INS_INF" = list(
+        "INS_CAT" = list(pk_fields=c("MISSION","STATION"),
+                         fk_fields=c("MISSION","STATION"))
+      ),
+      "INS_SPECIES" = list(
+        "INS_CAT" = list(pk_fields=c("SPECIES"),
+                       fk_fields=c("SPECIES")),
+        "INS_DET" = list(pk_fields=c("SPECIES"),
+                       fk_fields=c("SPECIES")),
+        combine = "OR"
+      ),
+      "INS_CAT" = list(
+        "INS_INF" = list(pk_fields=c("MISSION","STATION"),
+                       fk_fields=c("MISSION","STATION")),
+        "INS_SPECIES" = list(pk_fields=c("SPECIES"),
+                           fk_fields=c("SPECIES")),
+        combine = "ALL"
+      ),
+      "INS_DET" = list(
+        "INS_CAT" = list(pk_fields=c("MISSION","STATION","SPECIES"),
+                       fk_fields=c("MISSION","STATION","SPECIES"))
+      ),
+      "INS_LF" = list(
+        "INS_CAT" = list(pk_fields=c("MISSION","STATION","SPECIES"),
+                         fk_fields=c("MISSION","STATION","SPECIES"))
+      ),
+      "INS_TOW_STATUS_CODES" = list(
+        "INS_INF" = list(pk_fields=c("STATUS"),
+                       fk_fields=c("STATUS"))
+      ),
+      "INS_GEAR_CODES" = list(
+        "INS_INF" = list(pk_fields=c("GEAR"),
+                         fk_fields=c("GEAR_TYPE"))
+      ),
+      "INS_AREA_CODES" = list(
+        "INS_INF" = list(pk_fields=c("AREA"),
+                         fk_fields=c("AREA"))
+      ),
+      "INS_LOCATION_CODES" = list(
+        "INS_INF" = list(pk_fields=c("DESCRIPTION"),
+                         fk_fields=c("LOCATION"))
+      )
+
+    )
+    ,
+     filters = list(
+      "Area" = list(filt_tab = "INS_AREA_CODES",
+                    filt_field = c("AREA"),
+                    filt_disp = c("DESCRIPTION","AREA"),
+                    filt_ord = 1
+      ),
+      "Location" = list(filt_tab = "INS_LOCATION_CODES",
+                    filt_field = c("DESCRIPTION"),
+                    filt_disp = c("DESCRIPTION"),
+                    filt_ord = 1
+      ),
+      "Gear" = list(filt_tab = "INS_GEAR_CODES",
+                      filt_field = c("GEAR"),
+                      filt_disp = c("GEAR"),
+                      filt_ord = 1
+      ),
+      "Tow Status" = list(filt_tab = "INS_TOW_STATUS_CODES",
+                    filt_field = "STATUS",
+                    filt_disp = c("STATUS"),
+                    filt_ord = 1
+      ),
+      "Year" = list(filt_tab = "INS_INF",
+                       filt_field = c("YEAR"),
+                       filt_disp = c("YEAR"),
+                       filt_ord = 1
+      ),
+    "Season" = list(filt_tab = "INS_INF",
+                  filt_field = c("SEASON"),
+                  filt_disp = c("SEASON"),
+                  filt_ord = 1
+    )
+     )
+  )
+  #####
   rvp70 = list (
     db="rvp70",
     name = "Pre-1970s Research Surveys",
@@ -1118,7 +1208,7 @@ load_datasources <- function(db=NULL){
       )
     )
   )
-  
+ 
   stomach = list (
     db="stomach",
     name = "MFD_STOMACH",
@@ -1245,7 +1335,8 @@ load_datasources <- function(db=NULL){
   
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
                      isdb=isdb, marfis=marfis, comland86=comland86, 
-                     comland67=comland67, asef=asef, stomach=stomach)
+                     comland67=comland67, asef=asef, stomach=stomach, 
+                     inshore=inshore)
   
   
   generic_filts = list(

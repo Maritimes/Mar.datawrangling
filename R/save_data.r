@@ -35,20 +35,23 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
 records necessarily have positions and will not be visible in your shapefile")
 
-  if (is.null(db) & is.null(df)) {
+  if (is.null(df)) {
     df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, keep_nullsets = keep_nullsets)
-    if (is.null(filename)) name = match.call()[1]
-  }else{
-    if (is.null(filename)) name = match.call()[2]
   }
-  if (!is.null(filename)) name = filename
+  # if (is.null(filename)) name = match.call()[1]
+  # }else{  }
+    if (is.null(filename)) {
+      name = match.call()[2]
+    }else {
+      name = filename
+    }
   name = gsub('()','',name)
   name = gsub('\\.','',name)
   ts = format(Sys.time(), "%Y%m%d_%H%M")
   fn = paste(name,"_",ts,sep="" )
   #id posix and date fields
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
-
+  browser()
    if ('shp' %in% formats){
     df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(

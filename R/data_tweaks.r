@@ -121,6 +121,34 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       save( DSINF, file=file.path(data.dir, "CHID.DSINF.RData"), compress=TRUE)
     }
   }
+  
+  if (db == 'inshore'){
+    load(file.path(data.dir,"INSHORE.INS_INF.RData"), envir = .GlobalEnv)
+    if (!'LATITUDE' %in% colnames(INS_INF)){
+      INS_INF$LATITUDE = (as.numeric(substr(INS_INF$SLATDDMM,1,2))+(INS_INF$SLATDDMM - as.numeric(substr(INS_INF$SLATDDMM,1,2))*100)/60)
+      INS_INF$LONGITUDE = (as.numeric(substr(INS_INF$SLONGDDMM,1,2))+(INS_INF$SLONGDDMM - as.numeric(substr(INS_INF$SLONGDDMM,1,2))*100)/60)*-1
+      INS_INF$ELATITUDE = (as.numeric(substr(INS_INF$ELATDDMM,1,2))+(INS_INF$ELATDDMM - as.numeric(substr(INS_INF$ELATDDMM,1,2))*100)/60)
+      INS_INF$ELONGITUDE = (as.numeric(substr(INS_INF$ELONGDDMM,1,2))+(INS_INF$ELONGDDMM - as.numeric(substr(INS_INF$ELONGDDMM,1,2))*100)/60)*-1
+      #remove the many coord fields
+      INS_INF$BLATDEG<-NULL
+      INS_INF$BLATMIN<-NULL
+      INS_INF$BLONGDEG<-NULL
+      INS_INF$BLONGMIN<-NULL
+      
+      INS_INF$ELATDEG<-NULL
+      INS_INF$ELATMIN<-NULL
+      INS_INF$ELONGDEG<-NULL
+      INS_INF$ELONGMIN<-NULL
+      
+      INS_INF$SLATDDMM<-NULL
+      INS_INF$SLONGDDMM<-NULL
+      INS_INF$ELATDDMM<-NULL
+      INS_INF$ELONGDDMM<-NULL
+      cat(paste("\nINS_INF:  Converted DDMM coordinates to DDDD.DD ..."))
+      save( INS_INF, file=file.path(data.dir, "INSHORE.INS_INF.RData"), compress=TRUE)
+    }
+  }
+  
   if (db == 'redfish'){
    load(file.path(data.dir,"REDFISH.RFINF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(RFINF)){
