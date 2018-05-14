@@ -121,7 +121,24 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       save( DSINF, file=file.path(data.dir, "CHID.DSINF.RData"), compress=TRUE)
     }
   }
-  
+  if (db == 'meso'){
+    load(file.path(data.dir,"MESO.MESOPELAGIC.RData"), envir = .GlobalEnv)
+    if (!'LATITUDE' %in% colnames(MESOPELAGIC)){
+      MESOPELAGIC$theLat = paste0(sprintf("%02d",MESOPELAGIC$LAT_DEG),sprintf("%02d",MESOPELAGIC$LAT_MIN))  
+      MESOPELAGIC$theLong = paste0(sprintf("%02d",MESOPELAGIC$LON_DEG),sprintf("%02d",MESOPELAGIC$LON_MIN))  
+      MESOPELAGIC$LATITUDE = (as.numeric(substr(MESOPELAGIC$theLat,1,2))+(as.numeric(MESOPELAGIC$theLat) - as.numeric(substr(MESOPELAGIC$theLat,1,2))*100)/60)
+      MESOPELAGIC$LONGITUDE = (as.numeric(substr(MESOPELAGIC$theLong,1,2))+(as.numeric(MESOPELAGIC$theLong) - as.numeric(substr(MESOPELAGIC$theLong,1,2))*100)/60)*-1
+
+      MESOPELAGIC$theLat<-NULL
+      MESOPELAGIC$theLong<-NULL
+      MESOPELAGIC$LAT_DEG<-NULL
+      MESOPELAGIC$LAT_MIN<-NULL
+      MESOPELAGIC$LON_DEG<-NULL
+      MESOPELAGIC$LON_MIN<-NULL
+    }
+    cat(paste("\nMESOPELAGIC:  Converted DDMM coordinates to DDDD.DD ..."))
+    save( MESOPELAGIC, file=file.path(data.dir, "MESO.MESOPELAGIC.RData"), compress=TRUE)
+  }
   if (db == 'inshore'){
     load(file.path(data.dir,"INSHORE.INS_INF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(INS_INF)){

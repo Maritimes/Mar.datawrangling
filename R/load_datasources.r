@@ -603,6 +603,62 @@ load_datasources <- function(db=NULL){
     )
      )
   )
+  meso = list(
+    db="meso",
+    name="...",
+    schema = "GROUNDFISH",
+    desc= "...",
+    tables = c('GSSPECIES','MESOPELAGIC','MESOPELAGIC_GEAR_CODES'),
+    table_cat = "MESOPELAGIC",
+    #table_det = "MESOPELAGIC", 
+    table_pos = "MESOPELAGIC",
+    field_default = "TOT_COT",
+    joins = list(
+      "MESOPELAGIC" = list(
+        "GSSPECIES" = list(pk_fields=c("SP_CODE"),
+                         fk_fields=c("CODE")),
+        "MESOPELAGIC_GEAR_CODES" = list(pk_fields=c("GEAR"),
+                         fk_fields=c("GEARCD_ID"))
+      ),
+      "GSSPECIES" = list(
+        "MESOPELAGIC" = list(pk_fields=c("CODE"),
+                         fk_fields=c("SP_CODE"))
+      ),
+      "MESOPELAGIC_GEAR_CODES" = list(
+        "MESOPELAGIC" = list(pk_fields=c("GEARCD_ID"),
+                         fk_fields=c("GEAR"))
+      )
+      
+    )
+    ,
+    filters = list(
+      "Species Caught (by name)" = list(filt_tab = "GSSPECIES",
+                                        filt_field = c("CODE"),
+                                        filt_disp = c("COMM","CODE"),
+                                        filt_ord = 1
+      ),
+      "Species Caught (by code)" = list(filt_tab = "GSSPECIES",
+                                        filt_field = c("CODE"),
+                                        filt_disp = c("COMM","CODE"),
+                                        filt_ord = 2
+      ),
+      "Gear" = list(filt_tab = "MESOPELAGIC_GEAR_CODES",
+                    filt_field = c("DESCRIPTION"),
+                    filt_disp = c("DESCRIPTION"),
+                    filt_ord = 1
+      ),
+      "Year" = list(filt_tab = "MESOPELAGIC",
+                    filt_field = c("YEAR"),
+                    filt_disp = c("YEAR"),
+                    filt_ord = 1
+      ),
+      "Cruise" = list(filt_tab = "MESOPELAGIC",
+                      filt_field = c("CRUISE"),
+                      filt_disp = c("CRUISE"),
+                      filt_ord = 1
+      )
+    )
+  )
   #####
   rvp70 = list (
     db="rvp70",
@@ -1336,7 +1392,7 @@ load_datasources <- function(db=NULL){
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
                      isdb=isdb, marfis=marfis, comland86=comland86, 
                      comland67=comland67, asef=asef, stomach=stomach, 
-                     inshore=inshore)
+                     inshore=inshore, meso=meso)
   
   
   generic_filts = list(

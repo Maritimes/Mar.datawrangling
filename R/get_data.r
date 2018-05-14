@@ -94,7 +94,7 @@ get_data <-function(db = NULL,
     if (action == "verify_access") {
       cat(paste0("\nVerifying access to ", tables, " ..."))
       qry = paste0("select '1' from ", theschema, ".", 
-                   gsub(paste0(prefix, "."), "", tables), " WHERE ROWNUM<=1")
+                   gsub(".*\\.","", tables), " WHERE ROWNUM<=1")
       if (is.character(thecmd(oracle_cxn, qry, rows_at_time = 1))) {
         cat(" failed")
         return(FALSE)
@@ -119,7 +119,7 @@ get_data <-function(db = NULL,
                    \tThis\\These are from ", this$comments, "\n                   
                    \tIf this is critical, use RODBC instead of ROracle\n"))
       }
-      table_naked = table_naked1 = gsub(paste0(prefix, "."), "", tables)
+      table_naked = table_naked1 = gsub(".*\\.","", tables)
       qry = paste0("SELECT * from ", theschema, ".", table_naked, 
                    " WHERE ", add.where)
       res= thecmd(oracle_cxn, qry, rows_at_time = 1)
