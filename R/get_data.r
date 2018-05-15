@@ -176,7 +176,7 @@ Please ask the db custodian to grant you access to the tables listed above, and 
     sapply(tables, simplify = TRUE, loadit, data.dir)
     elapsed = timer.start - proc.time()
     cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
-    data_tweaks(data.dir = data.dir)
+   # data_tweaks(data.dir = data.dir)
   }
   # run the function/decide what to do ----------------------------------
   reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
