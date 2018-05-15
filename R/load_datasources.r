@@ -615,14 +615,14 @@ load_datasources <- function(db=NULL){
     table_pos = "GSINF",
     field_default = "TOTWGT",
     joins = list(
-      "GSINF" = list(
-        "GSXTYPE" = list(pk_fields=c("XTYPE"),
-                              fk_fields=c("TYPE")),
-        "GSGEAR" = list(pk_fields=c("GEAR"),
-                         fk_fields=c("GEAR")),
-        "GSMGT" = list(pk_fields = c("AREA"),
-                        fk_fields=c("STRAT"))
-      ),
+       "GSINF" = list(
+         "GSXTYPE" = list(pk_fields=c("TYPE"),
+                               fk_fields=c("XTYPE")),
+         "GSGEAR" = list(pk_fields=c("GEAR"),
+                          fk_fields=c("GEAR")),
+         "GSMGT" = list(pk_fields = c("AREA"),
+                         fk_fields=c("UNIT"))
+       ),
       "GSSPECIES" = list(
         "GSCAT" = list(pk_fields=c("CODE"),
                              fk_fields=c("SPEC")),
@@ -637,6 +637,19 @@ load_datasources <- function(db=NULL){
       "GSCAT" = list(
         "GSINF" = list(pk_fields=c("MISSION","SETNO"),
                        fk_fields=c("MISSION","SETNO"))
+    ),
+    "GSGEAR" = list(
+      "GSINF" = list(pk_fields=c("GEAR"),
+                     fk_fields=c("GEAR"))
+    ),
+    "GSMGT" = list(
+      "GSINF" = list(pk_fields=c("UNIT"),
+                     fk_fields=c("AREA"))
+    ),
+    "GSXTYPE" = list(
+      "GSINF" = list(pk_fields=c("XTYPE"),
+                     fk_fields=c("TYPE"))
+    )
     )
     ,
     filters = list(
@@ -669,9 +682,14 @@ load_datasources <- function(db=NULL){
                       filt_field = c("UNIT"),
                       filt_disp = c("UNIT"),
                       filt_ord = 1
+      ),
+      "Type" = list(filt_tab = "GSXTYPE",
+                    filt_field = c("XTYPE"),
+                    filt_disp = c("XTYPEDESC", "XTYPE"),
+                    filt_ord = 2
       )
     )
-))
+)
   meso = list(
     db="meso",
     name="...",
@@ -697,7 +715,6 @@ load_datasources <- function(db=NULL){
         "MESOPELAGIC" = list(pk_fields=c("GEARCD_ID"),
                          fk_fields=c("GEAR"))
       )
-      
     )
     ,
     filters = list(

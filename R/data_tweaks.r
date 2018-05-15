@@ -142,7 +142,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   if (db == 'meso_gully'){
     load(file.path(data.dir,"MESO_GULLY.GSINF.RData"), envir = .GlobalEnv)
     if (!'LATITUDE' %in% colnames(GSINF)){
-    GSINF$LATITUDE = (as.numeric(substr(GSINF$SLAT,1,2))+(GSINF$SLATDDMM - as.numeric(substr(GSINF$SLAT,1,2))*100)/60)
+    GSINF$LATITUDE = (as.numeric(substr(GSINF$SLAT,1,2))+(GSINF$SLAT - as.numeric(substr(GSINF$SLAT,1,2))*100)/60)
     GSINF$LONGITUDE = (as.numeric(substr(GSINF$SLONG,1,2))+(GSINF$SLONG - as.numeric(substr(GSINF$SLONG,1,2))*100)/60)*-1
     GSINF$ELATITUDE = (as.numeric(substr(GSINF$ELAT,1,2))+(GSINF$ELAT - as.numeric(substr(GSINF$ELAT,1,2))*100)/60)
     GSINF$ELONGITUDE = (as.numeric(substr(GSINF$ELONG,1,2))+(GSINF$ELONG - as.numeric(substr(GSINF$ELONG,1,2))*100)/60)*-1
@@ -152,7 +152,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     GSINF$ELAT<-NULL
     GSINF$ELONG<-NULL
     cat(paste("\nGSINF:  Converted DDMM coordinates to DDDD.DD ..."))
-    save( MESOPELAGIC, file=file.path(data.dir, "MESO_GULLY.GSINF.RData"), compress=TRUE)
+    save( GSINF, file=file.path(data.dir, "MESO_GULLY.GSINF.RData"), compress=TRUE)
     }
   }
   if (db == 'inshore'){
