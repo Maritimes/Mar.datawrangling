@@ -29,6 +29,42 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat("\nSDINF:  For convenience, added a YEAR field")
     }
   }
+  if (db == 'juvesh'){
+    load(file.path(data.dir,"JUVESH.JVINF.RData"), envir = .GlobalEnv)
+    load(file.path(data.dir,"JUVESH.JVCAT.RData"), envir = .GlobalEnv)
+    load(file.path(data.dir,"JUVESH.JVDET.RData"), envir = .GlobalEnv)
+    
+    if (!'YEAR' %in% colnames(JVINF)){
+      JVINF$YEAR = lubridate::year(JVINF$SDATE)
+      
+      cat("\nJVINF:  For convenience, added a YEAR field")
+    }
+    if (!'LATITUDE' %in% colnames(JVINF)){
+      JVINF$LATITUDE = (as.numeric(substr(JVINF$SLAT,1,2))+(JVINF$SLAT - as.numeric(substr(JVINF$SLAT,1,2))*100)/60)
+      JVINF$LONGITUDE = (as.numeric(substr(JVINF$SLONG,1,2))+(JVINF$SLONG - as.numeric(substr(JVINF$SLONG,1,2))*100)/60)*-1
+      JVINF$ELATITUDE = (as.numeric(substr(JVINF$ELAT,1,2))+(JVINF$ELAT - as.numeric(substr(JVINF$ELAT,1,2))*100)/60)
+      JVINF$ELONGITUDE = (as.numeric(substr(JVINF$ELONG,1,2))+(JVINF$ELONG - as.numeric(substr(JVINF$ELONG,1,2))*100)/60)*-1
+      cat(paste("\nJVINF:  Converted DDMM coordinates to DDDD.DD ..."))
+    }
+  
+    #sometimes the CRUNOs had leading 0s, and in the case of JVCAT, it sometimes has leading Os.  The following
+    #removes these so that data can be related properly without orphaning records.
+
+    JVINF[substr(JVINF$CRUNO,1,1)=="O","CRUNO"]<- substring(JVINF[substr(JVINF$CRUNO,1,1)=="O","CRUNO"],2)
+    JVCAT[substr(JVCAT$CRUNO,1,1)=="O","CRUNO"]<- substring(JVCAT[substr(JVCAT$CRUNO,1,1)=="O","CRUNO"],2)
+    JVDET[substr(JVDET$CRUNO,1,1)=="O","CRUNO"]<- substring(JVDET[substr(JVDET$CRUNO,1,1)=="O","CRUNO"],2)
+
+    JVINF[grepl("[[:alpha:]]", JVINF$CRUNO)==F,"CRUNO"]<-as.integer(JVINF[grepl("[[:alpha:]]", JVINF$CRUNO)==F,"CRUNO"])
+    JVDET[grepl("[[:alpha:]]", JVDET$CRUNO)==F,"CRUNO"]<-as.integer(JVDET[grepl("[[:alpha:]]", JVDET$CRUNO)==F,"CRUNO"])
+    JVCAT[grepl("[[:alpha:]]", JVCAT$CRUNO)==F,"CRUNO"]<-as.integer(JVCAT[grepl("[[:alpha:]]", JVCAT$CRUNO)==F,"CRUNO"])
+       
+    cat("\nJVINF/JVCAT/JVDET:  For convenience, removed leading zeroes from CRUNO")
+    save(JVCAT, file=file.path(data.dir, "JUVESH.JVCAT.RData"), compress=TRUE)
+    save(JVDET, file=file.path(data.dir, "JUVESH.JVDET.RData"), compress=TRUE)
+    save(JVINF, file=file.path(data.dir, "JUVESH.JVINF.RData"), compress=TRUE)
+    
+    
+  }
   if (db == 'isdb'){
     #'the following are special data handling processes specific to the ISDB tables
    load(file.path(data.dir,"ISDB.ISFISHSETS.RData"), envir = .GlobalEnv)

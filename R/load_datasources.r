@@ -604,6 +604,60 @@ load_datasources <- function(db=NULL){
      )
   )
   
+  juvesh = list(
+    db="juvesh",
+    name="...",
+    schema = "JUVESH",
+    desc= "...",
+    tables = c('JVCAT','JVINF','JVDET'),
+    table_cat = "JVCAT",
+    table_det = "JVDET", 
+    table_pos = "JVINF",
+    field_default = "TOTWGT",
+    joins = list(
+      "JVDET" = list(
+        "JVCAT" = list(pk_fields=c("VESEL","CRUNO","SETNO","SPEC"),
+                       fk_fields=c("VESEL","CRUNO","SETNO","SPEC"))
+      ),
+      "JVCAT" = list(
+        "JVINF" = list(pk_fields=c("VESEL","CRUNO","SETNO"),
+                       fk_fields=c("VESEL","CRUNO","SETNO"))
+      )
+    )
+    ,
+    filters = list(
+      "Species Caught (by code)" = list(filt_tab = "JVCAT",
+                                        filt_field = c("SPEC"),
+                                        filt_disp = c("SPEC"),
+                                        filt_ord = 1
+      ),
+      "Gear" = list(filt_tab = "JVINF",
+                    filt_field = c("GEAR"),
+                    filt_disp = c("GEAR"),
+                    filt_ord = 1
+      ),
+      "Year" = list(filt_tab = "JVINF",
+                    filt_field = c("YEAR"),
+                    filt_disp = c("YEAR"),
+                    filt_ord = 1
+      ),
+      "Cruise" = list(filt_tab = "JVINF",
+                      filt_field = c("CRUNO"),
+                      filt_disp = c("CRUNO"),
+                      filt_ord = 1
+      ),
+      "Strat" = list(filt_tab = "JVINF",
+                    filt_field = c("AREA"),
+                    filt_disp = c("AREA"),
+                    filt_ord = 1
+      ),
+      "Type" = list(filt_tab = "JVINF",
+                    filt_field = c("TYPE"),
+                    filt_disp = c("TYPE"),
+                    filt_ord = 1
+      )
+    )
+  )
   meso_gully = list(
     db="meso_gully",
     name="...",
@@ -1478,7 +1532,8 @@ load_datasources <- function(db=NULL){
   datasources = list(rv=rv, rvp70=rvp70, chid=chid, redfish=redfish, 
                      isdb=isdb, marfis=marfis, comland86=comland86, 
                      comland67=comland67, asef=asef, stomach=stomach, 
-                     inshore=inshore, meso=meso, meso_gully = meso_gully)
+                     inshore=inshore, meso=meso, meso_gully = meso_gully,
+                     juvesh=juvesh)
   
   
   generic_filts = list(
