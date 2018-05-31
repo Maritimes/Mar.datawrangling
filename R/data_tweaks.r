@@ -57,6 +57,12 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     JVINF[grepl("[[:alpha:]]", JVINF$CRUNO)==F,"CRUNO"]<-as.integer(JVINF[grepl("[[:alpha:]]", JVINF$CRUNO)==F,"CRUNO"])
     JVDET[grepl("[[:alpha:]]", JVDET$CRUNO)==F,"CRUNO"]<-as.integer(JVDET[grepl("[[:alpha:]]", JVDET$CRUNO)==F,"CRUNO"])
     JVCAT[grepl("[[:alpha:]]", JVCAT$CRUNO)==F,"CRUNO"]<-as.integer(JVCAT[grepl("[[:alpha:]]", JVCAT$CRUNO)==F,"CRUNO"])
+    
+    #discovered 2 setno "70"s for a cruise N-11, but when looking at time of the sets, one of them occurred 
+    #right when setno "30" should have happened, but was missing.  That missing set had catch records 
+    #which would have been orphaned.
+    #The code below makes this correction
+    JVINF[JVINF$VESEL=="N" & JVINF$CRUNO=="11" & JVINF$SETNO=="70" & JVINF$SDATE == "1983-06-24","SETNO"]<-30
        
     cat("\nJVINF/JVCAT/JVDET:  For convenience, removed leading zeroes from CRUNO")
     save(JVCAT, file=file.path(data.dir, "JUVESH.JVCAT.RData"), compress=TRUE)
