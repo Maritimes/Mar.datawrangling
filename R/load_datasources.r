@@ -985,8 +985,8 @@ load_datasources <- function(db=NULL){
          # combine = "ALL"
        ),
        "PRO_SPC_INFO" = list(
-         "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-                                    fk_fields=c("LOG_EFRT_STD_INFO_ID")),
+         # "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+         #                            fk_fields=c("LOG_EFRT_STD_INFO_ID")),
          "SPECIES" = list(pk_fields=c("SPECIES_CODE"),
                           fk_fields=c("SPECIES_CODE")),
          "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
@@ -994,8 +994,8 @@ load_datasources <- function(db=NULL){
          combine = "ALL"
        ),
        "PRO_SPC_INFO" = list(
-         "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
-                                 fk_fields=c("AREA_ID")),
+         # "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
+         #                         fk_fields=c("AREA_ID")),
          "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
                                  fk_fields=c("AREA_ID")),
          combine = "ALL"

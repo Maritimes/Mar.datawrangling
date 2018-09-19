@@ -2,6 +2,9 @@ Mar.datawrangling
 ==============
 
 Changes:
+2018.09.19
+* MARFIS filters fixed so that PRO_SPC_INFO tolerates NA areas, and is not 
+ filtered by changes in LOG_EFRT_STD_ID
 2018.05.14
 * Adds inshore survey data
 * Adds meso survey data
