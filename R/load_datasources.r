@@ -14,7 +14,7 @@ load_datasources <- function(db=NULL){
     name = "US",
     schema = "usnefsc",
     desc = "American Data",
-    tables = c("USS_STATION","USS_CATCH","USS_LENGTHS","USS_DETAIL","US_VESSEL_NET_CONVERSIONS","STRANL_CRUISE","STRANL_AREA","STRANL_STRATUM","USSPEC"),
+    tables = c("USS_STATION","USS_CATCH","USS_LENGTHS","USS_DETAIL","US_VESSEL_NET_CONVERSIONS","STRANL_CRUISE","STRANL_AREA","STRANL_STRATUM","USS_SPECIES_CODES"),
     table_cat = "USS_CATCH",
     table_det = c("USS_DETAIL", "USS_LENGTHS"),
     table_pos = "USS_STATION",
@@ -38,8 +38,8 @@ load_datasources <- function(db=NULL){
       "USS_CATCH"= list(
         "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
                              fk_fields=c("CRUISE6","TOW","STATION")),
-        "USSPEC" = list(pk_fields=c("SVSPP"),
-                        fk_fields=c("SPEC")),
+        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
+                        fk_fields=c("SVSPP")),
         combine = "ALL"),
       "USS_LENGTHS"= list(
         "USS_CATCH" = list(pk_fields=c("CRUISE6","STATION","SVSPP"),
@@ -48,8 +48,8 @@ load_datasources <- function(db=NULL){
         "USS_CATCH" = list(pk_fields=c("CRUISE6","TOW","SVSPP"),
                            fk_fields=c("CRUISE6","TOW","SVSPP"))),
       "US_VESSEL_NET_CONVERSIONS"= list(
-        "USSPEC" = list(pk_fields=c("SVSPP"),
-                        fk_fields=c("SPEC"))),
+        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
+                        fk_fields=c("SVSPP"))),
       "STRANL_CRUISE"= list(
         "USS_STATION" = list(pk_fields=c("CRUISE6"),
                              fk_fields=c("CRUISE6")),
@@ -68,8 +68,8 @@ load_datasources <- function(db=NULL){
         "USS_STATION" = list(pk_fields=c("STRATUM"),
                              fk_fields=c("STRATUM"))
       ),
-      "USSPEC"= list(
-        "USS_CATCH" = list(pk_fields=c("SPEC"),
+      "USS_SPECIES_CODES"= list(
+        "USS_CATCH" = list(pk_fields=c("SVSPP"),
                            fk_fields=c("SVSPP")))
     ),
     filters = list(  
@@ -88,15 +88,20 @@ load_datasources <- function(db=NULL){
                        filt_disp = c("STRATUM"),
                        filt_ord = 1
       ),
-      "Species (by name)" = list(filt_tab = "USSPEC",
-                                 filt_field = c("SPEC"),
-                                 filt_disp = c("CNAME","SPEC"),
+      "Species (by sci name)" = list(filt_tab = "USS_SPECIES_CODES",
+                                 filt_field = c("SVSPP"),
+                                 filt_disp = c("SCINAME","SVSPP"),
                                  filt_ord = 1
       ),
-      "Species (by code)" = list(filt_tab = "USSPEC",
-                                 filt_field = c("SPEC"),
-                                 filt_disp = c("CNAME","SPEC"),
-                                 filt_ord = 2
+      "Species (by common name)" = list(filt_tab = "USS_SPECIES_CODES",
+                                 filt_field = c("SVSPP"),
+                                 filt_disp = c("COMNAME","SVSPP"),
+                                 filt_ord = 1
+      ),
+      "Species (by code)" = list(filt_tab = "USS_SPECIES_CODES",
+                                        filt_field = c("SVSPP"),
+                                        filt_disp = c("COMNAME","SVSPP"),
+                                        filt_ord = 2
       ),
       "Year" = list(filt_tab = "USS_STATION",
                     filt_field = c("EST_YEAR"),
