@@ -9,7 +9,105 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 load_datasources <- function(db=NULL){
-  rv = list (
+  usnefsc = list(
+    db="usnefsc",
+    name = "US",
+    schema = "usnefsc",
+    desc = "American Data",
+    tables = c("USS_STATION","USS_CATCH","USS_LENGTHS","USS_DETAIL","US_VESSEL_NET_CONVERSIONS","STRANL_CRUISE","STRANL_AREA","STRANL_STRATUM","USSPEC"),
+    table_cat = "USS_CATCH",
+    table_det = c("USS_DETAIL", "USS_LENGTHS"),
+    table_pos = "USS_STATION",
+    field_default = "EXPCATCHWT",
+    field_drops = c('SLAT','SLONG','ELAT','ELON'),
+    joins = list(
+      "USS_STATION"= list(
+        "STRANL_CRUISE"= list(pk_fields=c("CRUISE6"),
+                              fk_fields=c("CRUISE6")),
+        "STRANL_STRATUM"= list(pk_fields=c("STRATUM"),
+                               fk_fields=c("STRATUM")),
+        "STRANL_AREA"= list(pk_fields=c("AREA"),
+                            fk_fields=c("AREA")),
+        # "USS_CATCH" = list(pk_fields=c("STATION"),
+        #                    fk_fields=c("STATION")),
+        # "USS_DETAIL" = list(pk_fields=c("STATION"),
+        #                     fk_fields=c("STATION")),
+        # "USS_LENGTHS" = list(pk_fields=c("STATION"),
+        #                      fk_fields=c("STATION")),
+        combine = "ALL"),
+      "USS_CATCH"= list(
+        "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
+                             fk_fields=c("CRUISE6","TOW","STATION")),
+        "USSPEC" = list(pk_fields=c("SVSPP"),
+                        fk_fields=c("SPEC")),
+        combine = "ALL"),
+      "USS_LENGTHS"= list(
+        "USS_CATCH" = list(pk_fields=c("CRUISE6","STATION","SVSPP"),
+                           fk_fields=c("CRUISE6","STATION","SVSPP"))),
+      "USS_DETAIL"= list(
+        "USS_CATCH" = list(pk_fields=c("CRUISE6","TOW","SVSPP"),
+                           fk_fields=c("CRUISE6","TOW","SVSPP"))),
+      "US_VESSEL_NET_CONVERSIONS"= list(
+        "USSPEC" = list(pk_fields=c("SVSPP"),
+                        fk_fields=c("SPEC"))),
+      "STRANL_CRUISE"= list(
+        "USS_STATION" = list(pk_fields=c("CRUISE6"),
+                             fk_fields=c("CRUISE6")),
+        "USS_LENGTHS" = list(pk_fields=c("CRUISE6"),
+                             fk_fields=c("CRUISE6")),
+        "USS_CATCH" = list(pk_fields=c("CRUISE6"),
+                           fk_fields=c("CRUISE6")),
+        "USS_DETAIL" = list(pk_fields=c("CRUISE6"),
+                            fk_fields=c("CRUISE6")),
+        combine = "OR"),
+      "STRANL_AREA"= list(
+        "USS_STATION" = list(pk_fields=c("AREA"),
+                             fk_fields=c("AREA"))
+      ),
+      "STRANL_STRATUM"= list(
+        "USS_STATION" = list(pk_fields=c("STRATUM"),
+                             fk_fields=c("STRATUM"))
+      ),
+      "USSPEC"= list(
+        "USS_CATCH" = list(pk_fields=c("SPEC"),
+                           fk_fields=c("SVSPP")))
+    ),
+    filters = list(  
+      "Cruise" = list(filt_tab = "STRANL_CRUISE",
+                      filt_field = c("CRUISE6"),
+                      filt_disp = c("CRUISE6"),
+                      filt_ord = 1
+      ), 
+      "Area" = list(filt_tab = "STRANL_AREA",
+                    filt_field = c("AREA"),
+                    filt_disp = c("AREA"),
+                    filt_ord = 1
+      ), 
+      "Stratum" = list(filt_tab = "STRANL_STRATUM",
+                       filt_field = c("STRATUM"),
+                       filt_disp = c("STRATUM"),
+                       filt_ord = 1
+      ),
+      "Species (by name)" = list(filt_tab = "USSPEC",
+                                 filt_field = c("SPEC"),
+                                 filt_disp = c("CNAME","SPEC"),
+                                 filt_ord = 1
+      ),
+      "Species (by code)" = list(filt_tab = "USSPEC",
+                                 filt_field = c("SPEC"),
+                                 filt_disp = c("CNAME","SPEC"),
+                                 filt_ord = 2
+      ),
+      "Year" = list(filt_tab = "USS_STATION",
+                    filt_field = c("EST_YEAR"),
+                    filt_disp = c("EST_YEAR"),
+                    filt_ord = 1
+      )
+    )
+  )
+  
+  
+  rv = list(
     db="rv",
     name = "Groundfish/RV/Ecosystem Surveys",
     schema = "GROUNDFISH",
@@ -50,31 +148,31 @@ load_datasources <- function(db=NULL){
         "GSCAT" = list(pk_fields=c("MISSION","SETNO","SPEC"),
                        fk_fields=c("MISSION","SETNO","SPEC")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
-                          fk_fields=c("CODE")),
+                           fk_fields=c("CODE")),
         combine = "ALL"
       ),
       "GSINF" = list(
         "GSMISSIONS" = list(pk_fields=c("MISSION"),
-                                fk_fields=c("MISSION")),
+                            fk_fields=c("MISSION")),
         "GSSTRATUM" = list(pk_fields=c("STRAT"),
-                                fk_fields=c("STRAT")),
+                           fk_fields=c("STRAT")),
         "GSXTYPE" = list(pk_fields=c("TYPE"),
-                                fk_fields=c("XTYPE")),
+                         fk_fields=c("XTYPE")),
         combine = "ALL"
       ),
       "GSSTRATUM" = list(
         "GSINF" = list(pk_fields=c("STRAT"),
-                                fk_fields=c("STRAT"))
+                       fk_fields=c("STRAT"))
       ),
       "GSXTYPE" = list(
         "GSINF" = list(pk_fields=c("XTYPE"),
-                                fk_fields=c("TYPE"))
+                       fk_fields=c("TYPE"))
       ),
       "FGP_TOWS_NW2" = list(
         "GSCAT" = list(pk_fields=c("MISSION","SETNUMBER","SPECIES"),
                        fk_fields=c("MISSION","SETNO","SPEC"))
       )
-      ),
+    ),
     filters = list(
       "Mission Name" = list(filt_tab = "GSMISSIONS",
                             filt_field = c("MISSION"),
@@ -159,107 +257,107 @@ load_datasources <- function(db=NULL){
                              ISFISHSETS = list(field="TRIP_ID",badvalues=c(100000990), comment="4VWX Skate Survey, 1999")
     ),  
     joins = list(
-       "ISFISHSETS" = list(
-         "ISTRIPS" = list(pk_fields=c("TRIP_ID"),
-                                 fk_fields=c("TRIP_ID")),
-         "ISSETTYPECODES" = list(pk_fields=c("SETCD_ID"),
-                                 fk_fields=c("SETCD_ID")),
-         "ISGEARS" = list(pk_fields=c("GEAR_ID"),
-                                 fk_fields=c("GEAR_ID")),
-         "ISSPECIESSOUGHTCODES" = list(pk_fields=c("SPECSCD_ID"),
-                                 fk_fields=c("SPECSCD_ID")),
-         "ISSETPROFILE_WIDE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
-                                       fk_fields=c("FISHSET_ID","SET_NO")),
-         combine = "ALL"
-       ),
-       "ISOBSERVERCODES" = list(
-         "ISTRIPS" = list(pk_fields=c("OBSCD_ID"),
-                                 fk_fields=c("OBSCD_ID"))
-       ),
-       "ISCATCHES" = list(
-         "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
-                                 fk_fields=c("FISHSET_ID","SET_NO")),
-         "ISSPECIESCODES" = list(pk_fields=c("SPECCD_ID"),
-                                 fk_fields=c("SPECCD_ID")),
-         combine = "ALL"
-       ),
-       "ISSETPROFILE_WIDE" = list(
-         "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
-                                 fk_fields=c("FISHSET_ID","SET_NO"))
-       ),
-       "ISGEARS" = list(
-         "ISFISHSETS" = list(pk_fields=c("GEAR_ID"),
-                                 fk_fields=c("GEAR_ID")),
-         "ISGEARCODES" = list(pk_fields=c("GEARCD_ID"),
-                                 fk_fields=c("GEARCD_ID")),
-         combine = "ALL"
-       ),
-       "ISGEARCODES" = list(
-         "ISGEARS" = list(pk_fields=c("GEARCD_ID"),
-                                 fk_fields=c("GEARCD_ID"))
-       ),
-       "ISGEARFEATURES" = list(
-         "ISGEARS" = list(pk_fields=c("GEAR_ID"),
-                                 fk_fields=c("GEAR_ID"))
-       ),
-       "ISGEARFEATURECODES" = list(
-         "ISGEARFEATURES" = list(pk_fields=c("GEARFCD_ID"),
-                                 fk_fields=c("GEARFCD_ID"))
-       ),
-       "ISGEARFEATURECLASSES" = list(
-         "ISGEARFEATURECODES" = list(pk_fields=c("GEARFCL_ID"),
-                                 fk_fields=c("GEARFCL_ID"))
-       ),
-       "ISTRIPTYPECODES" = list(
-         "ISTRIPS" = list(pk_fields=c("TRIPCD_ID"),
-                                 fk_fields=c("TRIPCD_ID"))
-       ),
-       "ISTRIPS" = list(
-         "ISFISHSETS" = list(pk_fields=c("TRIP_ID"),
-                                 fk_fields=c("TRIP_ID")),
-         "ISTRIPTYPECODES" = list(pk_fields=c("TRIPCD_ID"),
+      "ISFISHSETS" = list(
+        "ISTRIPS" = list(pk_fields=c("TRIP_ID"),
+                         fk_fields=c("TRIP_ID")),
+        "ISSETTYPECODES" = list(pk_fields=c("SETCD_ID"),
+                                fk_fields=c("SETCD_ID")),
+        "ISGEARS" = list(pk_fields=c("GEAR_ID"),
+                         fk_fields=c("GEAR_ID")),
+        "ISSPECIESSOUGHTCODES" = list(pk_fields=c("SPECSCD_ID"),
+                                      fk_fields=c("SPECSCD_ID")),
+        "ISSETPROFILE_WIDE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+                                   fk_fields=c("FISHSET_ID","SET_NO")),
+        combine = "ALL"
+      ),
+      "ISOBSERVERCODES" = list(
+        "ISTRIPS" = list(pk_fields=c("OBSCD_ID"),
+                         fk_fields=c("OBSCD_ID"))
+      ),
+      "ISCATCHES" = list(
+        "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+                            fk_fields=c("FISHSET_ID","SET_NO")),
+        "ISSPECIESCODES" = list(pk_fields=c("SPECCD_ID"),
+                                fk_fields=c("SPECCD_ID")),
+        combine = "ALL"
+      ),
+      "ISSETPROFILE_WIDE" = list(
+        "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+                            fk_fields=c("FISHSET_ID","SET_NO"))
+      ),
+      "ISGEARS" = list(
+        "ISFISHSETS" = list(pk_fields=c("GEAR_ID"),
+                            fk_fields=c("GEAR_ID")),
+        "ISGEARCODES" = list(pk_fields=c("GEARCD_ID"),
+                             fk_fields=c("GEARCD_ID")),
+        combine = "ALL"
+      ),
+      "ISGEARCODES" = list(
+        "ISGEARS" = list(pk_fields=c("GEARCD_ID"),
+                         fk_fields=c("GEARCD_ID"))
+      ),
+      "ISGEARFEATURES" = list(
+        "ISGEARS" = list(pk_fields=c("GEAR_ID"),
+                         fk_fields=c("GEAR_ID"))
+      ),
+      "ISGEARFEATURECODES" = list(
+        "ISGEARFEATURES" = list(pk_fields=c("GEARFCD_ID"),
+                                fk_fields=c("GEARFCD_ID"))
+      ),
+      "ISGEARFEATURECLASSES" = list(
+        "ISGEARFEATURECODES" = list(pk_fields=c("GEARFCL_ID"),
+                                    fk_fields=c("GEARFCL_ID"))
+      ),
+      "ISTRIPTYPECODES" = list(
+        "ISTRIPS" = list(pk_fields=c("TRIPCD_ID"),
+                         fk_fields=c("TRIPCD_ID"))
+      ),
+      "ISTRIPS" = list(
+        "ISFISHSETS" = list(pk_fields=c("TRIP_ID"),
+                            fk_fields=c("TRIP_ID")),
+        "ISTRIPTYPECODES" = list(pk_fields=c("TRIPCD_ID"),
                                  fk_fields=c("TRIPCD_ID")),
-         "ISOBSERVERCODES" = list(pk_fields=c("OBSCD_ID"),
+        "ISOBSERVERCODES" = list(pk_fields=c("OBSCD_ID"),
                                  fk_fields=c("OBSCD_ID")),
-         "ISVESSELS" = list(pk_fields=c("VESS_ID"),
-                                 fk_fields=c("VESS_ID")),
-         combine = "ALL"
-       ),
-       "ISSPECIESCODES" = list(
-         "ISCATCHES" = list(pk_fields=c("SPECCD_ID"),
-                                 fk_fields=c("SPECCD_ID")),
-         "ISFISHSETS" = list(pk_fields=c("SPECCD_ID"),
-                                 fk_fields=c("SPECSCD_ID")),
-         combine = "OR"
-       ),
-       "ISSPECIESSOUGHTCODES" = list(
-         "ISFISHSETS" = list(pk_fields=c("SPECSCD_ID"),
-                                 fk_fields=c("SPECSCD_ID"))
-         ),
-       "ISSETTYPECODES" = list(
-         "ISFISHSETS" = list(pk_fields=c("SETCD_ID"),
-                                 fk_fields=c("SETCD_ID"))
-       ),
-       "ISVESSELS" = list(
-         "ISTRIPS" = list(pk_fields=c("VESS_ID"),
-                                 fk_fields=c("VESS_ID"))
-       ),
-       "ISFISH" = list(
-         "ISCATCHES" = list(pk_fields=c("CATCH_ID"),
-                                 fk_fields=c("CATCH_ID"))
-       ),
-       "ISFISHMORPHS" = list(
-         "ISFISH" = list(pk_fields=c("FISH_ID"),
-                                 fk_fields=c("FISH_ID"))
-       ),
-       "ISMORPHCODES" = list(
-         "ISFISHMORPHS" = list(pk_fields=c("MRPHCD_ID"),
-                                 fk_fields=c("MRPHCD_ID"))
-       ),
-       "ISMORPHVALUECODES" = list(
-         "ISFISHMORPHS" = list(pk_fields=c("MRPHCD_ID","MRPHVCD_ID"),
-                                 fk_fields=c("MRPHCD_ID","MRPHVCD_ID"))
-       )
+        "ISVESSELS" = list(pk_fields=c("VESS_ID"),
+                           fk_fields=c("VESS_ID")),
+        combine = "ALL"
+      ),
+      "ISSPECIESCODES" = list(
+        "ISCATCHES" = list(pk_fields=c("SPECCD_ID"),
+                           fk_fields=c("SPECCD_ID")),
+        "ISFISHSETS" = list(pk_fields=c("SPECCD_ID"),
+                            fk_fields=c("SPECSCD_ID")),
+        combine = "OR"
+      ),
+      "ISSPECIESSOUGHTCODES" = list(
+        "ISFISHSETS" = list(pk_fields=c("SPECSCD_ID"),
+                            fk_fields=c("SPECSCD_ID"))
+      ),
+      "ISSETTYPECODES" = list(
+        "ISFISHSETS" = list(pk_fields=c("SETCD_ID"),
+                            fk_fields=c("SETCD_ID"))
+      ),
+      "ISVESSELS" = list(
+        "ISTRIPS" = list(pk_fields=c("VESS_ID"),
+                         fk_fields=c("VESS_ID"))
+      ),
+      "ISFISH" = list(
+        "ISCATCHES" = list(pk_fields=c("CATCH_ID"),
+                           fk_fields=c("CATCH_ID"))
+      ),
+      "ISFISHMORPHS" = list(
+        "ISFISH" = list(pk_fields=c("FISH_ID"),
+                        fk_fields=c("FISH_ID"))
+      ),
+      "ISMORPHCODES" = list(
+        "ISFISHMORPHS" = list(pk_fields=c("MRPHCD_ID"),
+                              fk_fields=c("MRPHCD_ID"))
+      ),
+      "ISMORPHVALUECODES" = list(
+        "ISFISHMORPHS" = list(pk_fields=c("MRPHCD_ID","MRPHVCD_ID"),
+                              fk_fields=c("MRPHCD_ID","MRPHVCD_ID"))
+      )
     ),
     filters = list(
       "Species Caught (by name)" = list(filt_tab = "ISSPECIESCODES",
@@ -299,9 +397,9 @@ load_datasources <- function(db=NULL){
                                 filt_ord = 1
       ),
       "Vessel (by VRN)" = list(filt_tab = "ISVESSELS",
-                  filt_field = c("VESSEL_NAME","LICENSE_NO"),
-                  filt_disp = c("VESSEL_NAME","CFV"),
-                  filt_ord = 2
+                               filt_field = c("VESSEL_NAME","LICENSE_NO"),
+                               filt_disp = c("VESSEL_NAME","CFV"),
+                               filt_ord = 2
       ),
       "Country Codes" = list(filt_tab = "ISVESSELS",
                              filt_field = c("CTRYCD_ID"),
@@ -352,41 +450,41 @@ load_datasources <- function(db=NULL){
     table_det = "DSDET",
     table_pos = "DSINF",
     field_default = "TOTNO",
-     joins = list(
-       "DSSPEC" = list(
-         "DSDET" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("SPEC")),
-         "DSCAT" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("SPEC")),
-         combine = "OR"
-       ),
-       "DSINF" = list(
-         "DSSTRATUM" = list(pk_fields=c("STRAT"),
-                                 fk_fields=c("STRAT")),
-         "GSXTYPE" = list(pk_fields=c("TYPE"),
-                                 fk_fields=c("XTYPE")),
-         combine = "ALL"
-       ),
-       "DSCAT" = list(
-         "DSINF" = list(pk_fields=c("CRUNO","SETNO"),
-                                 fk_fields=c("CRUNO","SETNO")),
-         "DSSPEC" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("SPEC")),
-         combine = "ALL"
-       ),
-       "DSDET" = list(
-         "DSCAT" = list(pk_fields=c("CRUNO","SETNO","SPEC"),
-                                 fk_fields=c("CRUNO","SETNO","SPEC"))
-       ),
-       "DSSTRATUM" = list(
-         "DSINF" = list(pk_fields=c("STRAT"),
-                                 fk_fields=c("STRAT"))
-       ),
-       "GSXTYPE" = list(
-         "DSINF" = list(pk_fields=c("XTYPE"),
-                        fk_fields=c("TYPE"))
-       )
-     ),
+    joins = list(
+      "DSSPEC" = list(
+        "DSDET" = list(pk_fields=c("SPEC"),
+                       fk_fields=c("SPEC")),
+        "DSCAT" = list(pk_fields=c("SPEC"),
+                       fk_fields=c("SPEC")),
+        combine = "OR"
+      ),
+      "DSINF" = list(
+        "DSSTRATUM" = list(pk_fields=c("STRAT"),
+                           fk_fields=c("STRAT")),
+        "GSXTYPE" = list(pk_fields=c("TYPE"),
+                         fk_fields=c("XTYPE")),
+        combine = "ALL"
+      ),
+      "DSCAT" = list(
+        "DSINF" = list(pk_fields=c("CRUNO","SETNO"),
+                       fk_fields=c("CRUNO","SETNO")),
+        "DSSPEC" = list(pk_fields=c("SPEC"),
+                        fk_fields=c("SPEC")),
+        combine = "ALL"
+      ),
+      "DSDET" = list(
+        "DSCAT" = list(pk_fields=c("CRUNO","SETNO","SPEC"),
+                       fk_fields=c("CRUNO","SETNO","SPEC"))
+      ),
+      "DSSTRATUM" = list(
+        "DSINF" = list(pk_fields=c("STRAT"),
+                       fk_fields=c("STRAT"))
+      ),
+      "GSXTYPE" = list(
+        "DSINF" = list(pk_fields=c("XTYPE"),
+                       fk_fields=c("TYPE"))
+      )
+    ),
     filters = list(
       "Year" = list(filt_tab = "DSINF",
                     filt_field = c("YEAR"),
@@ -442,9 +540,9 @@ load_datasources <- function(db=NULL){
     joins = list(
       "GSSPECIES" = list(
         "RFCAT" = list(pk_fields=c("CODE"),
-                           fk_fields=c("SPEC")),
+                       fk_fields=c("SPEC")),
         "RFDET" = list(pk_fields=c("CODE"),
-                         fk_fields=c("SPEC")),
+                       fk_fields=c("SPEC")),
         combine = "OR"
       ),
       "RFINF" = list(
@@ -457,22 +555,22 @@ load_datasources <- function(db=NULL){
       ),
       "RFCAT" = list(
         "RFINF" = list(pk_fields=c("CRUNO","SETNO"),
-                     fk_fields=c("CRUNO","SETNO")),
+                       fk_fields=c("CRUNO","SETNO")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
                            fk_fields=c("CODE")),
         combine = "ALL"
       ),
       "RFDET" = list(
         "RFCAT" = list(pk_fields=c("CRUNO","SETNO","SPEC"),
-                      fk_fields=c("CRUNO","SETNO","SPEC"))
+                       fk_fields=c("CRUNO","SETNO","SPEC"))
       ),
       "GSSTRATUM" = list(
         "RFINF" = list(pk_fields=c("STRAT"),
-                      fk_fields=c("STRAT"))
+                       fk_fields=c("STRAT"))
       ),
       "GSXTYPE" = list(
         "RFINF" = list(pk_fields=c("XTYPE"),
-                      fk_fields=c("TYPE"))
+                       fk_fields=c("TYPE"))
       )
     ),
     filters = list(
@@ -531,21 +629,21 @@ load_datasources <- function(db=NULL){
       ),
       "INS_SPECIES" = list(
         "INS_CAT" = list(pk_fields=c("SPECIES"),
-                       fk_fields=c("SPECIES")),
+                         fk_fields=c("SPECIES")),
         "INS_DET" = list(pk_fields=c("SPECIES"),
-                       fk_fields=c("SPECIES")),
+                         fk_fields=c("SPECIES")),
         combine = "OR"
       ),
       "INS_CAT" = list(
         "INS_INF" = list(pk_fields=c("MISSION","STATION"),
-                       fk_fields=c("MISSION","STATION")),
+                         fk_fields=c("MISSION","STATION")),
         "INS_SPECIES" = list(pk_fields=c("SPECIES"),
-                           fk_fields=c("SPECIES")),
+                             fk_fields=c("SPECIES")),
         combine = "ALL"
       ),
       "INS_DET" = list(
         "INS_CAT" = list(pk_fields=c("MISSION","STATION","SPECIES"),
-                       fk_fields=c("MISSION","STATION","SPECIES"))
+                         fk_fields=c("MISSION","STATION","SPECIES"))
       ),
       "INS_LF" = list(
         "INS_CAT" = list(pk_fields=c("MISSION","STATION","SPECIES"),
@@ -553,7 +651,7 @@ load_datasources <- function(db=NULL){
       ),
       "INS_TOW_STATUS_CODES" = list(
         "INS_INF" = list(pk_fields=c("STATUS"),
-                       fk_fields=c("STATUS"))
+                         fk_fields=c("STATUS"))
       ),
       "INS_GEAR_CODES" = list(
         "INS_INF" = list(pk_fields=c("GEAR"),
@@ -567,41 +665,41 @@ load_datasources <- function(db=NULL){
         "INS_INF" = list(pk_fields=c("DESCRIPTION"),
                          fk_fields=c("LOCATION"))
       )
-
+      
     )
     ,
-     filters = list(
+    filters = list(
       "Area" = list(filt_tab = "INS_AREA_CODES",
                     filt_field = c("AREA"),
                     filt_disp = c("DESCRIPTION","AREA"),
                     filt_ord = 1
       ),
       "Location" = list(filt_tab = "INS_LOCATION_CODES",
-                    filt_field = c("DESCRIPTION"),
-                    filt_disp = c("DESCRIPTION"),
-                    filt_ord = 1
+                        filt_field = c("DESCRIPTION"),
+                        filt_disp = c("DESCRIPTION"),
+                        filt_ord = 1
       ),
       "Gear" = list(filt_tab = "INS_GEAR_CODES",
-                      filt_field = c("GEAR"),
-                      filt_disp = c("GEAR"),
-                      filt_ord = 1
-      ),
-      "Tow Status" = list(filt_tab = "INS_TOW_STATUS_CODES",
-                    filt_field = "STATUS",
-                    filt_disp = c("STATUS"),
+                    filt_field = c("GEAR"),
+                    filt_disp = c("GEAR"),
                     filt_ord = 1
       ),
-      "Year" = list(filt_tab = "INS_INF",
-                       filt_field = c("YEAR"),
-                       filt_disp = c("YEAR"),
-                       filt_ord = 1
+      "Tow Status" = list(filt_tab = "INS_TOW_STATUS_CODES",
+                          filt_field = "STATUS",
+                          filt_disp = c("STATUS"),
+                          filt_ord = 1
       ),
-    "Season" = list(filt_tab = "INS_INF",
-                  filt_field = c("SEASON"),
-                  filt_disp = c("SEASON"),
-                  filt_ord = 1
+      "Year" = list(filt_tab = "INS_INF",
+                    filt_field = c("YEAR"),
+                    filt_disp = c("YEAR"),
+                    filt_ord = 1
+      ),
+      "Season" = list(filt_tab = "INS_INF",
+                      filt_field = c("SEASON"),
+                      filt_disp = c("SEASON"),
+                      filt_ord = 1
+      )
     )
-     )
   )
   
   juvesh = list(
@@ -647,9 +745,9 @@ load_datasources <- function(db=NULL){
                       filt_ord = 1
       ),
       "Strat" = list(filt_tab = "JVINF",
-                    filt_field = c("AREA"),
-                    filt_disp = c("AREA"),
-                    filt_ord = 1
+                     filt_field = c("AREA"),
+                     filt_disp = c("AREA"),
+                     filt_ord = 1
       ),
       "Type" = list(filt_tab = "JVINF",
                     filt_field = c("TYPE"),
@@ -669,41 +767,41 @@ load_datasources <- function(db=NULL){
     table_pos = "GSINF",
     field_default = "TOTWGT",
     joins = list(
-       "GSINF" = list(
-         "GSXTYPE" = list(pk_fields=c("TYPE"),
-                               fk_fields=c("XTYPE")),
-         "GSGEAR" = list(pk_fields=c("GEAR"),
-                          fk_fields=c("GEAR")),
-         "GSMGT" = list(pk_fields = c("AREA"),
-                         fk_fields=c("UNIT"))
-       ),
+      "GSINF" = list(
+        "GSXTYPE" = list(pk_fields=c("TYPE"),
+                         fk_fields=c("XTYPE")),
+        "GSGEAR" = list(pk_fields=c("GEAR"),
+                        fk_fields=c("GEAR")),
+        "GSMGT" = list(pk_fields = c("AREA"),
+                       fk_fields=c("UNIT"))
+      ),
       "GSSPECIES" = list(
         "GSCAT" = list(pk_fields=c("CODE"),
-                             fk_fields=c("SPEC")),
+                       fk_fields=c("SPEC")),
         "GSDET" = list(pk_fields=c("CODE"),
-                             fk_fields=c("SPEC")),
+                       fk_fields=c("SPEC")),
         combine = "OR"
       ),
       "GSDET" = list(
         "GSCAT" = list(pk_fields=c("MISSION","SETNO","SPEC"),
-                             fk_fields=c("MISSION","SETNO","SPEC"))
+                       fk_fields=c("MISSION","SETNO","SPEC"))
       ),
       "GSCAT" = list(
         "GSINF" = list(pk_fields=c("MISSION","SETNO"),
                        fk_fields=c("MISSION","SETNO"))
-    ),
-    "GSGEAR" = list(
-      "GSINF" = list(pk_fields=c("GEAR"),
-                     fk_fields=c("GEAR"))
-    ),
-    "GSMGT" = list(
-      "GSINF" = list(pk_fields=c("UNIT"),
-                     fk_fields=c("AREA"))
-    ),
-    "GSXTYPE" = list(
-      "GSINF" = list(pk_fields=c("XTYPE"),
-                     fk_fields=c("TYPE"))
-    )
+      ),
+      "GSGEAR" = list(
+        "GSINF" = list(pk_fields=c("GEAR"),
+                       fk_fields=c("GEAR"))
+      ),
+      "GSMGT" = list(
+        "GSINF" = list(pk_fields=c("UNIT"),
+                       fk_fields=c("AREA"))
+      ),
+      "GSXTYPE" = list(
+        "GSINF" = list(pk_fields=c("XTYPE"),
+                       fk_fields=c("TYPE"))
+      )
     )
     ,
     filters = list(
@@ -733,9 +831,9 @@ load_datasources <- function(db=NULL){
                       filt_ord = 1
       ),
       "Area" = list(filt_tab = "GSMGT",
-                      filt_field = c("UNIT"),
-                      filt_disp = c("UNIT"),
-                      filt_ord = 1
+                    filt_field = c("UNIT"),
+                    filt_disp = c("UNIT"),
+                    filt_ord = 1
       ),
       "Type" = list(filt_tab = "GSXTYPE",
                     filt_field = c("XTYPE"),
@@ -743,7 +841,7 @@ load_datasources <- function(db=NULL){
                     filt_ord = 2
       )
     )
-)
+  )
   meso = list(
     db="meso",
     name="...",
@@ -757,17 +855,17 @@ load_datasources <- function(db=NULL){
     joins = list(
       "MESOPELAGIC" = list(
         "GSSPECIES" = list(pk_fields=c("SP_CODE"),
-                         fk_fields=c("CODE")),
+                           fk_fields=c("CODE")),
         "MESOPELAGIC_GEAR_CODES" = list(pk_fields=c("GEAR"),
-                         fk_fields=c("GEARCD_ID"))
+                                        fk_fields=c("GEARCD_ID"))
       ),
       "GSSPECIES" = list(
         "MESOPELAGIC" = list(pk_fields=c("CODE"),
-                         fk_fields=c("SP_CODE"))
+                             fk_fields=c("SP_CODE"))
       ),
       "MESOPELAGIC_GEAR_CODES" = list(
         "MESOPELAGIC" = list(pk_fields=c("GEARCD_ID"),
-                         fk_fields=c("GEAR"))
+                             fk_fields=c("GEAR"))
       )
     )
     ,
@@ -812,56 +910,56 @@ load_datasources <- function(db=NULL){
     table_pos = "GSINFP70",
     field_default = "TOTNO",
     joins = list(
-       "SPECIES_CODES" = list(
-         "GSCATP70" = list(pk_fields=c("RESEARCH"),
-                                 fk_fields=c("SPEC")),
-         "GSDETP70" = list(pk_fields=c("RESEARCH"),
-                                 fk_fields=c("SPEC")),
-         combine = "OR"
-       ),
-       "GSSPECP70" = list(
-         "GSCATP70" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("SPEC")),
-         "GSDETP70" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("SPEC")),
-         combine = "OR"
-       ),
-       "GSVESP70" = list(
-         "GSINFP70" = list(pk_fields=c("VESEL"),
-                                 fk_fields=c("VESEL"))
-       ),
-       "GSGEAR" = list(
-         "GSINFP70" = list(pk_fields=c("GEAR"),
-                                 fk_fields=c("GEAR"))
-       ),
-       "GSCRUP70" = list(
-         "GSVESP70" = list(pk_fields=c("VESEL"),
-                                 fk_fields=c("VESEL"))
-       ),
-       "GSSEXP70" = list(
-         "GSDETP70" = list(pk_fields=c("SEXCODE"),
-                           fk_fields=c("FSEX"))
-       ),
-       "GSCATP70" = list(
-         "GSINFP70" = list(pk_fields=c("MISSION","SETNO"),
-                                 fk_fields=c("MISSION","SETNO")),
-         "SPECIES_CODES" = list(pk_fields=c("SPEC"),
-                                 fk_fields=c("RESEARCH")),
-         "GSVESP70" = list(pk_fields=c("VESEL"),
-                                fk_fields=c("VESEL")),
-         combine = "ALL"
-       ),
-       "GSDETP70" = list(
-         "GSCATP70" = list(pk_fields=c("MISSION","SETNO","SPEC"),
-                                 fk_fields=c("MISSION","SETNO","SPEC"))
-       ),
-       "GSINFP70" = list(
-         "GSXTYPE" = list(pk_fields=c("TYPE"),
-                                 fk_fields=c("XTYPE")),
-         "GSVESP70" = list(pk_fields=c("VESEL"),
-                                 fk_fields=c("VESEL")),
-         combine = "ALL"
-       )
+      "SPECIES_CODES" = list(
+        "GSCATP70" = list(pk_fields=c("RESEARCH"),
+                          fk_fields=c("SPEC")),
+        "GSDETP70" = list(pk_fields=c("RESEARCH"),
+                          fk_fields=c("SPEC")),
+        combine = "OR"
+      ),
+      "GSSPECP70" = list(
+        "GSCATP70" = list(pk_fields=c("SPEC"),
+                          fk_fields=c("SPEC")),
+        "GSDETP70" = list(pk_fields=c("SPEC"),
+                          fk_fields=c("SPEC")),
+        combine = "OR"
+      ),
+      "GSVESP70" = list(
+        "GSINFP70" = list(pk_fields=c("VESEL"),
+                          fk_fields=c("VESEL"))
+      ),
+      "GSGEAR" = list(
+        "GSINFP70" = list(pk_fields=c("GEAR"),
+                          fk_fields=c("GEAR"))
+      ),
+      "GSCRUP70" = list(
+        "GSVESP70" = list(pk_fields=c("VESEL"),
+                          fk_fields=c("VESEL"))
+      ),
+      "GSSEXP70" = list(
+        "GSDETP70" = list(pk_fields=c("SEXCODE"),
+                          fk_fields=c("FSEX"))
+      ),
+      "GSCATP70" = list(
+        "GSINFP70" = list(pk_fields=c("MISSION","SETNO"),
+                          fk_fields=c("MISSION","SETNO")),
+        "SPECIES_CODES" = list(pk_fields=c("SPEC"),
+                               fk_fields=c("RESEARCH")),
+        "GSVESP70" = list(pk_fields=c("VESEL"),
+                          fk_fields=c("VESEL")),
+        combine = "ALL"
+      ),
+      "GSDETP70" = list(
+        "GSCATP70" = list(pk_fields=c("MISSION","SETNO","SPEC"),
+                          fk_fields=c("MISSION","SETNO","SPEC"))
+      ),
+      "GSINFP70" = list(
+        "GSXTYPE" = list(pk_fields=c("TYPE"),
+                         fk_fields=c("XTYPE")),
+        "GSVESP70" = list(pk_fields=c("VESEL"),
+                          fk_fields=c("VESEL")),
+        combine = "ALL"
+      )
     ),
     filters = list(
       "Mission Name" = list(filt_tab = "GSINFP70",
@@ -933,103 +1031,103 @@ load_datasources <- function(db=NULL){
                       'LICENCE_ID',
                       'MON_DOC_LIC_ID'),
     joins = list(
-       "MON_DOCS" = list(
-         #not sure I can reference same table 3 different times like this
-         "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                                 fk_fields=c("VR_NUMBER")),
-         "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                                 fk_fields=c("HAIL_IN_CALL_ID")),
-         combine = "ALL"
-       ),
-       "MON_DOCS" = list(
-         "LOG_EFRT_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
-                                 fk_fields=c("MON_DOC_ID")),
-         "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
-                                 fk_fields=c("MON_DOC_ID")),
-         combine = "OR"
-       ),
-       "MON_DOCS" = list(
-         "NAFO_UNIT_AREAS" = list(pk_fields=c("FV_NAFO_UNIT_AREA_ID"),
-                                    fk_fields=c("AREA_ID")),
-         "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
-                                   fk_fields=c("AREA_ID")),
-         combine = "OR"
-       ),
-       "VESSELS" = list(
-         #not sure I can reference same table 3 different times like this
-         "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
-                                 fk_fields=c("VR_NUMBER_FISHING")),
-         "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
-                                 fk_fields=c("VR_NUMBER_LANDING")),
-         combine = "OR"
-       ),
-       "SPECIES_CATEGORIES" = list(
-         "SPECIES" = list(pk_fields=c("SPECIES_CATEGORY_ID"),
-                                 fk_fields=c("SPECIES_CATEGORY_ID"))
-       ),
-       "LOG_EFRT_STD_INFO" = list(
-         # "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
-         #                         fk_fields=c("MON_DOC_ID"))
-         # ,
-         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-                               fk_fields=c("LOG_EFRT_STD_INFO_ID"))
-         # combine = "AND"
-       ),
-       "LOG_SPC_STD_INFO" = list(
-         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-                                 fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-         "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
-                                  fk_fields=c("SPECIES_CODE"))
-         # "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
-         #                       fk_fields=c("CATCH_USAGE_CODE")),
-         # combine = "ALL"
-       ),
-       "PRO_SPC_INFO" = list(
-         # "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-         #                            fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-         "SPECIES" = list(pk_fields=c("SPECIES_CODE"),
-                          fk_fields=c("SPECIES_CODE")),
-         "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                               fk_fields=c("CATCH_USAGE_CODE")),
-         combine = "ALL"
-       ),
-       "PRO_SPC_INFO" = list(
-         # "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
-         #                         fk_fields=c("AREA_ID")),
-         "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
+      "MON_DOCS" = list(
+        #not sure I can reference same table 3 different times like this
+        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
+                         fk_fields=c("VR_NUMBER")),
+        "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
+                               fk_fields=c("HAIL_IN_CALL_ID")),
+        combine = "ALL"
+      ),
+      "MON_DOCS" = list(
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
+                                   fk_fields=c("MON_DOC_ID")),
+        "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
+                                  fk_fields=c("MON_DOC_ID")),
+        combine = "OR"
+      ),
+      "MON_DOCS" = list(
+        "NAFO_UNIT_AREAS" = list(pk_fields=c("FV_NAFO_UNIT_AREA_ID"),
                                  fk_fields=c("AREA_ID")),
-         combine = "ALL"
-       ),
-       "HAIL_IN_CALLS" = list(
-         "MON_DOCS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                                 fk_fields=c("HAIL_IN_CALL_ID")),
-         "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                                 fk_fields=c("VR_NUMBER")),
-         combine = "ALL"
-       ),
-       "GEARS" = list(
-         "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
-                                 fk_fields=c("GEAR_CODE"))
-       ),
-       "SPECIES" = list(
-         "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
-                                 fk_fields=c("SPECIES_CODE"))
-       ),
-       "AREAS" = list(
-         "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
-                                 fk_fields=c("FISHING_AREA_ID"))
-       ),
-       "NAFO_UNIT_AREAS" = list(
-         "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
-                                 fk_fields=c("NAFO_UNIT_AREA_ID"))
-       ),
-       "CATCH_USAGES" = list(
-         "LOG_SPC_STD_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                                 fk_fields=c("CATCH_USAGE_CODE")),
-         "PRO_SPC_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                                 fk_fields=c("CATCH_USAGE_CODE")),
-         combine = "OR"
-       )
+        "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
+                       fk_fields=c("AREA_ID")),
+        combine = "OR"
+      ),
+      "VESSELS" = list(
+        #not sure I can reference same table 3 different times like this
+        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
+                              fk_fields=c("VR_NUMBER_FISHING")),
+        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
+                              fk_fields=c("VR_NUMBER_LANDING")),
+        combine = "OR"
+      ),
+      "SPECIES_CATEGORIES" = list(
+        "SPECIES" = list(pk_fields=c("SPECIES_CATEGORY_ID"),
+                         fk_fields=c("SPECIES_CATEGORY_ID"))
+      ),
+      "LOG_EFRT_STD_INFO" = list(
+        # "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
+        #                         fk_fields=c("MON_DOC_ID"))
+        # ,
+        "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+                              fk_fields=c("LOG_EFRT_STD_INFO_ID"))
+        # combine = "AND"
+      ),
+      "LOG_SPC_STD_INFO" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+                              fk_fields=c("LOG_EFRT_STD_INFO_ID")),
+        "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
+                         fk_fields=c("SPECIES_CODE"))
+        # "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
+        #                       fk_fields=c("CATCH_USAGE_CODE")),
+        # combine = "ALL"
+      ),
+      "PRO_SPC_INFO" = list(
+        # "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+        #                            fk_fields=c("LOG_EFRT_STD_INFO_ID")),
+        "SPECIES" = list(pk_fields=c("SPECIES_CODE"),
+                         fk_fields=c("SPECIES_CODE")),
+        "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                              fk_fields=c("CATCH_USAGE_CODE")),
+        combine = "ALL"
+      ),
+      "PRO_SPC_INFO" = list(
+        # "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
+        #                         fk_fields=c("AREA_ID")),
+        "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
+                                 fk_fields=c("AREA_ID")),
+        combine = "ALL"
+      ),
+      "HAIL_IN_CALLS" = list(
+        "MON_DOCS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
+                          fk_fields=c("HAIL_IN_CALL_ID")),
+        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
+                         fk_fields=c("VR_NUMBER")),
+        combine = "ALL"
+      ),
+      "GEARS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
+                              fk_fields=c("GEAR_CODE"))
+      ),
+      "SPECIES" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
+                              fk_fields=c("SPECIES_CODE"))
+      ),
+      "AREAS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
+                              fk_fields=c("FISHING_AREA_ID"))
+      ),
+      "NAFO_UNIT_AREAS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
+                              fk_fields=c("NAFO_UNIT_AREA_ID"))
+      ),
+      "CATCH_USAGES" = list(
+        "LOG_SPC_STD_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                                  fk_fields=c("CATCH_USAGE_CODE")),
+        "PRO_SPC_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                              fk_fields=c("CATCH_USAGE_CODE")),
+        combine = "OR"
+      )
     ),
     filters = list(
       "Gear" = list(filt_tab = "GEARS",
@@ -1143,10 +1241,10 @@ load_datasources <- function(db=NULL){
       "PROVINCES" = list(
         "I_1986_2001" = list(pk_fields=c("PROV_CODE"),
                              fk_fields=c("LAND_PROV_CODE"))
-        ),
-        "UNITS_OF_MEASURE" = list(
-          "I_1986_2001" = list(pk_fields=c("UNIT_CODE"),
-                               fk_fields=c("UNIT_CODE"))
+      ),
+      "UNITS_OF_MEASURE" = list(
+        "I_1986_2001" = list(pk_fields=c("UNIT_CODE"),
+                             fk_fields=c("UNIT_CODE"))
       )
     ),
     filters = list(
@@ -1208,14 +1306,14 @@ load_datasources <- function(db=NULL){
         "C_1967_1985" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE"),
                              fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE")),
         "GEAR_TYPES_PRE_1986" = list(pk_fields=c("GEAR_TYPE"),
-                            fk_fields=c("GEAR_TYPE_CODE")),
+                                     fk_fields=c("GEAR_TYPE_CODE")),
         "DFO_REGIONS" = list(pk_fields=c("REGION_CODE"),
                              fk_fields=c("REGION_CODE")),
         combine = "ALL"
       ),
       "I_1967_1985" = list(
         "SPECIES_PRE_1986" = list(pk_fields=c("SPECIES_CODE"),
-                         fk_fields=c("SPECIES_CODE")),
+                                  fk_fields=c("SPECIES_CODE")),
         "S_1967_1985" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM"),
                              fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM")),
         "PROVINCES" = list(pk_fields=c("LAND_PROV_CODE"),
@@ -1253,11 +1351,11 @@ load_datasources <- function(db=NULL){
                     filt_disp = c("YEAR_OF_ACTIVITY"),
                     filt_ord = 1
       ),
-       "Landed Province" = list(filt_tab = "PROVINCES",
-                         filt_field = c("PROV_NAME"),
-                         filt_disp = c("PROV_NAME"),
-                         filt_ord = 1
-       ),
+      "Landed Province" = list(filt_tab = "PROVINCES",
+                               filt_field = c("PROV_NAME"),
+                               filt_disp = c("PROV_NAME"),
+                               filt_ord = 1
+      ),
       "DFO Region" = list(filt_tab = "DFO_REGIONS",
                           filt_field = c("REGION_NAME"),
                           filt_disp = c("REGION_NAME"),
@@ -1298,7 +1396,7 @@ load_datasources <- function(db=NULL){
     tables = c('TTYPES','TSTAT','TRINFO','TLETTER','TCOLORS','TAGS',
                'SEX','SCALE','RCSITE','OTYPES','ORIGINS','METHODS','GEAR'),
     table_cat = "TRINFO",
-   #table_det = "ROWNAMES", #table_det not really relevant for this db - using table can't join
+    #table_det = "ROWNAMES", #table_det not really relevant for this db - using table can't join
     table_pos = "TRINFO",
     field_default = "WGTO",
     joins = list(
@@ -1311,11 +1409,11 @@ load_datasources <- function(db=NULL){
                       fk_fields=c("TSTATID"))
       ),
       "TRINFO" = list(
-          "OTYPES" = list(pk_fields=c("VOTYPEID"),
-                          fk_fields=c("OTYPEID")),
-          "ORIGINS" = list(pk_fields=c("VORIGINID"),
-                          fk_fields=c("ORIGINID"))
-       ),
+        "OTYPES" = list(pk_fields=c("VOTYPEID"),
+                        fk_fields=c("OTYPEID")),
+        "ORIGINS" = list(pk_fields=c("VORIGINID"),
+                         fk_fields=c("ORIGINID"))
+      ),
       "TLETTER" = list(
         "TAGS" = list(pk_fields=c("TLETID"),
                       fk_fields=c("TLETID"))
@@ -1350,10 +1448,10 @@ load_datasources <- function(db=NULL){
         "TRINFO" = list(pk_fields=c("LOGID"),
                         fk_fields=c("LOGID"))
       ),
-       "RCSITE" = list(
-         "TRINFO" = list(pk_fields=c("SITEID"),
-                   fk_fields=c("CSITE"))
-         ),
+      "RCSITE" = list(
+        "TRINFO" = list(pk_fields=c("SITEID"),
+                        fk_fields=c("CSITE"))
+      ),
       "OTYPES" = list(
         "TRINFO" = list(pk_fields=c("OTYPEID"),
                         fk_fields=c("VOTYPEID"))
@@ -1404,7 +1502,7 @@ load_datasources <- function(db=NULL){
       )
     )
   )
- 
+  
   stomach = list (
     db="stomach",
     name = "MFD_STOMACH",
@@ -1450,7 +1548,7 @@ load_datasources <- function(db=NULL){
         "SDPRED" = list(pk_fields=c("SPEC"),
                         fk_fields=c("SPEC")),
         "SDITEM" = list(pk_fields=c("PREYSPECCD"),
-                       fk_fields=c("PREYSPECCD")),
+                        fk_fields=c("PREYSPECCD")),
         combine = "ALL"
       ),
       "SDDET" = list(
@@ -1464,7 +1562,7 @@ load_datasources <- function(db=NULL){
         "SDSTO" = list(pk_fields=c("SPEC"),
                        fk_fields=c("SPEC")),
         "SDDET" = list(pk_fields=c("SPEC"),
-                        fk_fields=c("SPEC")),
+                       fk_fields=c("SPEC")),
         combine = "OR"
       ),
       "SDITEM" = list(
@@ -1474,7 +1572,7 @@ load_datasources <- function(db=NULL){
       
       "SDSOURCE" = list(
         "SDSTO" = list(pk_fields=c("DATASOURCE"),
-                          fk_fields=c("DATASOURCE")),
+                       fk_fields=c("DATASOURCE")),
         "SDDET" = list(pk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX"),
                        fk_fields=c("DATASOURCE","MISSION","SETNO","SAMPLE_INDEX")),
         
@@ -1484,7 +1582,7 @@ load_datasources <- function(db=NULL){
       ),
       "SDDIGEST" = list(
         "SDSTO" = list(pk_fields=c("DIGESTION"),
-                         fk_fields=c("DIGESTION"))
+                       fk_fields=c("DIGESTION"))
       ),
       "SDFULLNESS" = list(
         "SDDET" = list(pk_fields=c("FULLNESS"),
@@ -1493,34 +1591,34 @@ load_datasources <- function(db=NULL){
     ),
     filters = list(
       "Year" = list(filt_tab = "SDINF",
-                       filt_field = c("YEAR"),
-                       filt_disp = c("YEAR"),
-                       filt_ord = 1
-      ),
-      "Mission" = list(filt_tab = "SDINF",
-                    filt_field = c("MISSION"),
-                    filt_disp = c("MISSION"),
+                    filt_field = c("YEAR"),
+                    filt_disp = c("YEAR"),
                     filt_ord = 1
       ),
-      "Data Source" = list(filt_tab = "SDSOURCE",
-                      filt_field = c("DATASOURCE"),
-                      filt_disp = c("DATASOURCE"),
-                      filt_ord = 1
+      "Mission" = list(filt_tab = "SDINF",
+                       filt_field = c("MISSION"),
+                       filt_disp = c("MISSION"),
+                       filt_ord = 1
       ),
-      "Predator Species" = list(filt_tab = "SDPRED",
-                           filt_field = c("SPEC"),
-                           filt_disp = c("DESCRIPTION","SPEC"),
+      "Data Source" = list(filt_tab = "SDSOURCE",
+                           filt_field = c("DATASOURCE"),
+                           filt_disp = c("DATASOURCE"),
                            filt_ord = 1
       ),
-      "Prey Species" = list(filt_tab = "SDITEM",
-                                filt_field = c("PREYSPECCD"),
-                                filt_disp = c("PREYSPECIES","PREYSPECCD"),
+      "Predator Species" = list(filt_tab = "SDPRED",
+                                filt_field = c("SPEC"),
+                                filt_disp = c("DESCRIPTION","SPEC"),
                                 filt_ord = 1
       ),
-      "Prey Species Group" = list(filt_tab = "SDITEM",
-                            filt_field = c("PREYITEMCD"),
-                            filt_disp = c("PREYITEM","PREYITEMCD"),
+      "Prey Species" = list(filt_tab = "SDITEM",
+                            filt_field = c("PREYSPECCD"),
+                            filt_disp = c("PREYSPECIES","PREYSPECCD"),
                             filt_ord = 1
+      ),
+      "Prey Species Group" = list(filt_tab = "SDITEM",
+                                  filt_field = c("PREYITEMCD"),
+                                  filt_disp = c("PREYITEM","PREYITEMCD"),
+                                  filt_ord = 1
       )
     )
   )
@@ -1533,7 +1631,7 @@ load_datasources <- function(db=NULL){
                      isdb=isdb, marfis=marfis, comland86=comland86, 
                      comland67=comland67, asef=asef, stomach=stomach, 
                      inshore=inshore, meso=meso, meso_gully = meso_gully,
-                     juvesh=juvesh)
+                     juvesh=juvesh, usnefsc=usnefsc )
   
   
   generic_filts = list(

@@ -66,8 +66,16 @@ self_filter <- function(db = NULL, looponce = FALSE, debug = FALSE) {
       }
       filt= paste(p_stuff, "%in%", f_stuff, collapse=get_joiner(combine))
       if (debug) cat(paste0("\n-----\n",filt))
-      if(debug & NROW(get(tab_prim)[eval(parse(text = filt)),])==0)browser()
-      assign(tab_prim, get(tab_prim)[eval(parse(text = filt)),], envir = .GlobalEnv)
+      if (debug & NROW(get(tab_prim)[eval(parse(text = filt)),])==0)browser()
+      if (ncol(get(tab_prim))==1){
+        theName = ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields
+        assign(tab_prim, as.data.frame(get(tab_prim)[eval(parse(text = filt)),]), envir = .GlobalEnv)
+        tmp_tab_prim<-get(tab_prim)
+        colnames(tmp_tab_prim)<-theName
+        assign(tab_prim,tmp_tab_prim, envir = .GlobalEnv)
+      }else{
+        assign(tab_prim, get(tab_prim)[eval(parse(text = filt)),], envir = .GlobalEnv)
+      }
       if (debug) cat(paste0("\n",tab_prim,": ",nrow(get(tab_prim)),"\n"))
       p_stuff = NULL
       f_stuff = NULL

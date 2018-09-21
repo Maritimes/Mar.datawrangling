@@ -21,6 +21,17 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   these.tables.prefixed = paste0(prefix,".",these.tables)
   
   cat("\nApplying tweaks ...")
+  if (db=='usnefsc'){
+    load(file.path(data.dir,"USNEFSC.USS_STATION.RData"), envir = .GlobalEnv)
+    if (!'LATITUDE' %in% colnames(USS_STATION)){
+      USS_STATION$LATITUDE = USS_STATION$DECDEG_BEGLAT
+      USS_STATION$LONGITUDE = USS_STATION$DECDEG_BEGLON
+      USS_STATION$ELATITUDE = USS_STATION$DECDEG_ENDLAT
+      USS_STATION$ELONGITUDE = USS_STATION$DECDEG_ENDLON
+      cat("\nUSS_STATION:  For convenience, added LATITUDE, LONGITUDE, ELATITUDE AND ELONGITUDE fields")
+      save(USS_STATION, file=file.path(data.dir, "USNEFSC.USS_STATION.RData"), compress=TRUE)
+    }
+  }
   if (db == 'stomach'){
    load(file.path(data.dir,"STOMACH.SDINF.RData"), envir = .GlobalEnv)
     if (!'YEAR' %in% colnames(SDINF)){

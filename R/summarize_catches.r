@@ -57,10 +57,17 @@ summarize_catches <- function(db=NULL,
   tab_foreign = ds_all[[.GlobalEnv$db]]$joins[[tab_prim]][names(ds_all[[.GlobalEnv$db]]$joins[[tab_prim]]) !="combine"]
   all_recs=summ[[tab_prim]]
   joiners = ds_all[[.GlobalEnv$db]]$tables[!(ds_all[[.GlobalEnv$db]]$tables %in% c(names(tab_foreign), tab_prim))]
-  doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, keep_nullsets){
+  doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, keep_nullsets, debug){
+    
     this_tab_foreign_nm = names(this_tab_foreign)
+  #  if (this_tab_foreign_nm %in% c("USS_LENGTHS", "USS_DETAIL"))browser()
     if (!is.null(ds_all[[.GlobalEnv$db]]$table_det)){
-      if (morph_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_det) return(this_tab_prim_data)
+      if (morph_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_det) {
+        if (debug) cat(paste0("Skipping merge of ",ds_all[[.GlobalEnv$db]]$table_det,"\n"))
+        return(this_tab_prim_data)
+      }else{
+
+      }
     }
     if (!is.null(ds_all[[.GlobalEnv$db]]$table_gear)){
       if (gear_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_gear) return(this_tab_prim_data)
@@ -99,38 +106,37 @@ summarize_catches <- function(db=NULL,
   }
   #ensure that tables that can be linked to the primary table are done first
   if(length(tab_foreign)>0){
-  for (m in 1:length(tab_foreign)){
-    if (debug) cat(paste0("PRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')\n"))
-    all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, keep_nullsets)
-  }
+    for (m in 1:length(tab_foreign)){
+      if (debug) cat(paste0("PRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')\n"))
+      all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, keep_nullsets, debug)
+    }
   }
   z=1
   while (length(joiners)>0 & z <= length(joiners)){
-
+    
     all = ds_all[[.GlobalEnv$db]]$joins[names(ds_all[[.GlobalEnv$db]]$joins) %in% joiners]
     all_names = names(sapply(all, names))
     if (length(setdiff(all_names, joiners))!=0) warning("The tables remaining to be joined do not match the join information in the data_sources.")
-       for (i in 1:length(all)){
-        joinTable = names(all[i])
-        pk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$pk_fields
-        fk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$fk_fields
-        all_this = all[[i]][!names(all[[i]]) %in% 'combine'][1]
-        names(all_this) = joinTable
-          if (all(fk %in% colnames(all_recs))){
-            names(all_this[[1]]) = c("fk_fields","pk_fields")
-            #if (debug) cat(nrow(all_recs))
-            if (debug) cat(paste0("\tTrying merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",pk,"', by.y='",fk, "')\n"))
-            
-            
-            #if (debug) browser()
-            all_recs = doMerge(all_recs, all_this, morph_dets, keep_nullsets)
-            joiners = joiners[!joiners %in% joinTable]
-            z=1
-          }else{
-            z=z+1
-          }
-        pk = NULL
-       }
+    for (i in 1:length(all)){
+      joinTable = names(all[i])
+      pk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$pk_fields
+      fk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$fk_fields
+      all_this = all[[i]][!names(all[[i]]) %in% 'combine'][1]
+      names(all_this) = joinTable
+      if (all(fk %in% colnames(all_recs))){
+        names(all_this[[1]]) = c("fk_fields","pk_fields")
+        if (debug) {
+          cat(paste0("\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')\n"))
+        }
+       # if (joinTable %in% c("USS_LENGTHS","USS_DETAIL"))browser()
+        all_recs = doMerge(all_recs, all_this, morph_dets, keep_nullsets, debug)
+        joiners = joiners[!joiners %in% joinTable]
+        z=1
+      }else{
+        z=z+1
+      }
+      pk = NULL
+    }
     if (z > length(joiners) & length(joiners)>0 & (gear_dets | morph_dets) ) {
       print("The following tables were not joined:")
       print(joiners, sep=" ", collapse = NULL)
