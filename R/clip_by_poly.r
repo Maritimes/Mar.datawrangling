@@ -39,9 +39,10 @@ clip_by_poly <- function(db = NULL, df=NULL,
                          lon.field = "LONGITUDE", 
                          clip.poly = NULL,
                          buffer.m = NULL,
-                         return.spatial = FALSE){
+                         return.spatial = FALSE,
+                         env=.GlobalEnv){
   if (!is.null(db)) {
-    df = get(ds_all[[.GlobalEnv$db]]$table_pos)
+    df = get(ds_all[[.GlobalEnv$db]]$table_pos, envir = env)
   } 
   df=Mar.utils::df_qc_spatial(df)
   df.sp = SpatialPointsDataFrame(
@@ -78,7 +79,7 @@ clip_by_poly <- function(db = NULL, df=NULL,
   df.sp_subset <- df.sp[clip.poly_this, ] 
   
   if (!is.null(db)){
-    assign(ds_all[[.GlobalEnv$db]]$table_pos, df.sp_subset@data, envir = .GlobalEnv)
+    assign(ds_all[[.GlobalEnv$db]]$table_pos, df.sp_subset@data, envir = env)
   } 
   if (!return.spatial){
     df.sp_subset = df.sp_subset@data

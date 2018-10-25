@@ -35,7 +35,7 @@
 #' @importFrom RODBC odbcClose
 #' @export
 #' @note This line is here to prevent an error message claiming the export is mult-line
-data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
+data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, env=.GlobalEnv) {
   filters = ds_all[[.GlobalEnv$db]]$filters
   
   get_location <- function() {
@@ -217,25 +217,25 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
         filt_dets[[1]]$filt_tab,
         subset(get(filt_dets[[1]]$filt_tab), get(filt_dets[[1]]$filt_field[1]) >= filt_data[1,1] &
                                                              get(filt_dets[[1]]$filt_field[1]) <= filt_data[2,1])
-        , envir = .GlobalEnv)
+        , envir = env)
     } else if (names(filt_dets) == 'Location') {
       #coords: c(S, N, E, W)
       if (!is.na(filt_data[1, 1]))
-        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = .GlobalEnv),
-          get(filt_dets[[1]]$filt_tab)[, ("LATITUDE")] >=  filt_data[1, 1]), envir = .GlobalEnv)
+        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = env),
+          get(filt_dets[[1]]$filt_tab)[, ("LATITUDE")] >=  filt_data[1, 1]), envir = env)
       if (!is.na(filt_data[2, 1]))
-        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = .GlobalEnv),
-          get(filt_dets[[1]]$filt_tab)[, ("LATITUDE")] <=  filt_data[2, 1]), envir = .GlobalEnv)
+        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = env),
+          get(filt_dets[[1]]$filt_tab)[, ("LATITUDE")] <=  filt_data[2, 1]), envir = env)
       if (!is.na(filt_data[3, 1]))
-        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = .GlobalEnv),
-          get(filt_dets[[1]]$filt_tab)[, ("LONGITUDE")] <=  filt_data[3, 1]), envir = .GlobalEnv)
+        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = env),
+          get(filt_dets[[1]]$filt_tab)[, ("LONGITUDE")] <=  filt_data[3, 1]), envir = env)
       if (!is.na(filt_data[4, 1]))
-        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = .GlobalEnv),
-         get(filt_dets[[1]]$filt_tab)[, ("LONGITUDE")] >=  filt_data[4, 1]), envir = .GlobalEnv)
+        assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = env),
+         get(filt_dets[[1]]$filt_tab)[, ("LONGITUDE")] >=  filt_data[4, 1]), envir = env)
     } else if (names(filt_dets) == 'By Polygon') {
       buffer.m = readline("If you want to add a buffer so that data can fall slightly beyond \nyour polygon, please enter it here (in meters):\n")
       if (buffer.m == "") buffer.m =0
-      assign(filt_dets[[1]]$filt_tab, clip_by_poly(df=get(filt_dets[[1]]$filt_tab), buffer.m = buffer.m, clip.poly = filt_data[[1]]), envir = .GlobalEnv)
+      assign(filt_dets[[1]]$filt_tab, clip_by_poly(df=get(filt_dets[[1]]$filt_tab), buffer.m = buffer.m, clip.poly = filt_data[[1]]), envir = env)
     } else{
       if (length(filt_dets[[1]]$filt_field) == 2) {
         assign(
@@ -245,7 +245,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
             get(filt_dets[[1]]$filt_tab)[, filt_dets[[1]]$filt_field[1]] %in% filt_data[, filt_dets[[1]]$filt_field[1]] &
               get(filt_dets[[1]]$filt_tab)[, filt_dets[[1]]$filt_field[2]] %in% filt_data[, filt_dets[[1]]$filt_field[2]]
           ),
-          envir = .GlobalEnv
+          envir = env
         )
       } else{
         assign(filt_dets[[1]]$filt_tab,
@@ -253,14 +253,14 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE) {
                  get(filt_dets[[1]]$filt_tab),
                  get(filt_dets[[1]]$filt_tab)[, filt_dets[[1]]$filt_field] %in% filt_data[, filt_dets[[1]]$filt_field]
                ),
-               envir = .GlobalEnv)
+               envir = env)
       }
       #instantiate filtered object
       assign(filt_dets[[1]]$filt_tab, get(filt_dets[[1]]$filt_tab))
     }
     self_filter(db) 
   }
-  if (refresh.data) sapply(ds_all[[.GlobalEnv$db]]$tables, simplify=TRUE, get_data)
+  if (refresh.data) sapply(ds_all[[.GlobalEnv$db]]$tables, simplify=TRUE, get_data, env)
   if (safe == TRUE)cat("
 The following step removes filtering options that would result in no records 
 being returned.  It is performed even before any selections are made since many 

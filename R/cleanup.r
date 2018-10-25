@@ -8,15 +8,15 @@
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-cleanup <- function(db=NULL, var.like = NULL){
+cleanup <- function(db=NULL, var.like = NULL, env=.GlobalEnv){
   
   if (!is.null(var.like)) {
-    rm(list = ls(pattern=var.like, envir = .GlobalEnv), envir = .GlobalEnv)
+    rm(list = ls(pattern=var.like, envir = env), envir = env)
   } 
   if (!is.null(db)) {
     tables = ds_all[[db]]$tables
     if (exists(as.character(paste0("zzz_orph_",ds_all[[db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[db]]$tables))
-    rm(list = tables, envir = .GlobalEnv)
+    rm(list = tables, envir = env)
   }
   
 }

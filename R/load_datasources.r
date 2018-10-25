@@ -9,6 +9,19 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 load_datasources <- function(db=NULL){
+  # odf = list(
+  #   db="odf",
+  #   name = "odf",
+  #   schema = "ODF_ARCHIVE",
+  #   desc = "American Data",
+  #   tables = c("USS_STATION","USS_CATCH","USS_LENGTHS","USS_DETAIL","US_VESSEL_NET_CONVERSIONS","STRANL_CRUISE","STRANL_AREA","STRANL_STRATUM","USS_SPECIES_CODES"),
+  #   table_cat = "USS_CATCH",
+  #   table_det = c("USS_DETAIL", "USS_LENGTHS"),
+  #   table_pos = "USS_STATION",
+  #   field_default = "EXPCATCHWT",
+  #   field_drops = c('SLAT','SLONG','ELAT','ELON'),
+  #   joins = list(
+  # ),
   usnefsc = list(
     db="usnefsc",
     name = "US",
@@ -1097,8 +1110,8 @@ load_datasources <- function(db=NULL){
         combine = "ALL"
       ),
       "PRO_SPC_INFO" = list(
-        # "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
-        #                         fk_fields=c("AREA_ID")),
+         "GEARS" = list(pk_fields=c("GEAR_CODE"),
+                                 fk_fields=c("GEAR_CODE")),
         "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
                                  fk_fields=c("AREA_ID")),
         combine = "ALL"
@@ -1636,7 +1649,9 @@ load_datasources <- function(db=NULL){
                      isdb=isdb, marfis=marfis, comland86=comland86, 
                      comland67=comland67, asef=asef, stomach=stomach, 
                      inshore=inshore, meso=meso, meso_gully = meso_gully,
-                     juvesh=juvesh, usnefsc=usnefsc )
+                     juvesh=juvesh, usnefsc=usnefsc
+                     #, odf = odf 
+                     )
   
   
   generic_filts = list(

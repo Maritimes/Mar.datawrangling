@@ -44,7 +44,8 @@ get_data_custom<-function(db=NULL,
                   usepkg = 'rodbc', 
                   fn.oracle.username ="_none_",
                   fn.oracle.password="_none_",
-                  fn.oracle.dsn="_none_"){
+                  fn.oracle.dsn="_none_",
+                  env=.GlobalEnv){
 
     oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
   
@@ -69,7 +70,7 @@ get_data_custom<-function(db=NULL,
       assign(table_naked, res)
       save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
       cat(paste("Got", tables[i],"\n"))
-      assign(x = tables[i],value = get(table_naked), envir = .GlobalEnv)
+      assign(x = tables[i],value = get(table_naked), envir = env)
       cat(paste0("Loaded ",tables[i],"\n"))
     }
   }
