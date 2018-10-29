@@ -12,6 +12,8 @@
 #' @param looponce default is \code{NULL}.  This is only used for QC purposes.
 #' @param debug default is \code{FALSE}.  This is used for debugging, and will
 #' cause the filtering commands to be printed out.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export

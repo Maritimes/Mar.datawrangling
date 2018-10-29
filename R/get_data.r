@@ -1,3 +1,47 @@
+#' @title get_data
+#' @description This function contains the logic for deciding whether to extract or load data.  It
+#' is aware of the required tables, and if all are present,it will load them into the
+#' global environment.  If some are missing, it will offer to re-extract them.  If the user chooses
+#' to re-extract, it will get their oracle credentials and verify that the user has access to all of
+#' the required tables prior to attempting an extraction.
+#' @param data.dir  The default is your working directory. If you are hoping to load existing data,
+#' this folder should contain a data folder containing your rdata files. If you are extracting data,
+#' a data folder will be created under this folder.
+#' extracted files to go.
+#' @param force.extract The default value is FALSE.  By default, existing data will be loaded.  If
+#' \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
+#' data.
+#' @param db default is \code{NULL}. This identifies the dataset you are working
+#' with.
+#' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
+#' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
+#' roracle will extract data ~ 5x faster.
+#' @param fn.oracle.username default is \code{'_none_'} This is your username for
+#' accessing oracle objects. If you have a value for this stored in your
+#' environment (e.g. from an rprofile file), this can be left and that value will
+#' be used.  If a value for this is provided, it will take priority over your
+#' existing value.
+#' @param fn.oracle.password default is \code{'_none_'} This is your password for
+#' accessing oracle objects. If you have a value for this stored in your
+#' environment (e.g. from an rprofile file), this can be left and that value will
+#' be used.  If a value for this is provided, it will take priority over your
+#' existing value.
+#' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
+#' identifier for accessing oracle objects. If you have a value for this stored
+#' in your environment (e.g. from an rprofile file), this can be left and that
+#' value will be used.  If a value for this is provided, it will take priority
+#' over your existing value.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
+#' @family dfo_extractions
+#' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
+#' @importFrom lubridate year
+#' @importFrom lubridate month
+#' @importFrom lubridate day
+#' @importFrom lubridate ymd
+#' @importFrom utils data
+#' @importFrom Mar.utils make_oracle_cxn
+#' @export
 get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE, 
           data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
           fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", env=.GlobalEnv) 

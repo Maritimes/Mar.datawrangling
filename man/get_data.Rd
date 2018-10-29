@@ -6,7 +6,8 @@
 \usage{
 get_data(db = NULL, usepkg = "rodbc", force.extract = FALSE,
   data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_",
-  fn.oracle.password = "_none_", fn.oracle.dsn = "_none_")
+  fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
+  env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -42,6 +43,9 @@ identifier for accessing oracle objects. If you have a value for this stored
 in your environment (e.g. from an rprofile file), this can be left and that
 value will be used.  If a value for this is provided, it will take priority
 over your existing value.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \description{
 This function contains the logic for deciding whether to extract or load data.  It
@@ -58,3 +62,4 @@ Other dfo_extractions: \code{\link{data_filter}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{dfo_extractions}

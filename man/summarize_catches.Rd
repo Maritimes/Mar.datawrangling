@@ -6,7 +6,7 @@
 \usage{
 summarize_catches(db = NULL, morph_dets = FALSE, gear_dets = FALSE,
   keep_nullsets = FALSE, valid.coords = FALSE, quiet = FALSE,
-  drop.na.cols = TRUE, debug = FALSE)
+  drop.na.cols = TRUE, debug = FALSE, env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -44,6 +44,9 @@ do not have any values in them will be dropped.}
 
 \item{debug}{default is \code{FALSE}.  If TRUE, messages describing the 
 merging steps will be printed out}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \value{
 a data frame, and if \code{req.coords=TRUE}, a message indicating how
@@ -61,3 +64,4 @@ Other dfo_extractions: \code{\link{data_filter}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{dfo_extractions}

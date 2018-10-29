@@ -5,9 +5,9 @@
 \title{save_data}
 \usage{
 save_data(db = NULL, df = NULL, filename = NULL,
-  df.crs = "+init=epsg:4326", req.coords = TRUE, lat.field = "LATITUDE",
-  lon.field = "LONGITUDE", keep_nullsets = FALSE, formats = c("csv",
-  "shp"))
+  df.crs = "+init=epsg:4326", req.coords = TRUE,
+  lat.field = "LATITUDE", lon.field = "LONGITUDE",
+  keep_nullsets = FALSE, formats = c("csv", "shp"), env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -36,6 +36,9 @@ your criteria are retained.  If you have selected data by the "caught
 species", you will have already exluded the null sets.}
 
 \item{formats}{This is a vector of the formats in which you would like to save the current data}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \description{
 This function takes either a dataframe or all of the data you've filtered, and rolls it up into a csv and/
@@ -49,3 +52,4 @@ Other general_use: \code{\link{cleanup}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{general_use}

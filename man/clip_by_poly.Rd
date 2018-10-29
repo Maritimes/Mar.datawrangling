@@ -6,7 +6,7 @@
 \usage{
 clip_by_poly(db = NULL, df = NULL, lat.field = "LATITUDE",
   lon.field = "LONGITUDE", clip.poly = NULL, buffer.m = NULL,
-  return.spatial = FALSE)
+  return.spatial = FALSE, env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -28,6 +28,9 @@ that the data will be clipped by (including the '.shp' extension).}
 
 \item{return.spatial}{default is \code{FALSE}. If this is TRUE, a 
 SpatialPointsDataFrame will be returned. Otherwise it will return a df.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \value{
 spatialPointsDataFrame
@@ -49,3 +52,4 @@ Other general_use: \code{\link{cleanup}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{general_use}

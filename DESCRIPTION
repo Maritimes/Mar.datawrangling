@@ -27,4 +27,4 @@ Remotes:
 License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/Maritimes/Mar.datawrangling/
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0

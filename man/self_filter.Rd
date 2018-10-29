@@ -4,7 +4,8 @@
 \alias{self_filter}
 \title{self_filter}
 \usage{
-self_filter(db = NULL, looponce = FALSE, debug = FALSE)
+self_filter(db = NULL, looponce = FALSE, debug = FALSE,
+  env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -14,6 +15,9 @@ with.}
 
 \item{debug}{default is \code{FALSE}.  This is used for debugging, and will
 cause the filtering commands to be printed out.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \description{
 This function draws upon the relationships between the tables 
@@ -37,3 +41,4 @@ Other dfo_extractions: \code{\link{data_filter}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{dfo_extractions}

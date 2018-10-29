@@ -4,7 +4,7 @@
 \alias{cleanup}
 \title{cleanup}
 \usage{
-cleanup(db = NULL, var.like = NULL)
+cleanup(db = NULL, var.like = NULL, env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -12,6 +12,9 @@ with.}
 
 \item{var.like}{The default value is NULL.  Providing a value to this parameter will remove ALL
 elements from your environment that match it.  Be careful and be as specific as you can.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \description{
 This function removes the R objects associated with the various objects created
@@ -24,3 +27,4 @@ Other general_use: \code{\link{clip_by_poly}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{general_use}

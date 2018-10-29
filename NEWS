@@ -2,6 +2,9 @@ Mar.datawrangling
 ==============
 
 Changes:
+2018.10.29
+* adds ability to specify environment; facilitating use of functions within 
+other functions
 2018.09.21
 * added USNEFSC data
 2018.09.19

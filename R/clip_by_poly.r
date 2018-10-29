@@ -18,6 +18,8 @@
 #' \code{clip.poly}
 #' @param return.spatial default is \code{FALSE}. If this is TRUE, a 
 #' SpatialPointsDataFrame will be returned. Otherwise it will return a df.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @importFrom rgeos gBuffer
 #' @importFrom sp CRS
 #' @importFrom sp proj4string
@@ -50,7 +52,6 @@ clip_by_poly <- function(db = NULL, df=NULL,
     data = df,
     proj4string = CRS('+init=epsg:4326')
   )
-  
   if (class(clip.poly)=="character"){
     #extract the full path and name of the shapefile 
     ogrPath = dirname(clip.poly)

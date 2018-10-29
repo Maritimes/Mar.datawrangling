@@ -29,6 +29,8 @@
 #' in your environment (e.g. from an rprofile file), this can be left and that
 #' value will be used.  If a value for this is provided, it will take priority
 #' over your existing value.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @importFrom lubridate year

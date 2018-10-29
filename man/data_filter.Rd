@@ -4,7 +4,8 @@
 \alias{data_filter}
 \title{data_filter}
 \usage{
-data_filter(db = .GlobalEnv$db, refresh.data = FALSE, safe = TRUE)
+data_filter(db = .GlobalEnv$db, refresh.data = FALSE, safe = TRUE,
+  env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -20,6 +21,9 @@ boxes are only populated with viable options.  If FALSE, invalid values are
 possible.  Turning this off omits the initial self_filter(), and causes the 
 script to run faster.  It's only advisable if you know your selections are 
 appropriate, and in that case, it's a good idea.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \value{
 list of the filters that were applied to generate the remaining dataset
@@ -60,3 +64,4 @@ Other dfo_extractions: \code{\link{get_data_custom}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{dfo_extractions}

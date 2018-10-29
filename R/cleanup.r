@@ -5,6 +5,8 @@
 #' with.
 #' @param var.like The default value is NULL.  Providing a value to this parameter will remove ALL
 #' elements from your environment that match it.  Be careful and be as specific as you can.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export

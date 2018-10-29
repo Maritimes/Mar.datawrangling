@@ -17,6 +17,8 @@
 #' possible.  Turning this off omits the initial self_filter(), and causes the 
 #' script to run faster.  It's only advisable if you know your selections are 
 #' appropriate, and in that case, it's a good idea.
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @note
 #' If editing, please be aware of the scope of the data - the approach was to load the data into the
 #' global environment, and then do all the filtering there.  This is why subsets require

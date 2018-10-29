@@ -19,6 +19,8 @@
 #' @param lat.field the default is \code{"LATITUDE"}. the name of the field holding latitude values (in decimal degrees)
 #' @param lon.field the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)
 #' @param formats This is a vector of the formats in which you would like to save the current data
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @importFrom rgdal writeOGR
 #' @importFrom sp SpatialPoints
 #' @importFrom utils write.csv
@@ -31,12 +33,13 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg
                          req.coords=TRUE, lat.field = "LATITUDE",
                          lon.field = "LONGITUDE",
                          keep_nullsets = FALSE,
-                         formats = c('csv', 'shp')){
+                         formats = c('csv', 'shp'),
+                         env=.GlobalEnv){
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
 records necessarily have positions and will not be visible in your shapefile")
 
   if (is.null(df)) {
-    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, keep_nullsets = keep_nullsets)
+    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, keep_nullsets = keep_nullsets, env=env)
   }
   # if (is.null(filename)) name = match.call()[1]
   # }else{  }

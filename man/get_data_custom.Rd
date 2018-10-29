@@ -6,7 +6,8 @@
 \usage{
 get_data_custom(db = NULL, data.dir = file.path(getwd(), "data"),
   tables = NULL, usepkg = "rodbc", fn.oracle.username = "_none_",
-  fn.oracle.password = "_none_", fn.oracle.dsn = "_none_")
+  fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
+  env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you want to get 
@@ -42,6 +43,9 @@ identifier for accessing oracle objects. If you have a value for this stored
 in your environment (e.g. from an rprofile file), this can be left and that
 value will be used.  If a value for this is provided, it will take priority
 over your existing value.}
+
+\item{env}{This the the environment you want this function to work in.  The 
+default value is \code{.GlobalEnv}.}
 }
 \description{
 This function allows users to extract other tables within a
@@ -56,3 +60,4 @@ Other dfo_extractions: \code{\link{data_filter}},
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{dfo_extractions}

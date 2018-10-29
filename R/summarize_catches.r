@@ -29,6 +29,8 @@
 #' do not have any values in them will be dropped.
 #' @param debug default is \code{FALSE}.  If TRUE, messages describing the 
 #' merging steps will be printed out
+#' @param env This the the environment you want this function to work in.  The 
+#' default value is \code{.GlobalEnv}.
 #' @return a data frame, and if \code{req.coords=TRUE}, a message indicating how
 #' many positions were lost due to the constraint.
 #' @importFrom Mar.utils df_qc_spatial
@@ -42,12 +44,13 @@ summarize_catches <- function(db=NULL,
                               valid.coords = FALSE,
                               quiet = FALSE,
                               drop.na.cols = TRUE,
-                              debug=FALSE){
+                              debug=FALSE,
+                              env=.GlobalEnv){
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   #create place to make a bunch of temporary duplicate data
   summ = new.env()
   drop_fields <- function(table.name, sens.fields){
-    table = get(table.name)
+    table = get(table.name,envir = env)
     assign(table.name,(unique(table[,!(names(table) %in% sens.fields)])), envir = summ)
   }
   #drop certain fields from all tables
