@@ -9,19 +9,6 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 load_datasources <- function(db=NULL){
-  # odf = list(
-  #   db="odf",
-  #   name = "odf",
-  #   schema = "ODF_ARCHIVE",
-  #   desc = "American Data",
-  #   tables = c("USS_STATION","USS_CATCH","USS_LENGTHS","USS_DETAIL","US_VESSEL_NET_CONVERSIONS","STRANL_CRUISE","STRANL_AREA","STRANL_STRATUM","USS_SPECIES_CODES"),
-  #   table_cat = "USS_CATCH",
-  #   table_det = c("USS_DETAIL", "USS_LENGTHS"),
-  #   table_pos = "USS_STATION",
-  #   field_default = "EXPCATCHWT",
-  #   field_drops = c('SLAT','SLONG','ELAT','ELON'),
-  #   joins = list(
-  # ),
   usnefsc = list(
     db="usnefsc",
     name = "US",
@@ -1325,6 +1312,8 @@ load_datasources <- function(db=NULL){
       "S_1967_1985" = list(
         "C_1967_1985" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE"),
                              fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE")),
+        "I_1967_1985" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM"),
+                             fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM")),
         "GEAR_TYPES_PRE_1986" = list(pk_fields=c("GEAR_TYPE"),
                                      fk_fields=c("GEAR_TYPE_CODE")),
         "DFO_REGIONS" = list(pk_fields=c("REGION_CODE"),
