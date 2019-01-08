@@ -1216,6 +1216,8 @@ load_datasources <- function(db=NULL){
       "S_1986_2001" = list(
         "C_1986_2001" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE"),
                              fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","REGION_CODE")),
+        "I_1986_2001" = list(pk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM"),
+                             fk_fields=c("YEAR_OF_ACTIVITY","CFV_NUMBER","CATCHERS_RECID","TRIP_NUM","SUB_TRIP_NUM")),
         "GEAR_TYPES" = list(pk_fields=c("GEAR_TYPE"),
                             fk_fields=c("GEAR_TYPE_CODE")),
         "DFO_REGIONS" = list(pk_fields=c("REGION_CODE"),
