@@ -46,7 +46,7 @@ clip_by_poly <- function(db = NULL, df=NULL,
   if (!is.null(db)) {
     df = get(ds_all[[.GlobalEnv$db]]$table_pos, envir = env)
   } 
-  df=Mar.utils::df_qc_spatial(df)
+  df=df_qc_spatial(df)
   df.sp = SpatialPointsDataFrame(
     coords = df[, c(lon.field, lat.field)],
     data = df,
