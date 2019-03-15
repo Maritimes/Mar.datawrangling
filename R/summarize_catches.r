@@ -6,11 +6,6 @@
 #' @param valid.coords default is FALSE.  This uses 
 #' \code{Mar.utils::df.qc.spatial()} to remove coordinates that are not valid.  
 #' If TRUE and no valid records remain, this function will abort.
-#' @param keep_nullsets default is FALSE.  In many cases, in addition to the
-#' catch, it is also useful to know where fishing occurred that did not result
-#' in catches.  this is especially true for most survey-type data.
-#' Note that for industry fishing (i.e. ISDB and MARFIS), the null sets will
-#' actually just consist of all sets that met your filter criteria.
 #' @param morph_dets default is FALSE.  For some databases, more detailed
 #' records can be added for each catch (e.g. gsdet for 'rv' data).  This flag
 #' indicates that the detailed records will be returned.  This means that every
@@ -40,7 +35,6 @@
 summarize_catches <- function(db=NULL,
                               morph_dets = FALSE,
                               gear_dets = FALSE,
-                              keep_nullsets = FALSE,
                               valid.coords = FALSE,
                               quiet = FALSE,
                               drop.na.cols = TRUE,
@@ -60,7 +54,7 @@ summarize_catches <- function(db=NULL,
   tab_foreign = ds_all[[.GlobalEnv$db]]$joins[[tab_prim]][names(ds_all[[.GlobalEnv$db]]$joins[[tab_prim]]) !="combine"]
   all_recs=summ[[tab_prim]]
   joiners = ds_all[[.GlobalEnv$db]]$tables[!(ds_all[[.GlobalEnv$db]]$tables %in% c(names(tab_foreign), tab_prim))]
-  doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, keep_nullsets, debug){
+  doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, debug){
     
     this_tab_foreign_nm = names(this_tab_foreign)
   #  if (this_tab_foreign_nm %in% c("USS_LENGTHS", "USS_DETAIL"))browser()
@@ -85,11 +79,7 @@ summarize_catches <- function(db=NULL,
     }
     joinnames=names(this_tab_prim_data[grepl("joinx", names(this_tab_prim_data))])
     
-    if (keep_nullsets == FALSE & this_tab_foreign_nm== ds_all[[.GlobalEnv$db]]$table_cat){
-      merged = merge(x= this_tab_prim_data, y=this_tab_foreign, by = joinnames,  all.y = TRUE)
-    }else{
-      merged = merge(x= this_tab_prim_data, y=this_tab_foreign, by = joinnames,  all.x = TRUE)
-    }
+    merged = merge(x= this_tab_prim_data, y=this_tab_foreign, by = joinnames,  all.x = TRUE)
     merged = merged[, -grep("joinx_", colnames(merged))]
     dups.x = sort(names(merged)[grepl("\\.x", names(merged))])
     dups.y = sort(names(merged)[grepl("\\.y", names(merged))])
@@ -111,7 +101,7 @@ summarize_catches <- function(db=NULL,
   if(length(tab_foreign)>0){
     for (m in 1:length(tab_foreign)){
       if (debug) cat(paste0("PRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')\n"))
-      all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, keep_nullsets, debug)
+      all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, debug)
     }
   }
   z=1
@@ -132,7 +122,7 @@ summarize_catches <- function(db=NULL,
           cat(paste0("\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')\n"))
         }
        # if (joinTable %in% c("USS_LENGTHS","USS_DETAIL"))browser()
-        all_recs = doMerge(all_recs, all_this, morph_dets, keep_nullsets, debug)
+        all_recs = doMerge(all_recs, all_this, morph_dets, debug)
         joiners = joiners[!joiners %in% joinTable]
         z=1
       }else{

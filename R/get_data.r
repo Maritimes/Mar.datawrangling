@@ -63,7 +63,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
            envir = .GlobalEnv)
   }
   else {
-    assign("db", db, envir = .GlobalEnv)
+    assign("db", tolower(db), envir = .GlobalEnv)
   }
   local_table_status_check <- function(db = .GlobalEnv$db) {
     localTables <- list.files(path = data.dir, pattern = paste0("^", 
@@ -176,8 +176,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     if (length(status[[1]]) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
     }
-    else if (length(status[[1]]) == 0 & force.extract == 
-             T) {
+    else if (length(status[[1]]) == 0 & force.extract == T) {
       try_extract(usepkg, reqd)
       try_load(reqd, data.dir)
     }

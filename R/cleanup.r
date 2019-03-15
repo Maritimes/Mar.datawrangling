@@ -11,11 +11,12 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 cleanup <- function(db=NULL, var.like = NULL, env=.GlobalEnv){
-  
+ 
   if (!is.null(var.like)) {
     rm(list = ls(pattern=var.like, envir = env), envir = env)
   } 
   if (!is.null(db)) {
+    db = tolower(db)
     tables = ds_all[[db]]$tables
     if (exists(as.character(paste0("zzz_orph_",ds_all[[db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[db]]$tables))
     rm(list = tables, envir = env)

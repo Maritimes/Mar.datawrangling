@@ -5,8 +5,8 @@
 \title{summarize_catches}
 \usage{
 summarize_catches(db = NULL, morph_dets = FALSE, gear_dets = FALSE,
-  keep_nullsets = FALSE, valid.coords = FALSE, quiet = FALSE,
-  drop.na.cols = TRUE, debug = FALSE, env = .GlobalEnv)
+  valid.coords = FALSE, quiet = FALSE, drop.na.cols = TRUE,
+  debug = FALSE, env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -24,12 +24,6 @@ detailed records can be added for each gear.  This means that a single catch
 will be duplicated multiple times - once for each new gear parameter (e.g.
 mesh shape, door height, etc).  If there's a good reason to show this with
 catch data, I can't think of it.}
-
-\item{keep_nullsets}{default is FALSE.  In many cases, in addition to the
-catch, it is also useful to know where fishing occurred that did not result
-in catches.  this is especially true for most survey-type data.
-Note that for industry fishing (i.e. ISDB and MARFIS), the null sets will
-actually just consist of all sets that met your filter criteria.}
 
 \item{valid.coords}{default is FALSE.  This uses 
 \code{Mar.utils::df.qc.spatial()} to remove coordinates that are not valid.  

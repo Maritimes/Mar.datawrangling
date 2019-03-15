@@ -273,6 +273,8 @@ load_datasources <- function(db=NULL){
                                       fk_fields=c("SPECSCD_ID")),
         "ISSETPROFILE_WIDE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
                                    fk_fields=c("FISHSET_ID","SET_NO")),
+        "ISCATCHES" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+                                   fk_fields=c("FISHSET_ID","SET_NO")),
         combine = "ALL"
       ),
       "ISOBSERVERCODES" = list(
@@ -793,7 +795,9 @@ load_datasources <- function(db=NULL){
       ),
       "GSCAT" = list(
         "GSINF" = list(pk_fields=c("MISSION","SETNO"),
-                       fk_fields=c("MISSION","SETNO"))
+                       fk_fields=c("MISSION","SETNO")),
+        "GSSPECIES" = list(pk_fields=c("SPEC"),
+                       fk_fields=c("CODE"))
       ),
       "GSGEAR" = list(
         "GSINF" = list(pk_fields=c("GEAR"),

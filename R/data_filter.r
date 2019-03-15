@@ -19,6 +19,12 @@
 #' appropriate, and in that case, it's a good idea.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
+#' @param keep_nullsets default is \code{TRUE}  If you're working the data that can 
+#' be extracted via this package, it can be useful to know where fishing 
+#' occurred that did not result in catches.  Note that for industry fishing 
+#' (i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching 
+#' your criteria are retained.  If you have selected data by the "caught 
+#' species", you will have already exluded the nullsets.
 #' @note
 #' If editing, please be aware of the scope of the data - the approach was to load the data into the
 #' global environment, and then do all the filtering there.  This is why subsets require
@@ -37,7 +43,7 @@
 #' @importFrom RODBC odbcClose
 #' @export
 #' @note This line is here to prevent an error message claiming the export is mult-line
-data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, env=.GlobalEnv) {
+data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep_nullsets = TRUE, env=.GlobalEnv) {
   filters = ds_all[[.GlobalEnv$db]]$filters
   
   get_location <- function() {
@@ -274,7 +280,7 @@ as removals from one table result in removals from another.\n
 If you want to see what records are being removed, you can run install the 
 bio.qcdata package and run qc_data(db).  It will capture the 'orphaned' records 
 so that you can examine them more closely.\n")
-if (safe==TRUE)self_filter(db)
+if (safe==TRUE)self_filter(db,keep_nullsets = keep_nullsets)
   while (length(filters) > 0) {
     cat("\nR isn't frozen - it's awaiting your selection in the pop-ups.\n")
     this.filter.name =  select.list(unlist(lapply(names(filters), function(l)l)),

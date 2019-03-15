@@ -5,7 +5,7 @@
 \title{self_filter}
 \usage{
 self_filter(db = NULL, looponce = FALSE, debug = FALSE,
-  env = .GlobalEnv)
+  env = .GlobalEnv, keep_nullsets = TRUE)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -18,6 +18,13 @@ cause the filtering commands to be printed out.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
+
+\item{keep_nullsets}{default is \code{TRUE}  If you're working the data that can 
+be extracted via this package, it can be useful to know where fishing 
+occurred that did not result in catches.  Note that for industry fishing 
+(i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching 
+your criteria are retained.  If you have selected data by the "caught 
+species", you will have already exluded the nullsets.}
 }
 \description{
 This function draws upon the relationships between the tables 

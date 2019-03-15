@@ -5,7 +5,7 @@
 \title{data_filter}
 \usage{
 data_filter(db = .GlobalEnv$db, refresh.data = FALSE, safe = TRUE,
-  env = .GlobalEnv)
+  keep_nullsets = TRUE, env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -21,6 +21,13 @@ boxes are only populated with viable options.  If FALSE, invalid values are
 possible.  Turning this off omits the initial self_filter(), and causes the 
 script to run faster.  It's only advisable if you know your selections are 
 appropriate, and in that case, it's a good idea.}
+
+\item{keep_nullsets}{default is \code{TRUE}  If you're working the data that can 
+be extracted via this package, it can be useful to know where fishing 
+occurred that did not result in catches.  Note that for industry fishing 
+(i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching 
+your criteria are retained.  If you have selected data by the "caught 
+species", you will have already exluded the nullsets.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}

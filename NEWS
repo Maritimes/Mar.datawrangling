@@ -2,6 +2,10 @@ Mar.datawrangling
 ==============
 
 Changes:
+2019.03.11
+* moves "keep_nullsets" variable to self_filter
+* removes case-sensitivity of datasources
+* incorporates a new updateCheck() function from Mar.utils
 2019.01.08
 * fixes joins within comland67 and comland86
 2018.10.29

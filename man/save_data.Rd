@@ -6,8 +6,8 @@
 \usage{
 save_data(db = NULL, df = NULL, filename = NULL,
   df.crs = "+init=epsg:4326", req.coords = TRUE,
-  lat.field = "LATITUDE", lon.field = "LONGITUDE",
-  keep_nullsets = FALSE, formats = c("csv", "shp"), env = .GlobalEnv)
+  lat.field = "LATITUDE", lon.field = "LONGITUDE", formats = c("csv",
+  "shp"), env = .GlobalEnv)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -27,13 +27,6 @@ LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.}
 \item{lat.field}{the default is \code{"LATITUDE"}. the name of the field holding latitude values (in decimal degrees)}
 
 \item{lon.field}{the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)}
-
-\item{keep_nullsets}{default is FALSE.  If you're working the data that can 
-be extracted via this package, it can be useful to know where fishing 
-occurred that did not result in catches.  Note that for industry fishing 
-(i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching 
-your criteria are retained.  If you have selected data by the "caught 
-species", you will have already exluded the null sets.}
 
 \item{formats}{This is a vector of the formats in which you would like to save the current data}
 

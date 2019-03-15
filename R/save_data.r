@@ -10,12 +10,6 @@
 #' with.
 #' @param req.coords default is TRUE.  This filters out records without values for LATITUDE or
 #' LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.
-#' @param keep_nullsets default is FALSE.  If you're working the data that can 
-#' be extracted via this package, it can be useful to know where fishing 
-#' occurred that did not result in catches.  Note that for industry fishing 
-#' (i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching 
-#' your criteria are retained.  If you have selected data by the "caught 
-#' species", you will have already exluded the null sets.
 #' @param lat.field the default is \code{"LATITUDE"}. the name of the field holding latitude values (in decimal degrees)
 #' @param lon.field the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)
 #' @param formats This is a vector of the formats in which you would like to save the current data
@@ -30,16 +24,16 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg:4326",
-                         req.coords=TRUE, lat.field = "LATITUDE",
+                         req.coords=TRUE, 
+                         lat.field = "LATITUDE",
                          lon.field = "LONGITUDE",
-                         keep_nullsets = FALSE,
                          formats = c('csv', 'shp'),
                          env=.GlobalEnv){
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
 records necessarily have positions and will not be visible in your shapefile")
 
   if (is.null(df)) {
-    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, keep_nullsets = keep_nullsets, env=env)
+    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env)
   }
   # if (is.null(filename)) name = match.call()[1]
   # }else{  }
