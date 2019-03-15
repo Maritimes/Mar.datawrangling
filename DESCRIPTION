@@ -20,7 +20,6 @@ Imports:
     Mar.utils
 Enhances:
     ROracle,
-    bio.plotting,
     DBI
 Remotes:
   Maritimes/Mar.utils

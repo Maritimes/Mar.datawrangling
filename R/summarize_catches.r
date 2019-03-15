@@ -57,7 +57,6 @@ summarize_catches <- function(db=NULL,
   doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, debug){
     
     this_tab_foreign_nm = names(this_tab_foreign)
-  #  if (this_tab_foreign_nm %in% c("USS_LENGTHS", "USS_DETAIL"))browser()
     if (!is.null(ds_all[[.GlobalEnv$db]]$table_det)){
       if (morph_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_det) {
         if (debug) cat(paste0("Skipping merge of ",ds_all[[.GlobalEnv$db]]$table_det,"\n"))
@@ -121,7 +120,6 @@ summarize_catches <- function(db=NULL,
         if (debug) {
           cat(paste0("\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')\n"))
         }
-       # if (joinTable %in% c("USS_LENGTHS","USS_DETAIL"))browser()
         all_recs = doMerge(all_recs, all_this, morph_dets, debug)
         joiners = joiners[!joiners %in% joinTable]
         z=1

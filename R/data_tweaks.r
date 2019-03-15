@@ -84,7 +84,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
   }
   if (db == 'isdb'){
     #'the following are special data handling processes specific to the ISDB tables
-   load(file.path(data.dir,"ISDB.ISFISHSETS.RData"), envir = .GlobalEnv)
+   test =load(file.path(data.dir,"ISDB.ISFISHSETS.RData"), envir = .GlobalEnv)
    load(file.path(data.dir,"ISDB.ISCATCHES.RData"), envir = .GlobalEnv)
     if (!'S_EST_NUM_CAUGHT' %in% colnames(ISCATCHES)){
       ISFISHSETS.directed=ISFISHSETS[c("FISHSET_ID","SET_NO","SPECSCD_ID")]  #keep only the field identifying the sought spp for each set

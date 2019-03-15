@@ -16,7 +16,6 @@ qc_findorphans<-function(db = NULL, usepkg = 'rodbc', data.dir = file.path(getwd
   #remove possible trailing slash from data.dir path
   if (substring(data.dir, nchar(data.dir))=="/") data.dir = substr(data.dir, 1, nchar(data.dir)-1)
   
-  if (!exists('ds_all', envir = .GlobalEnv)) assign("ds_all", load_datasources(), envir = .GlobalEnv)
   if (is.null(db)) stop("Please supply a value for db")
   
   prefix = toupper(db)
