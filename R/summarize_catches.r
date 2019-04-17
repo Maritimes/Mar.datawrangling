@@ -136,6 +136,7 @@ summarize_catches <- function(db=NULL,
   rm(summ)
   gc()
   if (drop.na.cols) all_recs[sapply(all_recs, function(x) all(is.na(x)))] <- NULL
+  if (nrow(all_recs) == 0)return(invisible(NULL))
   if (valid.coords == TRUE) {
     all_recs_spat = Mar.utils::df_qc_spatial(all_recs)
     if (NROW(all_recs_spat)==0) stop("\nNone of your records has valid coordinates...")

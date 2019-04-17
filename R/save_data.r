@@ -31,9 +31,13 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg
                          env=.GlobalEnv){
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
 records necessarily have positions and will not be visible in your shapefile")
-
   if (is.null(df)) {
     df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env)
+
+    if (is.null(df)){
+      cat("No records to save\n")
+      return(NULL)
+    }
   }
   # if (is.null(filename)) name = match.call()[1]
   # }else{  }
