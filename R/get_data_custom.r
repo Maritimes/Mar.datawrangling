@@ -2,8 +2,8 @@
 #' @description This function allows users to extract other tables within a
 #' known database that the script does not get by default.  They must have 
 #' access to the tables to extract them.
-#' @param db default is \code{NULL}. This identifies the dataset you want to get 
-#' additional tables from.
+#' @param schema default is \code{NULL}. This is the schema you want to access 
+#' a additional tables from.
 #' @param data.dir  The default is your working directory. If you are hoping to load existing data,
 #' this folder should contain a data folder containing your rdata files. If you are extracting data,
 #' a data folder will be created under this folder.
@@ -40,40 +40,75 @@
 #' @importFrom utils data
 #' @importFrom Mar.utils make_oracle_cxn
 #' @export
-get_data_custom<-function(db=NULL,
-                  data.dir = file.path(getwd(), 'data'),
-                  tables = NULL,
-                  usepkg = 'rodbc', 
-                  fn.oracle.username ="_none_",
-                  fn.oracle.password="_none_",
-                  fn.oracle.dsn="_none_",
-                  env=.GlobalEnv){
-
-    oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
-  
-  if (class(oracle_cxn_custom$channel)=="RODBC"){
-    thecmd= RODBC::sqlQuery
-  }else if (class(oracle_cxn_custom$channel)=="OraConnection"){
-    thecmd = ROracle::dbGetQuery
+get_data_custom<-function(schema=NULL,
+                          data.dir = file.path(getwd(), 'data'),
+                          tables = NULL,
+                          usepkg = 'rodbc', 
+                          fn.oracle.username ="_none_",
+                          fn.oracle.password="_none_",
+                          fn.oracle.dsn="_none_",
+                          env=.GlobalEnv){
+  try_load <- function(tables, data.dir, thisenv = env) {
+    loadit <- function(x, data.dir) {
+      this = paste0(x, ".RData")
+      thisP = file.path(data.dir, this)
+      load(file = thisP,envir = env)
+      cat(paste0("\nLoaded ", x, "... "))
+      fileAge = file.info(thisP)$mtime
+      fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
+                      0)
+      cat(paste0(" (Data modified ", fileAge, " days ago.)"))
+      if (fileAge > 90) 
+        cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
+    }
+    cat("\nLoading data...\n")
+    timer.start = proc.time()
+    sapply(tables, simplify = TRUE, loadit, data.dir)
+    elapsed = timer.start - proc.time()
+    cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
   }
-  prefix=toupper(db)
-  theschema = ds_all[[db]]$schema
-
-  for (i in 1:length(tables)){
-    cat(paste0("\nVerifying access to ",tables[i]," ..."))
-    qry = paste0("select '1' from ",theschema,".",gsub(paste0(prefix,"."),"",tables[i])," WHERE ROWNUM<=1")
-    if (is.character(thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))){
-      break("Can't find or access specified table")
-    }else{
-      cat(paste0("\nExtracting ",tables[i],"...\n"))
-      table_naked = table_naked1 = gsub(paste0(prefix,"."),"",tables[i])
-      qry = paste0("SELECT * from ", theschema, ".",table_naked)
-      res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
-      assign(table_naked, res)
-      save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
-      cat(paste("Got", tables[i],"\n"))
-      assign(x = tables[i],value = get(table_naked), envir = env)
-      cat(paste0("Loaded ",tables[i],"\n"))
+  
+  reqd = toupper(paste0(schema, ".", tables))
+  loadsuccess = tryCatch(
+    {
+      try_load(reqd, data.dir)
+    }, 
+    warning = function(w) {
+      print()
+    },
+    error=function(cond){
+      return(-1)
+    }
+  )
+  if (is.null(loadsuccess)){
+    return(NULL)
+  } else if (loadsuccess==-1){
+    oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
+    
+    if (class(oracle_cxn_custom$channel)=="RODBC"){
+      thecmd= RODBC::sqlQuery
+    }else if (class(oracle_cxn_custom$channel)=="OraConnection"){
+      thecmd = ROracle::dbGetQuery
+    }
+    prefix=theschema=toupper(schema)
+    
+    for (i in 1:length(tables)){
+      cat(paste0("\nVerifying access to ",tables[i]," ..."))
+      qry = paste0("select '1' from ",theschema,".",gsub(paste0(prefix,"."),"",tables[i])," WHERE ROWNUM<=1")
+      if (is.character(thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))){
+        break("Can't find or access specified table")
+      }else{
+        cat(paste0("\nExtracting ",tables[i],"...\n"))
+        table_naked = gsub(paste0(prefix,"."),"",tables[i])
+        table_naked1 = table_naked
+        qry = paste0("SELECT * from ", theschema, ".",table_naked)
+        res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
+        assign(table_naked, res)
+        save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
+        cat(paste("Got", tables[i],"\n"))
+        assign(x = tables[i],value = get(table_naked), envir = env)
+        cat(paste0("Loaded ",tables[i],"\n"))
+      }
     }
   }
 }

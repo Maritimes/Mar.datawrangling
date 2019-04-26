@@ -4,14 +4,14 @@
 \alias{get_data_custom}
 \title{get_data_custom}
 \usage{
-get_data_custom(db = NULL, data.dir = file.path(getwd(), "data"),
+get_data_custom(schema = NULL, data.dir = file.path(getwd(), "data"),
   tables = NULL, usepkg = "rodbc", fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
   env = .GlobalEnv)
 }
 \arguments{
-\item{db}{default is \code{NULL}. This identifies the dataset you want to get 
-additional tables from.}
+\item{schema}{default is \code{NULL}. This is the schema you want to access 
+a additional tables from.}
 
 \item{data.dir}{The default is your working directory. If you are hoping to load existing data,
 this folder should contain a data folder containing your rdata files. If you are extracting data,
