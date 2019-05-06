@@ -149,7 +149,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     elapsed = timer.start - proc.time()
     cat(paste("\n\nExtraction completed in", round(elapsed[3], 
                                                    0) * -1, "seconds"))
-    data_tweaks(data.dir = data.dir)
+    data_tweaks(db= .GlobalEnv$db, data.dir = data.dir)
   }
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {

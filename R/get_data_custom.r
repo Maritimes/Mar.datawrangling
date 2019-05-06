@@ -52,11 +52,14 @@ get_data_custom<-function(schema=NULL,
     loadit <- function(x, data.dir) {
       this = paste0(x, ".RData")
       thisP = file.path(data.dir, this)
+      if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "MARFISSCI",replacement ="MARFIS",ignore.case = T))) thisP = gsub(x= thisP,pattern = "MARFISSCI",replacement ="MARFIS",ignore.case = T)
+      if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T))) thisP = gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T)
+      if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T))) thisP = gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T)
+      
       load(file = thisP,envir = env)
       cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
-      fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
-                      0)
+      fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 0)
       cat(paste0(" (Data modified ", fileAge, " days ago.)"))
       if (fileAge > 90) 
         cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
