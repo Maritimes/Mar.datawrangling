@@ -70,7 +70,7 @@ self_filter <- function(db = NULL, looponce = FALSE, debug = FALSE, env=.GlobalE
       for (j in 1:length(names(ds_all[[.GlobalEnv$db]]$joins[[i]])[names(ds_all[[.GlobalEnv$db]]$joins[[i]]) !="combine"])){
         if (j>1) combine = ds_all[[.GlobalEnv$db]]$joins[[i]]$combine
         tab_foreign = names(ds_all[[.GlobalEnv$db]]$joins[[i]][j])
-      if (nrow(get(tab_prim))==0 & nrow(get(tab_foreign))==0) {
+      if (nrow(get(tab_prim, envir = env))==0 & nrow(get(tab_foreign, envir = env))==0) {
         next
       }
         if (length(ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields)>1){
