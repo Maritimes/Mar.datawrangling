@@ -55,7 +55,7 @@ get_std_rv<-function(fn.oracle.username = "_none_",
   infn$GSSTRATUM = infn$GSSTRATUM[infn$GSSTRATUM$STRAT %in% strat,]
   infn$GSSPECIES = infn$GSSPECIES[infn$GSSPECIES$CODE == sp,]
   infn$GSDET = infn$GSDET[infn$GSDET$FLEN >= len_min & infn$GSDET$FLEN <= len_max,]
-  self_filter(db='rv', keep_nullsets = T, env = infn, debug = F)
+  Mar.datawrangling::self_filter(db='rv', keep_nullsets = T, env = infn, debug = F)
   res = Mar.datawrangling::summarize_catches(morph_dets = T, env = infn)
   
   Mar.datawrangling::get_data_custom(schema = 'groundfish', tables = "GSSPEC", data.dir = data.dir, env = infn,fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn)
