@@ -7,7 +7,7 @@
 get_data_custom(schema = NULL, data.dir = file.path(getwd(), "data"),
   tables = NULL, usepkg = "rodbc", fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
-  env = .GlobalEnv)
+  env = .GlobalEnv, quiet = F)
 }
 \arguments{
 \item{schema}{default is \code{NULL}. This is the schema you want to access 
@@ -46,6 +46,8 @@ over your existing value.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
+
+\item{quiet}{default is \code{FALSE}.  If TRUE, no output messages will be shown.}
 }
 \description{
 This function allows users to extract other tables within a
@@ -54,7 +56,8 @@ access to the tables to extract them.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{self_filter}},
+  \code{\link{get_data}}, \code{\link{get_std_rv}},
+  \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{
