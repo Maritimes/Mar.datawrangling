@@ -31,6 +31,7 @@
 #' over your existing value.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
+#' @param quiet default is \code{FALSE}.  If TRUE, no output messages will be shown.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @importFrom lubridate year
@@ -47,7 +48,8 @@ get_data_custom<-function(schema=NULL,
                           fn.oracle.username ="_none_",
                           fn.oracle.password="_none_",
                           fn.oracle.dsn="_none_",
-                          env=.GlobalEnv){
+                          env=.GlobalEnv,
+                          quiet=F){
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {
       this = paste0(x, ".RData")
@@ -57,18 +59,18 @@ get_data_custom<-function(schema=NULL,
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T))) thisP = gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T)
       
       load(file = thisP,envir = env)
-      cat(paste0("\nLoaded ", x, "... "))
+      if (!quiet) cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 0)
-      cat(paste0(" (Data modified ", fileAge, " days ago.)"))
-      if (fileAge > 90) 
+      if (!quiet) cat(paste0(" (Data modified ", fileAge, " days ago.)"))
+      if ((!quiet)  & fileAge > 90) 
         cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
     }
-    cat("\nLoading data...\n")
+    if (!quiet) cat("\nLoading data...\n")
     timer.start = proc.time()
     sapply(tables, simplify = TRUE, loadit, data.dir)
     elapsed = timer.start - proc.time()
-    cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
+    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
   }
   
   reqd = toupper(paste0(schema, ".", tables))
@@ -84,7 +86,7 @@ get_data_custom<-function(schema=NULL,
     }
   )
   if (is.null(loadsuccess)){
-    return(NULL)
+    return(invisible(NULL))
   } else if (loadsuccess==-1){
     oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
     
@@ -96,7 +98,7 @@ get_data_custom<-function(schema=NULL,
     prefix=theschema=toupper(schema)
     
     for (i in 1:length(tables)){
-      cat(paste0("\nVerifying access to ",tables[i]," ..."))
+      if (!quiet) cat(paste0("\nVerifying access to ",tables[i]," ..."))
       qry = paste0("select '1' from ",theschema,".",gsub(paste0(prefix,"."),"",tables[i])," WHERE ROWNUM<=1")
       if (is.character(thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))){
         break("Can't find or access specified table")
@@ -108,9 +110,9 @@ get_data_custom<-function(schema=NULL,
         res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
         assign(table_naked, res)
         save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
-        cat(paste("Got", tables[i],"\n"))
+        if (!quiet) cat(paste("Got", tables[i],"\n"))
         assign(x = tables[i],value = get(table_naked), envir = env)
-        cat(paste0("Loaded ",tables[i],"\n"))
+        if (!quiet) cat(paste0("Loaded ",tables[i],"\n"))
       }
     }
   }
