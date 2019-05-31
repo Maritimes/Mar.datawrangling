@@ -48,7 +48,7 @@ get_std_rv<-function(fn.oracle.username = "_none_",
   infn <- new.env()
   # Get underlying data -----------------------------------------------------
 
-  Mar.datawrangling::get_data('rv', data.dir = data.dir, env = infn, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn)
+  Mar.datawrangling::get_data('rv', data.dir = data.dir, env = infn, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   infn$GSMISSIONS = infn$GSMISSIONS[infn$GSMISSIONS$YEAR >=year_min & infn$GSMISSIONS$YEAR <= year_max, ]
   infn$GSMISSIONS = infn$GSMISSIONS[infn$GSMISSIONS$SEASON == season,]
   infn$GSXTYPE = infn$GSXTYPE[infn$GSXTYPE$XTYPE==1,]
@@ -58,7 +58,7 @@ get_std_rv<-function(fn.oracle.username = "_none_",
   Mar.datawrangling::self_filter(db='rv', keep_nullsets = T, env = infn, debug = F)
   res = Mar.datawrangling::summarize_catches(morph_dets = T, env = infn)
   
-  Mar.datawrangling::get_data_custom(schema = 'groundfish', tables = "GSSPEC", data.dir = data.dir, env = infn,fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn)
+  Mar.datawrangling::get_data_custom(schema = 'groundfish', tables = "GSSPEC", data.dir = data.dir, env = infn,fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   res = merge(res, infn$GSSPEC[,c("SPEC","LENWGTA","LENWGTB","LGRP")], all.x = T)
   
   res_sets = unique(res[,c("SETNO","MISSION","LATITUDE","LONGITUDE","YEAR","STRAT","AREA")])
