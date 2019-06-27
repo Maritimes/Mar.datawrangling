@@ -12,7 +12,9 @@
 #' LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.
 #' @param lat.field the default is \code{"LATITUDE"}. the name of the field holding latitude values (in decimal degrees)
 #' @param lon.field the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)
-#' @param formats This is a vector of the formats in which you would like to save the current data
+#' @param formats This is a vector of the formats in which you would like to save the current data,
+#' including "sp" for a SpatialPointsDataFrame (as a local object),  "shp" for a shapefile 
+#' or "csv" (both written to the wd).   
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @importFrom rgdal writeOGR
@@ -52,18 +54,21 @@ records necessarily have positions and will not be visible in your shapefile")
   fn = paste(name,"_",ts,sep="" )
   #id posix and date fields
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
-   if ('shp' %in% formats){
+   if ('shp' %in% formats | 'sp' %in% formats){
     df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(
         coords = df.sp[, c(lon.field, lat.field)],
         data = df.sp,
         proj4string = sp::CRS(df.crs)
       )
-    df.sp = Mar.utils::prepare_shape_fields(df.sp)
     if (nrow(df.sp@data) != nrow(df)) {
-      cat(paste0(nrow(df)-nrow(df.sp@data), " records were lost from the shapefile due to invalid coordinates\n"))
+      cat(paste0(nrow(df)-nrow(df.sp@data), " records were lost from due to invalid coordinates\n"))
     }
+    if ('sp' %in% formats) assign(fn, df.sp, envir = env)
+    if ('shp' %in% formats){
+    df.sp = Mar.utils::prepare_shape_fields(df.sp)
     rgdal::writeOGR(df.sp, ".", fn, driver="ESRI Shapefile", overwrite_layer=TRUE)
+    }
   }
   if ('csv' %in% formats){
     write.csv(df, paste0(fn,".csv"))
