@@ -29,8 +29,10 @@ LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.}
 \item{lon.field}{the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)}
 
 \item{formats}{This is a vector of the formats in which you would like to save the current data,
-including "sp" for a SpatialPointsDataFrame (as a local object),  "shp" for a shapefile 
-or "csv" (both written to the wd).}
+including "raw" for a (local) dataframe, "sp" for a (local) SpatialPointsDataFrame,  
+"shp" for a shapefile or "csv" (both written to the wd). The raw and sp objects will
+just have the name specified by filename, while the csv and shapefiles, since they're
+written externally also get a timestamp.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
