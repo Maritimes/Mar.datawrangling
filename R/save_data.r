@@ -13,8 +13,10 @@
 #' @param lat.field the default is \code{"LATITUDE"}. the name of the field holding latitude values (in decimal degrees)
 #' @param lon.field the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)
 #' @param formats This is a vector of the formats in which you would like to save the current data,
-#' including "sp" for a SpatialPointsDataFrame (as a local object),  "shp" for a shapefile 
-#' or "csv" (both written to the wd).   
+#' including "raw" for a (local) dataframe, "sp" for a (local) SpatialPointsDataFrame,  
+#' "shp" for a shapefile or "csv" (both written to the wd). The raw and sp objects will
+#' just have the name specified by filename, while the csv and shapefiles, since they're
+#' written externally also get a timestamp.  
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @importFrom rgdal writeOGR
@@ -34,7 +36,7 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
 records necessarily have positions and will not be visible in your shapefile")
   if (is.null(df)) {
-    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env)
+    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env, drop.na.cols = F)
 
     if (is.null(df)){
       cat("No records to save\n")
@@ -54,6 +56,7 @@ records necessarily have positions and will not be visible in your shapefile")
   fn = paste(name,"_",ts,sep="" )
   #id posix and date fields
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
+  if ('raw' %in% formats) assign(paste0("raw_",name), df, envir = env)
    if ('shp' %in% formats | 'sp' %in% formats){
     df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(
@@ -64,7 +67,7 @@ records necessarily have positions and will not be visible in your shapefile")
     if (nrow(df.sp@data) != nrow(df)) {
       cat(paste0(nrow(df)-nrow(df.sp@data), " records were lost from due to invalid coordinates\n"))
     }
-    if ('sp' %in% formats) assign(fn, df.sp, envir = env)
+    if ('sp' %in% formats) assign(paste0("sp_",name), df.sp, envir = env)
     if ('shp' %in% formats){
     df.sp = Mar.utils::prepare_shape_fields(df.sp)
     rgdal::writeOGR(df.sp, ".", fn, driver="ESRI Shapefile", overwrite_layer=TRUE)
