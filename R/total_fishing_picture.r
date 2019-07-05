@@ -74,7 +74,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                                 agg.poly.shp = "NAFO", agg.poly.field = "NAFO_1",
                                 data.dir = NULL, qplot=FALSE, quiet = FALSE){
   if (is.null(dateEnd)) dateEnd = dateStart+years(1)
-  thisFleet = get_fleet(dateStart = dateStart, dateEnd = dateEnd, mdCode = mdCode, sectors = 7, data.dir=data.dir, , fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+  thisFleet = get_fleet(dateStart = dateStart, dateEnd = dateEnd, mdCode = mdCode, sectors = 7, data.dir=data.dir, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   if (nrow(thisFleet)==0)stop("No vessels found for the supplied criteria","\n")
   #have to set explicitly in case it wasn't specified in call (use what we got from get_fleet)
   mdCode = unique(thisFleet$MON_DOC_DEFN_ID)
