@@ -98,8 +98,8 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     stop("\nNo MARFIS data matches filters")
   }
   #VMS Data (1)
-  if (!quiet)cat("Retrieving VMS data","\n")
-  vmsRecs = VMS_get_recs(dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = thisFleetVRNs)
+  if (!quiet)cat("\n","Retrieving VMS data")
+  vmsRecs = Mar.utils::VMS_get_recs(dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = thisFleetVRNs)
   vmsRecsCln = Mar.utils::VMS_clean_recs(vmsRecs, maxBreak_mins = maxBreak_mins)
   vmsRecsCln$OBSERVED <- 0
   #wait till after ISDB to convert VMS to segments
@@ -116,7 +116,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                          tfpEnv$ISSETPROFILE_WIDE$DATE_TIME3), 
                   tfpEnv$ISSETPROFILE_WIDE$DATE_TIME2), tfpEnv$ISSETPROFILE_WIDE$DATE_TIME1), 
     origin = "1970-01-01"))
-  thed = simple_date(thed, "fsDate")
+  thed = Mar.utils::simple_date(thed, "fsDate")
   tfpEnv$ISSETPROFILE_WIDE = cbind(tfpEnv$ISSETPROFILE_WIDE,thed)
   #vmstracks <- vmstracks[vmstracks$trekMin < max(marfisRange) & vmstracks$trekMax >= min(marfisRange),]
   tfpEnv$ISSETPROFILE_WIDE = tfpEnv$ISSETPROFILE_WIDE[tfpEnv$ISSETPROFILE_WIDE$fsDate >= min(marfisRange) 
@@ -147,7 +147,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     obTrips[,"meanDate"] = as.Date((as.integer(obTrips[,"LANDING_DATE"]) + as.integer(obTrips[,"BOARD_DATE"]))/2, origin="1970-01-01")
   }
   #make segments to get start and end times of tracks
-  vmstracks = make_segments(vmsRecsCln,objField = "trek",seqField = "POSITION_UTC_DATE",
+  vmstracks = Mar.utils::make_segments(vmsRecsCln,objField = "trek",seqField = "POSITION_UTC_DATE",
                             filename = "vms",createShp = F,plot = FALSE)
   vmstracks = vmstracks$segments
   #ensure that only VMS data with some overlap of marfis data is retained
@@ -169,7 +169,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   }
   if (exists("raw_isdb",envir = tfpEnv)){
     if (!quiet)cat("Determining location of Observer data","\n")
-    tfpEnv$raw_isdb = identify_area(tfpEnv$raw_isdb,
+    tfpEnv$raw_isdb = Mar.utils::identify_area(tfpEnv$raw_isdb,
                                     agg.poly.shp = agg.poly.shp,
                                     agg.poly.field = agg.poly.field)
     raw_isdbTrip = unique(tfpEnv$raw_isdb[,c(agg.poly.field,"TRIP_ID")])
@@ -182,7 +182,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   }
   if(exists("raw_marfis",envir = tfpEnv)){
     if (!quiet)cat("Determining location of MARFIS data","\n")
-    tfpEnv$raw_marfis = identify_area(tfpEnv$raw_marfis, 
+    tfpEnv$raw_marfis = Mar.utils::identify_area(tfpEnv$raw_marfis, 
                                       agg.poly.shp = agg.poly.shp,
                                       agg.poly.field = agg.poly.field)
     raw_marfisTrip = unique(tfpEnv$raw_marfis[,c(agg.poly.field,"TRIP_ID")])
