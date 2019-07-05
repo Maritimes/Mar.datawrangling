@@ -2,6 +2,8 @@ Mar.datawrangling
 ==============
 
 Changes:
+2019.07.05
+* adds total_fishing_picture(), with other related additions
 2019.03.11
 * moves "keep_nullsets" variable to self_filter
 * removes case-sensitivity of datasources

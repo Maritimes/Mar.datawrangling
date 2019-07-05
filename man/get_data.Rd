@@ -7,7 +7,7 @@
 get_data(db = NULL, usepkg = "rodbc", force.extract = FALSE,
   data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
-  env = .GlobalEnv)
+  env = .GlobalEnv, quiet = FALSE)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -21,10 +21,9 @@ roracle will extract data ~ 5x faster.}
 \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 data.}
 
-\item{data.dir}{The default is your working directory. If you are hoping to load existing data,
-this folder should contain a data folder containing your rdata files. If you are extracting data,
-a data folder will be created under this folder.
-extracted files to go.}
+\item{data.dir}{The default is your working directory. If you are hoping to 
+load existing data, this folder should identify the folder containing your 
+*.rdata files.}
 
 \item{fn.oracle.username}{default is \code{'_none_'} This is your username for
 accessing oracle objects. If you have a value for this stored in your
@@ -46,6 +45,9 @@ over your existing value.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
+
+\item{quiet}{default is \code{FALSE}.  If True, no text describing progress
+will be shown.}
 }
 \description{
 This function contains the logic for deciding whether to extract or load data.  It

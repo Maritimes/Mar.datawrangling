@@ -10,8 +10,6 @@
 #' @param db default is \code{NULL}. This identifies the dataset you are working
 #' with.
 #' @param looponce default is \code{NULL}.  This is only used for QC purposes.
-#' @param debug default is \code{FALSE}.  This is used for debugging, and will
-#' cause the filtering commands to be printed out.
 #' @param env This the the environment you want this function to work in.  The
 #' default value is \code{.GlobalEnv}.
 #' @param keep_nullsets default is \code{TRUE}  If you're working the data that can
@@ -20,6 +18,10 @@
 #' (i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching
 #' your criteria are retained.  If you have selected data by the "caught
 #' species", you will have already exluded the nullsets.
+#' @param quiet default is \code{FALSE}.  If True, the filtering process will
+#' not show text describing progress.
+#' @param debug default is \code{FALSE}.  This is used for debugging, and will
+#' cause the filtering commands to be printed out.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -29,11 +31,12 @@ self_filter <-
            looponce = FALSE,
            debug = FALSE,
            env = .GlobalEnv,
-           keep_nullsets = TRUE) {
+           keep_nullsets = TRUE,
+           quiet= FALSE) {
     if (is.null(db)) db = ds_all[[.GlobalEnv$db]]$db
     loopagain = TRUE
     loopLast = FALSE
-    cat("\nFiltering...\n")
+    if (!quiet) cat("\nFiltering...\n")
     
     timer.start = proc.time()
     prefix = toupper(db)
@@ -41,7 +44,7 @@ self_filter <-
     
     posTable = ds_all[[.GlobalEnv$db]]$table_pos
     
-    cat("\nRecords remaining in each table after each loop:\n")
+    if (!quiet) cat("\nRecords remaining in each table after each loop:\n")
     get_joiner = function(combine) {
       if (is.null(combine)) combine = "missing"
       switch(combine,
@@ -53,7 +56,7 @@ self_filter <-
       count.pre = sum(sapply(sapply(catchTable, get, env), NROW))
       count.pre.all = sapply(sapply(ds_all[[.GlobalEnv$db]]$tables, get, env), NROW)
       precnt = sum(count.pre.all)
-      print(count.pre.all)
+      if (!quiet) print(count.pre.all)
       for (i in 1:length(ds_all[[.GlobalEnv$db]]$joins)) {
         nullSetFlag = F
         tab_prim = names(ds_all[[.GlobalEnv$db]]$joins)[i]
@@ -131,16 +134,16 @@ self_filter <-
       postcnt = sum(count.post.all)
       count.post = sum(sapply(sapply(catchTable, get, env), NROW))
       if (postcnt == 0)
-        cat("No data remains.\n")
+        if (!quiet) cat("No data remains.\n")
       if ((precnt == postcnt & loopLast == TRUE) | looponce) {
         loopagain = FALSE
       } else if (count.pre == count.post) {
         loopLast = TRUE
       }
-      cat("--------------------\n")
+      if (!quiet) cat("--------------------\n")
     }
-    cat("Filtering completed\n")
+    if (!quiet) cat("Filtering completed\n")
     elapsed = timer.start - proc.time()
-    cat(paste0("\n", round(elapsed[3], 0) * -1, " seconds elapsed\n"))
+    if (!quiet) cat(paste0("\n", round(elapsed[3], 0) * -1, " seconds elapsed\n"))
     return(invisible(NULL))
   }

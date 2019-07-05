@@ -30,6 +30,7 @@
 #' @param sp default is \code{NULL}.  This is the species code you want data for
 #' @param len_min default is \code{NULL}.  This is the minimum length you want data to be returned for.
 #' @param len_max default is \code{NULL}. This is the maximum length you want data to be returned for.
+#' @importFrom stats aggregate
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -77,7 +78,7 @@ get_std_rv<-function(fn.oracle.username = "_none_",
   res_dets$FLEN = floor(res_dets$FLEN/res_dets$LGRP)*res_dets$LGRP +1
   res_dets$STDCLEN = res_dets$CLEN*res_dets$TOTWGT/res_dets$SAMPWGT*1.75/res_dets$DIST
   
-  res_dets = aggregate(
+  res_dets = stats::aggregate(
     x = list(STDCLEN = res_dets$STDCLEN,
              CLEN = res_dets$CLEN),
     by = list(MISSION = res_dets$MISSION, 

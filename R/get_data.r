@@ -4,10 +4,9 @@
 #' global environment.  If some are missing, it will offer to re-extract them.  If the user chooses
 #' to re-extract, it will get their oracle credentials and verify that the user has access to all of
 #' the required tables prior to attempting an extraction.
-#' @param data.dir  The default is your working directory. If you are hoping to load existing data,
-#' this folder should contain a data folder containing your rdata files. If you are extracting data,
-#' a data folder will be created under this folder.
-#' extracted files to go.
+#' @param data.dir  The default is your working directory. If you are hoping to 
+#' load existing data, this folder should identify the folder containing your 
+#' *.rdata files.
 #' @param force.extract The default value is FALSE.  By default, existing data will be loaded.  If
 #' \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 #' data.
@@ -33,6 +32,8 @@
 #' over your existing value.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
+#' @param quiet default is \code{FALSE}.  If True, no text describing progress
+#' will be shown.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @importFrom lubridate year
@@ -43,8 +44,9 @@
 #' @importFrom Mar.utils make_oracle_cxn
 #' @export
 get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE, 
-          data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
-          fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", env=.GlobalEnv) 
+                     data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
+                     fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
+                     env=.GlobalEnv, quiet = FALSE) 
 {
   if (substring(data.dir, nchar(data.dir)) == "/") 
     data.dir = substr(data.dir, 1, nchar(data.dir) - 1)
@@ -87,20 +89,20 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       thecmd = RODBC::sqlQuery
     }
     if (action == "verify_access") {
-      cat(paste0("\nVerifying access to ", tables, " ..."))
+      if (!quiet) cat(paste0("\nVerifying access to ", tables, " ..."))
       qry = paste0("select '1' from ", theschema, ".", 
                    gsub(".*\\.", "", tables), " WHERE ROWNUM<=1")
       if (is.character(thecmd(oracle_cxn, qry, rows_at_time = 1))) {
-        cat(" failed")
+        if (!quiet) cat(" failed")
         return(FALSE)
       }
       else {
-        cat(" success")
+        if (!quiet) cat(" success")
         return(TRUE)
       }
     }
     else if (action == "extract") {
-      cat(paste0("\nExtracting ", tables, "... "))
+      if (!quiet) cat(paste0("\nExtracting ", tables, "... "))
       add.where = "1=1"
       if (tables %in% names(ds_all[[.GlobalEnv$db]]$table_err_roracle)) {
         this = ds_all[[.GlobalEnv$db]]$table_err_roracle[[tables]]
@@ -108,7 +110,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
                                       this$badvalues)), sep = "", collapse = ",")
         add.where = paste0(this$field, " NOT IN (", badvalues, 
                            ")")
-        cat(paste0("\n\tSkipping records ", theschema, 
+        if (!quiet) cat(paste0("\n\tSkipping records ", theschema, 
                    ".", tables, ".", this$field, " IN (", badvalues, 
                    ")\n\n                   \tThis\\These are from ", 
                    this$comments, "\n                   \n                   \tIf this is critical, use RODBC instead of ROracle\n"))
@@ -120,7 +122,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       assign(table_naked, res)
       save(list = table_naked1, file = file.path(data.dir, 
                                                  paste0(tables, ".RData")))
-      cat(paste("Got", tables))
+      if (!quiet) cat(paste("Got", tables))
     }
   }
   try_extract <- function(usepkg, tables) {
@@ -142,12 +144,12 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     if (!all(verified)) 
       stop("You do not have access to all of the required tables.\n      \nPlease ask the db custodian to grant you access to the tables listed above, and try again.\n\n      ")
     dir.create(data.dir, recursive = TRUE, showWarnings = FALSE)
-    cat("\n\nStarting extractions... ")
+    if (!quiet) cat("\n\nStarting extractions... ")
     timer.start = proc.time()
     sapply(tables, oracle_activity, oracle_cxn[[2]], oracle_cxn[[1]], 
            ds_all[[.GlobalEnv$db]]$schema, toupper(db), "extract")
     elapsed = timer.start - proc.time()
-    cat(paste("\n\nExtraction completed in", round(elapsed[3], 
+    if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 
                                                    0) * -1, "seconds"))
     data_tweaks(db= .GlobalEnv$db, data.dir = data.dir)
   }
@@ -156,19 +158,20 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       this = paste0(x, ".RData")
       thisP = file.path(data.dir, this)
       load(file = thisP,envir = env)
-      cat(paste0("\nLoaded ", x, "... "))
+      if (!quiet) cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
                       0)
-      cat(paste0(" (Data modified ", fileAge, " days ago.)"))
-      if (fileAge > 90) 
-        cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
+      if (!quiet) {
+        cat(paste0(" (Data modified ", fileAge, " days ago.)"))
+        if (fileAge > 90) cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
+      }
     }
-    cat("\nLoading data...\n")
+    if (!quiet) cat("\nLoading data...\n")
     timer.start = proc.time()
     sapply(tables, simplify = TRUE, loadit, data.dir)
     elapsed = timer.start - proc.time()
-    cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
+    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
   }
   reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
   if (dir.exists(data.dir) == TRUE) {

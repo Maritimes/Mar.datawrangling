@@ -5,7 +5,7 @@
 \title{self_filter}
 \usage{
 self_filter(db = NULL, looponce = FALSE, debug = FALSE,
-  env = .GlobalEnv, keep_nullsets = TRUE)
+  env = .GlobalEnv, keep_nullsets = TRUE, quiet = FALSE)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -25,6 +25,9 @@ occurred that did not result in catches.  Note that for industry fishing
 (i.e. ISDB, MARFIS, COMLAND**), this will just ensure that all sets matching
 your criteria are retained.  If you have selected data by the "caught
 species", you will have already exluded the nullsets.}
+
+\item{quiet}{default is \code{FALSE}.  If True, the filtering process will
+not show text describing progress.}
 }
 \description{
 This function draws upon the relationships between the tables

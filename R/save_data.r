@@ -28,28 +28,26 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg:4326",
-                         req.coords=TRUE, 
-                         lat.field = "LATITUDE",
-                         lon.field = "LONGITUDE",
-                         formats = c('csv', 'shp'),
-                         env=.GlobalEnv){
+                      req.coords=TRUE, 
+                      lat.field = "LATITUDE",
+                      lon.field = "LONGITUDE",
+                      formats = c('csv', 'shp'),
+                      env=.GlobalEnv){
   if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
-records necessarily have positions and will not be visible in your shapefile")
+records necessarily have positions and will not be visible in your shapefile\n")
   if (is.null(df)) {
     df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env, drop.na.cols = F)
-
+    
     if (is.null(df)){
-      cat("No records to save\n")
+      cat("\nNo records to save")
       return(NULL)
     }
   }
-  # if (is.null(filename)) name = match.call()[1]
-  # }else{  }
-    if (is.null(filename)) {
-      name = match.call()[2]
-    }else {
-      name = filename
-    }
+  if (is.null(filename)) {
+    name = match.call()[2]
+  }else {
+    name = filename
+  }
   name = gsub('()','',name)
   name = gsub('\\.','',name)
   ts = format(Sys.time(), "%Y%m%d_%H%M")
@@ -57,20 +55,21 @@ records necessarily have positions and will not be visible in your shapefile")
   #id posix and date fields
   df=data.frame(lapply(df, function(x) if(inherits(x, "POSIXct")|inherits(x, "Date")) as.Date(strftime(x, format="%Y-%m-%d")) else x))
   if ('raw' %in% formats) assign(paste0("raw_",name), df, envir = env)
-   if ('shp' %in% formats | 'sp' %in% formats){
+  if ('shp' %in% formats | 'sp' %in% formats){
     df.sp = Mar.utils::df_qc_spatial(df, lat.field, lon.field)
     df.sp = sp::SpatialPointsDataFrame(
-        coords = df.sp[, c(lon.field, lat.field)],
-        data = df.sp,
-        proj4string = sp::CRS(df.crs)
-      )
+      coords = df.sp[, c(lon.field, lat.field)],
+      data = df.sp,
+      proj4string = sp::CRS(df.crs)
+    )
     if (nrow(df.sp@data) != nrow(df)) {
-      cat(paste0(nrow(df)-nrow(df.sp@data), " records were lost from due to invalid coordinates\n"))
+      cat("\n",paste0(nrow(df)-nrow(df.sp@data), " records were lost due to invalid coordinates"))
     }
     if ('sp' %in% formats) assign(paste0("sp_",name), df.sp, envir = env)
     if ('shp' %in% formats){
-    df.sp = Mar.utils::prepare_shape_fields(df.sp)
-    rgdal::writeOGR(df.sp, ".", fn, driver="ESRI Shapefile", overwrite_layer=TRUE)
+      df.sp = Mar.utils::prepare_shape_fields(df.sp)
+      rgdal::writeOGR(df.sp, ".", fn, driver="ESRI Shapefile", overwrite_layer=TRUE)
+      cat(paste0("\nWrote file to: ",file.path(getwd(),fn)))
     }
   }
   if ('csv' %in% formats){

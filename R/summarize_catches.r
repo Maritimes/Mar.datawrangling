@@ -59,7 +59,7 @@ summarize_catches <- function(db=NULL,
     this_tab_foreign_nm = names(this_tab_foreign)
     if (!is.null(ds_all[[.GlobalEnv$db]]$table_det)){
       if (morph_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_det) {
-        if (debug) cat(paste0("Skipping merge of ",ds_all[[.GlobalEnv$db]]$table_det,"\n"))
+        if (debug) cat(paste0("\nSkipping merge of ",ds_all[[.GlobalEnv$db]]$table_det))
         return(this_tab_prim_data)
       }else{
 
@@ -99,7 +99,7 @@ summarize_catches <- function(db=NULL,
   #ensure that tables that can be linked to the primary table are done first
   if(length(tab_foreign)>0){
     for (m in 1:length(tab_foreign)){
-      if (debug) cat(paste0("PRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')\n"))
+      if (debug) cat(paste0("\nPRIME: Trying merge(",tab_prim,", ",names(tab_foreign[m]),", by.x='",tab_foreign[[1]]$pk_fields,"', by.y='",tab_foreign[[1]]$fk_fields, "')"))
       all_recs = doMerge(all_recs, tab_foreign[m], morph_dets, debug)
     }
   }
@@ -118,7 +118,7 @@ summarize_catches <- function(db=NULL,
       if (all(fk %in% colnames(all_recs))){
         names(all_this[[1]]) = c("fk_fields","pk_fields")
         if (debug) {
-          cat(paste0("\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')\n"))
+          cat(paste0("\n\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')"))
         }
         all_recs = doMerge(all_recs, all_this, morph_dets, debug)
         joiners = joiners[!joiners %in% joinTable]
@@ -140,7 +140,7 @@ summarize_catches <- function(db=NULL,
   if (valid.coords == TRUE) {
     all_recs_spat = Mar.utils::df_qc_spatial(all_recs)
     if (NROW(all_recs_spat)==0) stop("\nNone of your records has valid coordinates...")
-    if (!quiet) cat(paste0("\nYou indicated you only wanted data with valid coordinates.  ",NROW(all_recs) - NROW(all_recs_spat)," of ",NROW(all_recs)," records were lost due to this constraint"))
+    if (!quiet) cat(paste0("\nYou indicated you only wanted data with valid coordinates.\n",NROW(all_recs) - NROW(all_recs_spat)," of ",NROW(all_recs)," records were lost due to this constraint"))
     all_recs = all_recs_spat
   }
   return(invisible(all_recs))
