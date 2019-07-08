@@ -2,20 +2,20 @@
 #' @description This function prepares a detailed length frequency table based on 1, 2 or 3 cm intervals
 #' depending on the species being processed. It provides the same data as results from NWAGS.gsd3lf_mv.
 #' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.password}  
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for this stored
-#' in your environment (e.g. from an rprofile file), this can be left and that
-#' value will be used.  If a value for this is provided, it will take priority
-#' over your existing value.
+#' identifier for accessing oracle objects. If you have a value for 
+#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+#' this can be left and that value will be used.  If a value for this is 
+#' provided, it will take priority over your existing value.
 #' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
 #' roracle will extract data ~ 5x faster.

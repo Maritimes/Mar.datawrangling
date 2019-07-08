@@ -33,13 +33,13 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg
                       lon.field = "LONGITUDE",
                       formats = c('csv', 'shp'),
                       env=.GlobalEnv){
-  if (req.coords == FALSE & 'shp' %in% formats) warning("\nSince req.coords = FALSE, not all of the
-records necessarily have positions and will not be visible in your shapefile\n")
+  if (req.coords == FALSE & 'shp' %in% formats) warning("\n","Since req.coords = FALSE, not all of the
+records necessarily have positions and will not be visible in your shapefile")
   if (is.null(df)) {
     df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env, drop.na.cols = F)
     
     if (is.null(df)){
-      cat("\nNo records to save")
+      cat("\n","No records to save")
       return(NULL)
     }
   }

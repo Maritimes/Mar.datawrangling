@@ -36,7 +36,7 @@ self_filter <-
     if (is.null(db)) db = ds_all[[.GlobalEnv$db]]$db
     loopagain = TRUE
     loopLast = FALSE
-    if (!quiet) cat("\nFiltering...\n")
+    if (!quiet) cat("\n","Filtering...")
     
     timer.start = proc.time()
     prefix = toupper(db)
@@ -44,7 +44,7 @@ self_filter <-
     
     posTable = ds_all[[.GlobalEnv$db]]$table_pos
     
-    if (!quiet) cat("\nRecords remaining in each table after each loop:\n")
+    if (!quiet) cat("\n","Records remaining in each table after each loop:")
     get_joiner = function(combine) {
       if (is.null(combine)) combine = "missing"
       switch(combine,
@@ -134,7 +134,7 @@ self_filter <-
       postcnt = sum(count.post.all)
       count.post = sum(sapply(sapply(catchTable, get, env), NROW))
       if (postcnt == 0)
-        if (!quiet) cat("No data remains.\n")
+        if (!quiet) cat("\n","No data remains.")
       if ((precnt == postcnt & loopLast == TRUE) | looponce) {
         loopagain = FALSE
       } else if (count.pre == count.post) {
@@ -142,8 +142,8 @@ self_filter <-
       }
       if (!quiet) cat("--------------------\n")
     }
-    if (!quiet) cat("Filtering completed\n")
+    if (!quiet) cat("\n","Filtering completed")
     elapsed = timer.start - proc.time()
-    if (!quiet) cat(paste0("\n", round(elapsed[3], 0) * -1, " seconds elapsed\n"))
+    if (!quiet) cat(paste0("\n", round(elapsed[3], 0) * -1, " seconds elapsed"))
     return(invisible(NULL))
   }

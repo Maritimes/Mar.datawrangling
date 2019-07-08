@@ -3,20 +3,20 @@
 #' Monitoring Doc IDs associated with a particular fleet for a particular date 
 #' range.
 #' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.password}  
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for this stored
-#' in your environment (e.g. from an rprofile file), this can be left and that
-#' value will be used.  If a value for this is provided, it will take priority
-#' over your existing value.
+#' identifier for accessing oracle objects. If you have a value for 
+#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+#' this can be left and that value will be used.  If a value for this is 
+#' provided, it will take priority over your existing value.
 #' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
 #' roracle will extract data ~ 5x faster.
@@ -72,38 +72,29 @@ get_fleet<-function(fn.oracle.username = "_none_",
                     sectors = 7, data.dir = getwd()){
   fleetEnv = new.env()
   # tweak_it <- function(df = NULL, mdCode = NULL){
-  #   #   cat("\n")
+  #not implemented, but envisioned for fleet specific processing tasks,
+  # though maybe in a seperate function
   #   #   if (length(mdCode)>1) browser()
   #   if (mdCode ==  1){
-  #     cat("FIXED GEAR GROUNDFISH MONITORI","\n")
-  # 
+  #     cat("\n","FIXED GEAR GROUNDFISH MONITORI")
   #       }else if (mdCode ==  2){
-  #         cat("MOBILE GEAR GROUNDFISH MONITOR","\n")
-  #     #     browser()
+  #         cat("\n","MOBILE GEAR GROUNDFISH MONITOR")
   #       }else if (mdCode ==  3){
-  #         cat("ATLANTIC BLUEFIN TUNA LOG DOCU","\n")
-  #     #     browser()
-  #     #     browser()
+  #         cat("\n","ATLANTIC BLUEFIN TUNA LOG DOCU")
   #       }else if (mdCode ==  4){
-  #         cat("SWORDFISH HARPOON","\n")
-  #     #     browser()
+  #         cat("\n","SWORDFISH HARPOON")
   #       }else if (mdCode ==  5){
-  #         cat("SWORDFISH/SHARK LONGLINE MONIT","\n")
-  #     #     browser()
+  #         cat("\n","SWORDFISH/SHARK LONGLINE MONIT")
   #       }else if (mdCode ==  6){
-  #         cat("FIXED GEAR HERRING MONITORING","\n")
-  #     #     browser()
+  #         cat("\n","FIXED GEAR HERRING MONITORING")
   #       }else if (mdCode ==  7){
-  #         cat("HERRING MOBILE GEAR MONITORING","\n")
-  #     #     browser()
+  #         cat("\n","HERRING MOBILE GEAR MONITORING")
   #       }else if (mdCode ==  8){
-  #         cat("TRANSPORT MONITORING DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","TRANSPORT MONITORING DOCUMENT")
   #       }else if (mdCode ==  9){
-  #         cat("MACKEREL - FIXED GEAR","\n")
-  #     #     browser()
+  #         cat("\n","MACKEREL - FIXED GEAR")
   #       }else if (mdCode == 10){
-  #         cat("CRAB MONITORING DOCUMENT","\n")
+  #         cat("\n","CRAB MONITORING DOCUMENT")
   #     #     detRecs =  unique(MON_DOC_ENTRD_DETS[MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID %in%  146,])
   #     #     thisSp = merge(df, detRecs, by="MON_DOC_ID")
   #     #     thisSp =unique(thisSp[,c("VR_NUMBER","DATA_VALUE")])
@@ -114,16 +105,13 @@ get_fleet<-function(fn.oracle.username = "_none_",
   #     #     )
   #     #     print(thisSpAgg)
   #       }else if (mdCode == 11){
-  #         cat("EXPLORATORY ROCK/JONAH CRAB FI","\n")
-  #     #     browser()
+  #         cat("\n","EXPLORATORY ROCK/JONAH CRAB FI")
   #       }else if (mdCode == 12){
-  #         cat("INSHORE DREDGE SHELLFISH","\n")
-  #     #     browser()
+  #         cat("\n","INSHORE DREDGE SHELLFISH")
   #       }else if (mdCode == 13){
-  #          cat("OFFSHORE CLAM FISHING LOG","\n")
-  #     #     # browser()
+  #          cat("\n","OFFSHORE CLAM FISHING LOG")
   #   }else if (mdCode == 14){
-  #     cat("SCALLOP MONITORING DOCUMENT","\n")
+  #     cat("\n","SCALLOP MONITORING DOCUMENT")
   #   #   detRecs =  unique(fleetEnv$MON_DOC_ENTRD_DETS[fleetEnv$MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID %in%  189,])
   #   #   thisSp = merge(df, detRecs, by="MON_DOC_ID")
   #   #   thisSp =unique(thisSp[,c("VR_NUMBER","DATA_VALUE")])
@@ -134,94 +122,66 @@ get_fleet<-function(fn.oracle.username = "_none_",
   #   #   )
   #   #   print(thisSpAgg)
   #       }else if (mdCode == 15){
-  #         cat("OFFSHORE SCALLOP MONITORING DO","\n")
-  #     #     browser()
+  #         cat("\n","OFFSHORE SCALLOP MONITORING DO")
   #       }else if (mdCode == 16){
-  #         cat("MOBILE SHRIMP","\n")
-  #     #     browser()
+  #         cat("\n","MOBILE SHRIMP")
   #       }else if (mdCode == 17){
-  #         cat("WHELK/MOONSNAIL MONITORING DOC","\n")
-  #     #     browser()
+  #         cat("\n","WHELK/MOONSNAIL MONITORING DOC")
   #       }else if (mdCode == 18){
-  #         cat("SEA URCHIN MONITORING DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","SEA URCHIN MONITORING DOCUMENT")
   #       }else if (mdCode == 19){
-  #         cat("OFFSHORE LOBSTER MONITORING DO","\n")
-  #     #     browser()
+  #         cat("\n","OFFSHORE LOBSTER MONITORING DO")
   #       }else if (mdCode == 20){
-  #         cat("FIXED GEAR (GROUNDFISH)/ ENGIN","\n")
-  #     #     browser()
+  #         cat("\n","FIXED GEAR (GROUNDFISH)/ ENGIN")
   #       }else if (mdCode == 21){
-  #         cat("GROUNDFISH - SHRIMP / POISSON","\n")
-  #     #     browser()
+  #         cat("\n","GROUNDFISH - SHRIMP / POISSON")
   #       }else if (mdCode == 22){
-  #         cat("ATLANTIC BLUEFIN TUNA LOG","\n")
-  #     #     browser()
+  #         cat("\n","ATLANTIC BLUEFIN TUNA LOG")
   #       }else if (mdCode == 23){
-  #         cat("PELAGICS / PELAGIQUES","\n")
-  #     #     browser()
+  #         cat("\n","PELAGICS / PELAGIQUES")
   #       }else if (mdCode == 24){
-  #         cat("GENERIC BUYERS SLIP / <<GENERI","\n")
-  #     #     browser()
+  #         cat("\n","GENERIC BUYERS SLIP / <<GENERI")
   #       }else if (mdCode == 25){
-  #         cat("CRAB LOG BOOK / LANDING REPORT","\n")
-  #     #     browser()
+  #         cat("\n","CRAB LOG BOOK / LANDING REPORT")
   #       }else if (mdCode == 26){
-  #         cat("TEST MONITORING DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","TEST MONITORING DOCUMENT")
   #       }else if (mdCode == 27){
-  #         cat("ATLANTIC STURGEON LOGBOOK","\n")
-  #     #     browser()
+  #         cat("\n","ATLANTIC STURGEON LOGBOOK")
   #       }else if (mdCode == 28){
-  #         cat("SHRIMP TRAP","\n")
-  #     #     browser()
+  #         cat("\n","SHRIMP TRAP")
   #       }else if (mdCode == 29){
-  #         cat("INTERNATIONAL FISHING LOG","\n")
-  #     #     browser()
+  #         cat("\n","INTERNATIONAL FISHING LOG")
   #       }else if (mdCode == 30){
-  #         cat("DECK LOG","\n")
-  #     #     browser()
+  #         cat("\n","DECK LOG")
   #       }else if (mdCode == 31){
-  #         cat("NORTHERN SHRIMP SLIP - C","\n")
-  #     #     browser()
+  #         cat("\n","NORTHERN SHRIMP SLIP - C")
   #       }else if (mdCode == 32){
-  #         cat("NATIONAL SEA SLIP","\n")
-  #     #     browser()
+  #         cat("\n","NATIONAL SEA SLIP")
   #       }else if (mdCode == 39){
-  #         cat("SEA CUCUMBER","\n")
-  #     #     browser()
+  #         cat("\n","SEA CUCUMBER")
   #       }else if (mdCode == 40){
-  #         cat("TEST BLANK DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","TEST BLANK DOCUMENT")
   #       }else if (mdCode == 41){
-  #         cat("SEA CUCUMBER (2012)","\n")
-  #     #     browser()
+  #         cat("\n","SEA CUCUMBER (2012)")
   #       }else if (mdCode == 46){
-  #         cat("GENERIC CATCH ENTRY DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","GENERIC CATCH ENTRY DOCUMENT")
   #       }else if (mdCode == 47){
-  #         cat("HAGFISH MONITORING DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","HAGFISH MONITORING DOCUMENT")
   #       }else if (mdCode == 48){
-  #         cat("COMMERCIAL OYSTER DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","COMMERCIAL OYSTER DOCUMENT")
   #       }else if (mdCode == 49){
-  #         cat("LOBSTER 38 B DOCUMENT","\n")
+  #         cat("\n","LOBSTER 38 B DOCUMENT")
   #     #     detRecs =  unique(MON_DOC_ENTRD_DETS[MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID %in%  189,])
-  #     #     browser()
   #       }else if (mdCode == 50){
-  #         cat("SHRIMP TRANSPORT DOCUMENT","\n")
-  #     #     browser()
+  #         cat("\n","SHRIMP TRANSPORT DOCUMENT")
   #       }else if (mdCode == 52){
-  #         cat("SEA URCHIN FOR LFA 36 & 38","\n")
-  #     #     browser()
+  #         cat("\n","SEA URCHIN FOR LFA 36 & 38")
   #       }else if (mdCode == 53){
-  #         cat("SCALLOP DIVE","\n")
-  #     #     browser()
+  #         cat("\n","SCALLOP DIVE")
   #   }
-  #   #   # cat("Doing lobster-y things","\n")
-  #   #   # cat("scalloping the data","\n")
-  #   #   # cat("swordfishing for facts","\n")
+  #   #   # cat("\n","Doing lobster-y things")
+  #   #   # cat("\n","scalloping the data")
+  #   #   # cat("\n","swordfishing for facts")
   #   #   # df = df[df$SECTOR_ID == 7,]
   #   #   # return(df)
   # }

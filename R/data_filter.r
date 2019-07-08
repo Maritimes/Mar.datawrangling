@@ -155,10 +155,10 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
       while (!file.exists(selected.option.sanitized) | 
              (ifelse(regexpr("\\.([[:alnum:]]+)$", selected.option.sanitized)>-1L, substring(selected.option.sanitized, regexpr("\\.([[:alnum:]]+)$", selected.option.sanitized) + 1L), "") !='shp')){
       if (f>1) {
-        cat("Invalid path, or filename does not include the .shp extension\n")
-        cat("Ensure you are referencing the full path, or that it's relative to your working directory")
+        cat("\n","Invalid path, or filename does not include the .shp extension")
+        cat("\n","Ensure you are referencing the full path, or that it's relative to your working directory")
       }
-        selected.option.sanitized = readline("Enter the full path to the shapefile \nyou want to use to clip (include the '.shp'): \n")
+        selected.option.sanitized = readline("\nEnter the full path to the shapefile \nyou want to use to clip (include the '.shp'): \n")
       f=f+1
       }
     }else if (names(choice) == 'Location') {
@@ -241,7 +241,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
         assign(filt_dets[[1]]$filt_tab, subset(get(filt_dets[[1]]$filt_tab, envir = env),
          get(filt_dets[[1]]$filt_tab)[, ("LONGITUDE")] >=  filt_data[4, 1]), envir = env)
     } else if (names(filt_dets) == 'By Polygon') {
-      buffer.m = readline("If you want to add a buffer so that data can fall slightly beyond \nyour polygon, please enter it here (in meters):\n")
+      buffer.m = readline("\nIf you want to add a buffer so that data can fall slightly beyond \nyour polygon, please enter it here (in meters):\n")
       if (buffer.m == "") buffer.m =0
       assign(filt_dets[[1]]$filt_tab, clip_by_poly(df=get(filt_dets[[1]]$filt_tab), buffer.m = buffer.m, clip.poly = filt_data[[1]]), envir = env)
     } else{
@@ -270,7 +270,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
   }
   if (refresh.data) sapply(ds_all[[.GlobalEnv$db]]$tables, simplify=TRUE, get_data, env)
   if (safe == TRUE)cat("
-The following step removes filtering options that would result in no records 
+\nThe following step removes filtering options that would result in no records 
 being returned.  It is performed even before any selections are made since many 
 of the code tables have values that never show up in the actual data.  It is 
 also performed every time a selection is chosen.\n
@@ -279,10 +279,10 @@ datasource will be displayed.  Sometimes the filtering happens multiple times,
 as removals from one table result in removals from another.\n
 If you want to see what records are being removed, you can run install the 
 bio.qcdata package and run qc_data(db).  It will capture the 'orphaned' records 
-so that you can examine them more closely.\n")
+so that you can examine them more closely.")
 if (safe==TRUE)self_filter(db,keep_nullsets = keep_nullsets)
   while (length(filters) > 0) {
-    cat("\nR isn't frozen - it's awaiting your selection in the pop-ups.\n")
+    cat("\n","R isn't frozen - it's awaiting your selection in the pop-ups.","\n")
     this.filter.name =  select.list(unlist(lapply(names(filters), function(l)l)),
       multiple = F,
       graphics = T,

@@ -3,20 +3,20 @@
 #' for a particular date range, for a particular Fleet (identified by the 
 #' monitoring document code). 
 #' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.password}  
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for this stored
-#' in your environment (e.g. from an rprofile file), this can be left and that
-#' value will be used.  If a value for this is provided, it will take priority
-#' over your existing value.
+#' identifier for accessing oracle objects. If you have a value for 
+#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+#' this can be left and that value will be used.  If a value for this is 
+#' provided, it will take priority over your existing value.
 #' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
 #' roracle will extract data ~ 5x faster.
@@ -57,6 +57,7 @@
 #' @importFrom rgdal readOGR
 #' @importFrom lubridate years
 #' @importFrom stats aggregate
+#' @importFrom graphics plot
 #' @importFrom Mar.utils VMS_get_recs
 #' @importFrom Mar.utils VMS_clean_recs
 #' @importFrom Mar.utils make_segments
@@ -75,14 +76,14 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                                 data.dir = NULL, qplot=FALSE, quiet = FALSE){
   if (is.null(dateEnd)) dateEnd = dateStart+years(1)
   thisFleet = get_fleet(dateStart = dateStart, dateEnd = dateEnd, mdCode = mdCode, sectors = 7, data.dir=data.dir, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
-  if (nrow(thisFleet)==0)stop("No vessels found for the supplied criteria","\n")
+  if (nrow(thisFleet)==0)stop("\n","No vessels found for the supplied criteria")
   #have to set explicitly in case it wasn't specified in call (use what we got from get_fleet)
   mdCode = unique(thisFleet$MON_DOC_DEFN_ID)
   thisFleetLics = unique(thisFleet$LICENCE_ID)
   thisFleetVRNs <- unique(thisFleet$VR_NUMBER)
   #create an environ for all this stuff
   tfpEnv = new.env()
-  if (!quiet)cat("Retrieving MARFIS data","\n")
+  if (!quiet)cat("\n","Retrieving MARFIS data")
   # MARFIS Data  
   Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   tfpEnv$PRO_SPC_INFO = tfpEnv$PRO_SPC_INFO[which(tfpEnv$PRO_SPC_INFO$DATE_FISHED >= dateStart 
@@ -91,11 +92,11 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   if (nrow(tfpEnv$PRO_SPC_INFO[!is.na(tfpEnv$PRO_SPC_INFO$LATITUDE)& !is.na(tfpEnv$PRO_SPC_INFO$LONGITUDE),])>0){
     save_data(df=tfpEnv$PRO_SPC_INFO,filename = 'marfis',formats = c("sp","shp","raw"), lat.field = "LATITUDE", lon.field = "LONGITUDE", env = tfpEnv)
   }
-  cat(paste0("\nMARFIS data range: ",min(tfpEnv$PRO_SPC_INFO$DATE_FISHED), " - ", max(tfpEnv$PRO_SPC_INFO$DATE_FISHED)))
+  cat(paste0("\n","MARFIS data range: ",min(tfpEnv$PRO_SPC_INFO$DATE_FISHED), " - ", max(tfpEnv$PRO_SPC_INFO$DATE_FISHED)))
   marfisRange = range(tfpEnv$PRO_SPC_INFO$DATE_FISHED)
   rm("PRO_SPC_INFO", envir = tfpEnv)
   if(!exists("raw_marfis",envir = tfpEnv)){
-    stop("\nNo MARFIS data matches filters")
+    stop("\n","No MARFIS data matches filters")
   }
   #VMS Data (1)
   if (!quiet)cat("\n","Retrieving VMS data")
@@ -106,7 +107,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   
   # Observer Data
   
-  if (!quiet)cat("Retrieving Observer data","\n")
+  if (!quiet)cat("\n","Retrieving Observer data")
   get_data('isdb',data.dir = data.dir, quiet = TRUE, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   #add specific dates so we can search by finer date range than year:
   thed = data.frame(fsDate = as.POSIXct(
@@ -138,11 +139,11 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   }
   cleanup('isdb', env = tfpEnv)
   if(!exists("raw_isdb",envir = tfpEnv)){
-    cat("No Observer data matches filters","\n")
+    cat("\n","No Observer data matches filters")
   } else {
     #VMS Data (2)
     #try to identify which VMS tracks had an observer (i.e. correct VRN and in appropriate time span)
-    if (!quiet)cat("Associating VMS data with Observer data","\n")
+    if (!quiet)cat("\n","Associating VMS data with Observer data")
     obTrips = unique(tfpEnv$raw_isdb[,c("MARFIS_LICENSE_NO","LICENSE_NO","BOARD_DATE","LANDING_DATE")])
     obTrips[,"meanDate"] = as.Date((as.integer(obTrips[,"LANDING_DATE"]) + as.integer(obTrips[,"BOARD_DATE"]))/2, origin="1970-01-01")
   }
@@ -162,13 +163,13 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   ts = format(Sys.time(), "%Y%m%d_%H%M")
   nm = paste0("vms_",ts)
   rgdal::writeOGR(obj = vmstracksShp, layer = nm, dsn = getwd(), driver = "ESRI Shapefile",  overwrite_layer = TRUE)
-  cat("VMS data saved as shapefile to ",paste0(getwd(),"/",nm,".shp"),"\n")
+  cat("\n","VMS data saved as shapefile to ",paste0(getwd(),"/",nm,".shp"))
   #get distribution percentages of observer data
   if (agg.poly.shp == "NAFO"){
     agg.poly.shp <- NULL
   }
   if (exists("raw_isdb",envir = tfpEnv)){
-    if (!quiet)cat("Determining location of Observer data","\n")
+    if (!quiet)cat("\n","Determining location of Observer data")
     tfpEnv$raw_isdb = Mar.utils::identify_area(tfpEnv$raw_isdb,
                                     agg.poly.shp = agg.poly.shp,
                                     agg.poly.field = agg.poly.field)
@@ -181,7 +182,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     )
   }
   if(exists("raw_marfis",envir = tfpEnv)){
-    if (!quiet)cat("Determining location of MARFIS data","\n")
+    if (!quiet)cat("\n","Determining location of MARFIS data")
     tfpEnv$raw_marfis = Mar.utils::identify_area(tfpEnv$raw_marfis, 
                                       agg.poly.shp = agg.poly.shp,
                                       agg.poly.field = agg.poly.field)
@@ -193,7 +194,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       length
     )
   }
-  if (!quiet)cat("Determining relative observer coverage for this data","\n")
+  if (!quiet)cat("\n","Determining relative observer coverage for this data")
   
   if (!is.null(agg.poly.shp)){
     agg.poly <- rgdal::readOGR(dsn = agg.poly.shp, verbose = FALSE)

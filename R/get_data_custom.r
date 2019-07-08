@@ -15,20 +15,20 @@
 #' connect.  rodbc is slightly easier to setup, but roracle will extract data ~ 
 #' 5x faster.
 #' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.password}  
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for this stored
-#' in your environment (e.g. from an rprofile file), this can be left and that
-#' value will be used.  If a value for this is provided, it will take priority
-#' over your existing value.
+#' identifier for accessing oracle objects. If you have a value for 
+#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+#' this can be left and that value will be used.  If a value for this is 
+#' provided, it will take priority over your existing value.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If TRUE, no output messages will be shown.
@@ -66,11 +66,11 @@ get_data_custom<-function(schema=NULL,
       if ((!quiet)  & fileAge > 90) 
         cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
     }
-    if (!quiet) cat("\nLoading data...\n")
+    if (!quiet) cat("\nLoading data...")
     timer.start = proc.time()
     sapply(tables, simplify = TRUE, loadit, data.dir)
     elapsed = timer.start - proc.time()
-    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
+    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
   }
   
   reqd = toupper(paste0(schema, ".", tables))
@@ -98,21 +98,21 @@ get_data_custom<-function(schema=NULL,
     prefix=theschema=toupper(schema)
     
     for (i in 1:length(tables)){
-      if (!quiet) cat(paste0("\nVerifying access to ",tables[i]," ..."))
+      if (!quiet) cat(paste0("\n","Verifying access to ",tables[i]," ..."))
       qry = paste0("select '1' from ",theschema,".",gsub(paste0(prefix,"."),"",tables[i])," WHERE ROWNUM<=1")
       if (is.character(thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))){
         break("Can't find or access specified table")
       }else{
-        cat(paste0("\nExtracting ",tables[i],"...\n"))
+        cat(paste0("\n","Extracting ",tables[i],"..."))
         table_naked = gsub(paste0(prefix,"."),"",tables[i])
         table_naked1 = table_naked
         qry = paste0("SELECT * from ", theschema, ".",table_naked)
         res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
         assign(table_naked, res)
         save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
-        if (!quiet) cat(paste("Got", tables[i],"\n"))
+        if (!quiet) cat(paste("\n","Got", tables[i]))
         assign(x = tables[i],value = get(table_naked), envir = env)
-        if (!quiet) cat(paste0("Loaded ",tables[i],"\n"))
+        if (!quiet) cat(paste0("\n","Loaded ",tables[i]))
       }
     }
   }

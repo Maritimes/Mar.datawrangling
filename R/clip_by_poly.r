@@ -75,7 +75,7 @@ clip_by_poly <- function(db = NULL, df=NULL,
     clip.poly_this = spTransform(clip.poly_this, CRS('+init=epsg:4326'))
   }
   if (NROW(df.sp[clip.poly_this, ]) ==0) {
-    stop("\nNo data lies inside this polygon, aborting clip.\n\n")
+    stop("\nNo data lies inside this polygon, aborting clip.")
   }
   df.sp_subset <- df.sp[clip.poly_this, ] 
   

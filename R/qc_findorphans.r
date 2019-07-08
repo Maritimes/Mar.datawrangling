@@ -22,14 +22,13 @@ qc_findorphans<-function(db = NULL, usepkg = 'rodbc', data.dir = file.path(getwd
   name_prefix = "zzz_orph_"
   get_data(db, usepkg = usepkg, data.dir = data.dir)
   self_filter(db, looponce=TRUE, debug = debug)
-  cat("
-Orphans within code tables are generally expected.
-This will take a moment...\n")
+  cat("\n","Orphans within code tables are generally expected.
+This will take a moment...")
   get_orphans <- function(this){
     x <- rbind(get(this, envir = orig), get(this, envir = .GlobalEnv))
     x = x[! duplicated(x, fromLast=TRUE) & seq(nrow(x)) <= nrow(get(this, envir = orig)), ]
     assign(paste0(name_prefix,this), x, envir = .GlobalEnv)
-    cat(paste0("Created ",name_prefix,this," ...\n"))
+    cat(paste0("\n","Created ",name_prefix,this," ..."))
   }
   
   these.tables.prefixed = paste0(prefix,".",ds_all[[db]]$tables)

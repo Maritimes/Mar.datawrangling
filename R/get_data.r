@@ -16,20 +16,20 @@
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
 #' roracle will extract data ~ 5x faster.
 #' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for this stored in your
-#' environment (e.g. from an rprofile file), this can be left and that value will
-#' be used.  If a value for this is provided, it will take priority over your
-#' existing value.
+#' accessing oracle objects. If you have a value for \code{oracle.password}  
+#' stored in your environment (e.g. from an rprofile file), this can be left out
+#' and that value will be used.  If a value for this is provided, it will take 
+#' priority over your existing value.
 #' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for this stored
-#' in your environment (e.g. from an rprofile file), this can be left and that
-#' value will be used.  If a value for this is provided, it will take priority
-#' over your existing value.
+#' identifier for accessing oracle objects. If you have a value for 
+#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+#' this can be left and that value will be used.  If a value for this is 
+#' provided, it will take priority over your existing value.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
@@ -167,11 +167,11 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
         if (fileAge > 90) cat(paste("\n!!! This data was extracted more than 90 days ago - consider re-extracting it"))
       }
     }
-    if (!quiet) cat("\nLoading data...\n")
+    if (!quiet) cat("\nLoading data...")
     timer.start = proc.time()
     sapply(tables, simplify = TRUE, loadit, data.dir)
     elapsed = timer.start - proc.time()
-    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load...\n"))
+    if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
   }
   reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
   if (dir.exists(data.dir) == TRUE) {
@@ -184,9 +184,9 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       try_load(reqd, data.dir)
     }
     else {
-      cat(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:\n"))
-      cat(status[[1]])
-      choice = toupper(readline(prompt = "Press 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
+      cat(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:"))
+      cat("\n",status[[1]])
+      choice = toupper(readline(prompt = "\nPress 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
       print(choice)
       if (toupper(choice) == "C") {
         stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
@@ -203,8 +203,8 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
   }
   else {
     cat(paste0("\nWarning: The specified data.dir ('", data.dir, 
-               "') does not exist.\n"))
-    goahead = toupper(readline(prompt = "Type 'y' to create this folder and extract the data into it.  Press any other key to cancel the operation. \n"))
+               "') does not exist."))
+    goahead = toupper(readline(prompt = "\nType 'y' to create this folder and extract the data into it.  Press any other key to cancel the operation."))
     print(goahead)
     if (toupper(goahead) != "Y") {
       stop("Cancelled.")

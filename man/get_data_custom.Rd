@@ -27,22 +27,22 @@ connect.  rodbc is slightly easier to setup, but roracle will extract data ~
 5x faster.}
 
 \item{fn.oracle.username}{default is \code{'_none_'} This is your username for
-accessing oracle objects. If you have a value for this stored in your
-environment (e.g. from an rprofile file), this can be left and that value will
-be used.  If a value for this is provided, it will take priority over your
-existing value.}
+accessing oracle objects. If you have a value for \code{oracle.username} 
+stored in your environment (e.g. from an rprofile file), this can be left out
+and that value will be used.  If a value for this is provided, it will take 
+priority over your existing value.}
 
 \item{fn.oracle.password}{default is \code{'_none_'} This is your password for
-accessing oracle objects. If you have a value for this stored in your
-environment (e.g. from an rprofile file), this can be left and that value will
-be used.  If a value for this is provided, it will take priority over your
-existing value.}
+accessing oracle objects. If you have a value for \code{oracle.password}  
+stored in your environment (e.g. from an rprofile file), this can be left out
+and that value will be used.  If a value for this is provided, it will take 
+priority over your existing value.}
 
 \item{fn.oracle.dsn}{default is \code{'_none_'} This is your dsn/ODBC
-identifier for accessing oracle objects. If you have a value for this stored
-in your environment (e.g. from an rprofile file), this can be left and that
-value will be used.  If a value for this is provided, it will take priority
-over your existing value.}
+identifier for accessing oracle objects. If you have a value for 
+\code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
+this can be left and that value will be used.  If a value for this is 
+provided, it will take priority over your existing value.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
