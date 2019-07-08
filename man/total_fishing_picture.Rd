@@ -7,9 +7,9 @@
 total_fishing_picture(fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
   usepkg = "rodbc", dateStart = NULL, dateEnd = NULL,
-  mdCode = NULL, maxBreak_mins = 1440, agg.poly.shp = "NAFO",
-  agg.poly.field = "NAFO_1", data.dir = NULL, qplot = FALSE,
-  quiet = FALSE)
+  mdCode = NULL, maxBreak_mins = 1440, obsCovByArea = FALSE,
+  agg.poly.shp = "NAFO", agg.poly.field = "NAFO_1", data.dir = NULL,
+  qplot = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{fn.oracle.username}{default is \code{'_none_'} This is your username for
@@ -53,6 +53,11 @@ previous "trek".  However, if it sits for 25 hours, a new trek will be created.
 This does not change the data that is extracted, just how the data is broken 
 into discrete line segments.}
 
+\item{obsCovByArea}{default is \code{FALSE}. Observer coverage is calculated 
+simply as a percentage of observer trips vs all trips.  If this is set to TRUE,
+coverage will be calculated on an area by area basis using the shapefile identified 
+in \code{agg_poly_shape} and the field identified in \code{agg.poly.field}.}
+
 \item{agg.poly.shp}{default is \code{NULL}.  This is the shapefile that has 
 polygons that should be checked for sufficient unique values of the 
 sens.fields.  If NULL, NAFO zones will be used.  Otherwise, a path to any 
@@ -75,9 +80,10 @@ be displayed as the script runs.}
 }
 \value{
 a list of 6 objects - "obs_raw" & "marfis_raw" contain the data extracted
-from their respected databases, "obs_sp" & "marfis_sp" are the same data, but as 
-SpatialPointsDataFrames and "vmstracks", which is a SpatialLinesDataFrame with 
-identified "treks"
+from their respected databases.  "obs_sp" & "marfis_sp" are the same data, but as 
+SpatialPointsDataFrames. "vmstracks" is a SpatialLinesDataFrame with identified 
+"treks". "obs_coverage" is a table showing the number of observed trips vs the 
+total number of trips (by area if obsCovByArea is TRUE)
 }
 \description{
 This function extracts all of the observer, Marfis and VMS data 

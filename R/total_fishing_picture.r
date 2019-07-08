@@ -35,6 +35,10 @@
 #' previous "trek".  However, if it sits for 25 hours, a new trek will be created.
 #' This does not change the data that is extracted, just how the data is broken 
 #' into discrete line segments. 
+#' @param obsCovByArea default is \code{FALSE}. Observer coverage is calculated 
+#' simply as a percentage of observer trips vs all trips.  If this is set to TRUE,
+#' coverage will be calculated on an area by area basis using the shapefile identified 
+#' in \code{agg_poly_shape} and the field identified in \code{agg.poly.field}.
 #' @param agg.poly.shp default is \code{NULL}.  This is the shapefile that has 
 #' polygons that should be checked for sufficient unique values of the 
 #' sens.fields.  If NULL, NAFO zones will be used.  Otherwise, a path to any 
@@ -52,9 +56,10 @@
 #' and Observer data (blue dots) will be generated.
 #' @family fleets
 #' @return a list of 6 objects - "obs_raw" & "marfis_raw" contain the data extracted
-#' from their respected databases, "obs_sp" & "marfis_sp" are the same data, but as 
-#' SpatialPointsDataFrames and "vmstracks", which is a SpatialLinesDataFrame with 
-#' identified "treks"
+#' from their respected databases.  "obs_sp" & "marfis_sp" are the same data, but as 
+#' SpatialPointsDataFrames. "vmstracks" is a SpatialLinesDataFrame with identified 
+#' "treks". "obs_coverage" is a table showing the number of observed trips vs the 
+#' total number of trips (by area if obsCovByArea is TRUE)  
 #' @importFrom rgdal readOGR
 #' @importFrom lubridate years
 #' @importFrom stats aggregate
@@ -73,9 +78,10 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                                 usepkg = "rodbc",
                                 dateStart = NULL, dateEnd =NULL, 
                                 mdCode = NULL, maxBreak_mins = 1440,
-                                agg.poly.shp = "NAFO", agg.poly.field = "NAFO_1",
+                                obsCovByArea = FALSE, agg.poly.shp = "NAFO", 
+                                agg.poly.field = "NAFO_1",
                                 data.dir = NULL, qplot=FALSE, quiet = FALSE){
-  if (is.null(dateEnd)) dateEnd = dateStart+years(1)
+  if (is.null(dateEnd)) dateEnd = as.Date(dateStart,origin = "1970-01-01")+lubridate::years(1)
   thisFleet = get_fleet(dateStart = dateStart, dateEnd = dateEnd, mdCode = mdCode, sectors = 7, data.dir=data.dir, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   if (nrow(thisFleet)==0)stop("\n","No vessels found for the supplied criteria")
   #have to set explicitly in case it wasn't specified in call (use what we got from get_fleet)
@@ -150,7 +156,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   }
   #make segments to get start and end times of tracks
   vmstracks = Mar.utils::make_segments(vmsRecsCln,objField = "trek",seqField = "POSITION_UTC_DATE",
-                            filename = "vms",createShp = F,plot = FALSE)
+                                       filename = "vms",createShp = F,plot = FALSE)
   vmstracks = vmstracks$segments
   #ensure that only VMS data with some overlap of marfis data is retained
   vmstracks <- vmstracks[vmstracks$trekMin < max(marfisRange) & vmstracks$trekMax >= min(marfisRange),]
@@ -165,28 +171,42 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   nm = paste0("vms_",ts)
   rgdal::writeOGR(obj = vmstracksShp, layer = nm, dsn = getwd(), driver = "ESRI Shapefile",  overwrite_layer = TRUE)
   cat("\n","VMS data saved as shapefile to ",paste0(getwd(),"/",nm,".shp"))
+  if(obsCovByArea){
   #get distribution percentages of observer data
   if (agg.poly.shp == "NAFO"){
     agg.poly.shp <- NULL
   }
   if (exists("raw_isdb",envir = tfpEnv)){
     if (!quiet)cat("\n","Determining location of Observer data")
+   
     tfpEnv$raw_isdb = Mar.utils::identify_area(tfpEnv$raw_isdb,
-                                    agg.poly.shp = agg.poly.shp,
-                                    agg.poly.field = agg.poly.field)
-    raw_isdbTrip = unique(tfpEnv$raw_isdb[,c(agg.poly.field,"TRIP_ID")])
-    isdb_agg = stats::aggregate(
-      x = list(OBS = raw_isdbTrip$TRIP_ID),
-      by = list(area = raw_isdbTrip[,agg.poly.field]
+                                               agg.poly.shp = agg.poly.shp,
+                                               agg.poly.field = agg.poly.field)
+    tt2 = stats::aggregate(
+      x = list(cnt =  tfpEnv$raw_isdb$TRIP_ID),
+      by = list(TRIP_ID = tfpEnv$raw_isdb$TRIP_ID,
+                area =  tfpEnv$raw_isdb[,agg.poly.field]
       ),
+      length
+    )
+    #Following is a hack.  We have the area for each set, but can only compare
+    #against MARFIS at a trip level.  The following assigns each trip to the area
+    #with the most sets.
+    tt2 <- data.table::setDT(tt2)
+    tt2 <- tt2[tt2[, .I[which.max(cnt)], by=TRIP_ID]$V1]
+    tt2 <- as.data.frame(tt2)
+    tt2$cnt<-NULL
+    isdb_agg = stats::aggregate(
+      x = list(OBS = tt2$TRIP_ID),
+      by = list(area = tt2$area),
       length
     )
   }
   if(exists("raw_marfis",envir = tfpEnv)){
     if (!quiet)cat("\n","Determining location of MARFIS data")
     tfpEnv$raw_marfis = Mar.utils::identify_area(tfpEnv$raw_marfis, 
-                                      agg.poly.shp = agg.poly.shp,
-                                      agg.poly.field = agg.poly.field)
+                                                 agg.poly.shp = agg.poly.shp,
+                                                 agg.poly.field = agg.poly.field)
     raw_marfisTrip = unique(tfpEnv$raw_marfis[,c(agg.poly.field,"TRIP_ID")])
     marfis_agg = stats::aggregate(
       x = list(MARFIS = raw_marfisTrip$TRIP_ID),
@@ -195,6 +215,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       length
     )
   }
+  
   if (!quiet)cat("\n","Determining relative observer coverage for this data")
   
   if (!is.null(agg.poly.shp)){
@@ -228,6 +249,13 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     allAreas$PERCENT <- allAreas$OBS/allAreas$MARFIS *100
   }else{
     allAreas <- NA
+  }
+  
+  }else{
+    allAreas <- data.frame(OBS = length(unique(tfpEnv$raw_isdb$TRIP_ID)),
+                           MARFIS = length(unique(tfpEnv$raw_marfis$TRIP_ID)),
+                           PERCENT = (length(unique(tfpEnv$raw_isdb$TRIP_ID))/
+                             length(unique(tfpEnv$raw_marfis$TRIP_ID)))*100)
   }
   res = list()
   res[["obs_raw"]]<- tfpEnv$raw_isdb
