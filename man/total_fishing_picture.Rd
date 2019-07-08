@@ -84,6 +84,10 @@ This function extracts all of the observer, Marfis and VMS data
 for a particular date range, for a particular Fleet (identified by the 
 monitoring document code).
 }
+\seealso{
+Other fleets: \code{\link{get_fleet}}
+}
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{fleets}

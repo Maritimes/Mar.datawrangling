@@ -57,6 +57,7 @@
 #' @param data.dir  The default is your working directory. If you are hoping to 
 #' load existing data, this folder should identify the folder containing your 
 #' *.rdata files.
+#' @family fleets
 #' @importFrom Mar.utils clean_crap_fields
 #' @importFrom Mar.utils rename_fields
 #' @importFrom Mar.utils simple_date

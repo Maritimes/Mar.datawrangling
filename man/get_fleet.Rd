@@ -82,6 +82,10 @@ This function extracts all of the Vessels, Licences and MARFIS
 Monitoring Doc IDs associated with a particular fleet for a particular date 
 range.
 }
+\seealso{
+Other fleets: \code{\link{total_fishing_picture}}
+}
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
 }
+\concept{fleets}

@@ -50,6 +50,7 @@
 #' @param qplot  default is \code{FALSE}. If set to TRUE, a quick and dirty plot 
 #' of the vms (grey (unobserved) and blue (observed)), Marfis (small black crosses) 
 #' and Observer data (blue dots) will be generated.
+#' @family fleets
 #' @return a list of 6 objects - "obs_raw" & "marfis_raw" contain the data extracted
 #' from their respected databases, "obs_sp" & "marfis_sp" are the same data, but as 
 #' SpatialPointsDataFrames and "vmstracks", which is a SpatialLinesDataFrame with 
