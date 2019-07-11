@@ -109,18 +109,16 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                                                       | (paste0(tfpEnv$PRO_SPC_INFO$MON_DOC_ID,"_",tfpEnv$PRO_SPC_INFO$LICENCE_ID,"_",tfpEnv$PRO_SPC_INFO$VR_NUMBER_LANDING,"_",tfpEnv$PRO_SPC_INFO$GEAR_CODE) %in% thisFleetUnq))), ]
   Mar.datawrangling::get_data_custom('marfissci', tables = "LOG_EFRT_STD_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   marfData = merge(tfpEnv$PRO_SPC_INFO,tfpEnv$LOG_EFRT_STD_INFO, by = c("LOG_EFRT_STD_INFO_ID", "MON_DOC_ID"), all.x =T)
-  
+
   
   if (nrow(marfData[!is.na(marfData$LATITUDE)& !is.na(marfData$LONGITUDE),])>0){
     save_data(df=marfData,filename = 'marfis',formats = c("sp","shp","raw"), lat.field = "LATITUDE", lon.field = "LONGITUDE", env = tfpEnv)
   }
   cat(paste0("\n","MARFIS data range: ",min(marfData$DATE_FISHED), " - ", max(marfData$DATE_FISHED)))
+  if (nrow(marfData)==0)stop("\n","No MARFIS data matches filters")
   marfisRange = range(marfData$DATE_FISHED)
   thisFleetVRNs = unique(c(marfData$VR_NUMBER_FISHING, marfData$VR_NUMBER_LANDING))
-  #rm("PRO_SPC_INFO", envir = tfpEnv)
-  if(!exists("raw_marfis",envir = tfpEnv)){
-    stop("\n","No MARFIS data matches filters")
-  }
+
   #VMS Data (1)
   if (length(thisFleetVRNs)>1000){
     cat("\n","Too many vessels to extract VMS data (max of 1000)")

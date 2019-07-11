@@ -88,15 +88,18 @@ get_fleet<-function(fn.oracle.username = "_none_",
     tbls = list(fleetEnv$GEARS, fleetEnv$MON_DOC_ENTRD_DETS, fleetEnv$MON_DOC_LICS, fleetEnv$V_LICENCE_HISTORY, fleetEnv$MON_DOCS, fleetEnv$MON_DOC_DEFNS, fleetEnv$COLUMN_DEFNS)
     while (LOOPAGAIN){
       precnt = sum(sapply(tbls, NROW))
+      fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_ID %in% fleetEnv$PRO_SPC_INFO$MON_DOC_ID,]
+      fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% fleetEnv$GEARS$GEAR_CODE,]
+      fleetEnv$MON_DOC_LICS = fleetEnv$MON_DOC_LICS[fleetEnv$MON_DOC_LICS$MON_DOC_ID %in% fleetEnv$MON_DOCS$MON_DOC_ID,]
       fleetEnv$MON_DOC_LICS = fleetEnv$MON_DOC_LICS[fleetEnv$MON_DOC_LICS$LICENCE_ID %in% fleetEnv$V_LICENCE_HISTORY$LICENCE_ID,]
       fleetEnv$V_LICENCE_HISTORY = fleetEnv$V_LICENCE_HISTORY[fleetEnv$V_LICENCE_HISTORY$LICENCE_ID %in% fleetEnv$MON_DOC_LICS$LICENCE_ID,]
-      fleetEnv$MON_DOC_LICS = fleetEnv$MON_DOC_LICS[fleetEnv$MON_DOC_LICS$MON_DOC_ID %in% fleetEnv$MON_DOCS$MON_DOC_ID,]
       fleetEnv$MON_DOC_ENTRD_DETS = fleetEnv$MON_DOC_ENTRD_DETS[fleetEnv$MON_DOC_ENTRD_DETS$MON_DOC_ID %in%  fleetEnv$MON_DOCS$MON_DOC_ID,]
-      fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% fleetEnv$GEARS$GEAR_CODE,]
       fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[fleetEnv$MON_DOC_DEFNS$MON_DOC_DEFN_ID %in% fleetEnv$MON_DOCS$MON_DOC_DEFN_ID,]
       fleetEnv$COLUMN_DEFNS = fleetEnv$COLUMN_DEFNS[fleetEnv$COLUMN_DEFNS$COLUMN_DEFN_ID %in% fleetEnv$MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID,]
       fleetEnv$GEARS = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% fleetEnv$MON_DOCS$FV_GEAR_CODE,]
-       postcnt =  sum(sapply(tbls, NROW))
+      fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[fleetEnv$PRO_SPC_INFO$MON_DOC_ID %in% fleetEnv$MON_DOCS$MON_DOC_ID,]
+      
+      postcnt =  sum(sapply(tbls, NROW))
       #cat(paste(precnt,"vs", postcnt,"\n"))
       if(postcnt==precnt) LOOPAGAIN=FALSE
     }
@@ -119,7 +122,11 @@ get_fleet<-function(fn.oracle.username = "_none_",
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOC_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   Mar.datawrangling::get_data_custom('marfissci', tables = "COLUMN_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   Mar.datawrangling::get_data_custom('marfissci', tables = "GEARS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
-  fleetEnv$MON_DOC_LICS= Mar.utils::clean_crap_fields(fleetEnv$MON_DOC_LICS, "MON_DOC_CUSER")
+  ###experimenting
+  Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+  ###
+  
+    fleetEnv$MON_DOC_LICS= Mar.utils::clean_crap_fields(fleetEnv$MON_DOC_LICS, "MON_DOC_CUSER")
   
   fleetEnv$V_LICENCE_HISTORY = Mar.utils::clean_crap_fields(fleetEnv$V_LICENCE_HISTORY)
   fleetEnv$V_LICENCE_HISTORY = Mar.utils::simple_date(fleetEnv$V_LICENCE_HISTORY, c("START_DATE_TIME","END_DATE_TIME","EXPIRY_DATE"))
@@ -138,6 +145,12 @@ get_fleet<-function(fn.oracle.username = "_none_",
   if (!is.null(mdCode) && mdCode != "all") fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdCode,] 
   if (!is.null(gearCode) && gearCode != "all") fleetEnv$GEARS <- fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearCode,]
   filternator()
+  #experimenting 2
+  fleetEnv$PRO_SPC_INFO = Mar.utils::simple_date(fleetEnv$PRO_SPC_INFO, c("LANDED_DATE","DATE_FISHED" ))
+  fleetEnv$PRO_SPC_INFO =  fleetEnv$PRO_SPC_INFO[which((fleetEnv$PRO_SPC_INFO$DATE_FISHED >= dateStart | fleetEnv$PRO_SPC_INFO$LANDED_DATE >= dateStart) 
+                                                       & (fleetEnv$PRO_SPC_INFO$DATE_FISHED < dateEnd | fleetEnv$PRO_SPC_INFO$LANDED_DATE < dateEnd)), ]
+  filternator()
+  #experimenting 2
   #sort in prep of select list
   fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[with(fleetEnv$MON_DOC_DEFNS,order(SHORT_DOC_TITLE, MON_DOC_DEFN_ID)),]
   mdCheck = unique(fleetEnv$MON_DOC_DEFNS$MON_DOC_DEFN_ID)
