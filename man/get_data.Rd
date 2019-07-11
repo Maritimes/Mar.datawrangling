@@ -11,7 +11,22 @@ get_data(db = NULL, usepkg = "rodbc", force.extract = FALSE,
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
-with.}
+with. Valid values include the following (assuming you have Oracle access)
+\itemize{
+\item \code{rv} - Bottom Trawl Surveys conducted in shore waters off south west Nova Scotia
+\item \code{rvp70} - Bottom Trawl Surveys conducted in shore waters off south west Nova Scotia conducted prior to 1970
+\item \code{isdb} - DFO at-sea fish catch observations from commercial fishing vessels operating in the North West Atlantic.
+\item \code{chid} - Exploratory fishing surveys of the benthic fish fauna at 900-1800m.
+\item \code{redfish} - A survey using stratified random design with day/night replication targeting deep sea redfish
+\item \code{marfis} - A Policy and Economics Branch database that houses information on the fisheries of the Scotia-Fundy region, including data related to catch and effort.
+\item \code{comland67} - Commercial Landings (1967-1985) - like MARFIS, but earlier.
+\item \code{comland86} - Commercial Landings (1986-2001) - like MARFIS, but earlier. This is separated from the 1967 - 1985 COMLAND data due to differences in the code tables.
+\item \code{stomach} -     Stomach Contents Database
+\item \code{asef} - Tagged salmon records at fishways
+\item \code{meso} - Mesopelagic Database
+\item \code{meso_gully} - Mesopelagic Gully Database
+\item \code{juvesh} - Juvenile Silver Hake Database
+}}
 
 \item{usepkg}{default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but

@@ -7,9 +7,10 @@
 total_fishing_picture(fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
   usepkg = "rodbc", dateStart = NULL, dateEnd = NULL,
-  mdCode = NULL, maxBreak_mins = 1440, obsCovByArea = FALSE,
-  agg.poly.shp = "NAFO", agg.poly.field = "NAFO_1", data.dir = NULL,
-  qplot = FALSE, quiet = FALSE)
+  mdCode = NULL, gearCode = NULL, sectors = 7,
+  maxBreak_mins = 1440, obsCovByArea = FALSE, agg.poly.shp = "NAFO",
+  agg.poly.field = "NAFO_1", data.dir = NULL, qplot = FALSE,
+  quiet = FALSE)
 }
 \arguments{
 \item{fn.oracle.username}{default is \code{'_none_'} This is your username for
@@ -44,6 +45,14 @@ data will be returned.}
 \item{mdCode}{default is \code{NULL}. This is the MARFIS Monitoring
 Document code used to identify fleets. If this is left as NULL, a popup
 will allow the user to select one from a list.}
+
+\item{gearCode}{default is \code{NULL}. In some cases, a fleet will contain multiple
+gear types. Setting this to \code{NULL} (the default) will prompt you to 
+select gears from the available values (if there are multiple).  Setting it to 
+\code{'all'} will get all gear types.  Entering a vector of MARFIS gear codes 
+(e.g. \code{c(51,81)}) will only return those gear codes.}
+
+\item{sectors}{default is \code{7} (i.e. Maritimes). This identifies the region.}
 
 \item{maxBreak_mins}{default is \code{1440} (minutes, or 24 hours).  This is the 
 amount of time that can pass for a vessel between successive VMS points before 
