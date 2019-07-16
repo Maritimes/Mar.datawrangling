@@ -123,8 +123,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, 
                                        fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, 
                                        fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
-    tfpEnv$PRO_SPC_INFO =  tfpEnv$PRO_SPC_INFO[which((tfpEnv$PRO_SPC_INFO$DATE_FISHED >= dateStart | tfpEnv$PRO_SPC_INFO$LANDED_DATE >= dateStart) 
-                                                     & (tfpEnv$PRO_SPC_INFO$DATE_FISHED < dateEnd | tfpEnv$PRO_SPC_INFO$LANDED_DATE < dateEnd)
+    tfpEnv$PRO_SPC_INFO =  tfpEnv$PRO_SPC_INFO[which((tfpEnv$PRO_SPC_INFO$DATE_FISHED >= dateStart & tfpEnv$PRO_SPC_INFO$DATE_FISHED <= dateEnd)
                                                      & ((paste0(tfpEnv$PRO_SPC_INFO$MON_DOC_ID,"_",tfpEnv$PRO_SPC_INFO$LICENCE_ID,"_",tfpEnv$PRO_SPC_INFO$VR_NUMBER_FISHING,"_",tfpEnv$PRO_SPC_INFO$GEAR_CODE) %in% thisFleetUnq)
                                                         | (paste0(tfpEnv$PRO_SPC_INFO$MON_DOC_ID,"_",tfpEnv$PRO_SPC_INFO$LICENCE_ID,"_",tfpEnv$PRO_SPC_INFO$VR_NUMBER_LANDING,"_",tfpEnv$PRO_SPC_INFO$GEAR_CODE) %in% thisFleetUnq))), ]
     Mar.datawrangling::get_data_custom('marfissci', tables = "LOG_EFRT_STD_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
@@ -146,11 +145,11 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                       dateStart = dateStart, dateEnd = dateEnd, vrnList = thisFleetVRNs,
                       marfisRange=marfisRange){
     if (!quiet)cat("\n","Retrieving VMS data")
-    vmsRecs = VMS_get_recs(fn.oracle.username = fn.oracle.username, 
+    vmsRecs = Mar.utils::VMS_get_recs(fn.oracle.username = fn.oracle.username, 
                            fn.oracle.password = fn.oracle.password, 
                            fn.oracle.dsn = fn.oracle.dsn,
                            dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = thisFleetVRNs)
-    vmsRecsCln = VMS_clean_recs(vmsRecs, maxBreak_mins = maxBreak_mins)
+    vmsRecsCln = Mar.utils::VMS_clean_recs(vmsRecs, maxBreak_mins = maxBreak_mins)
     vmsRecsCln$OBSERVED <- 0
     vmsRecsCln$MARFISMATCH <- 0
     if (nrow(vmsRecsCln)<1){
@@ -198,7 +197,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     #first part of condition below seems enough, but fisheries like clam don't have values for marfis licence No 
     #or marfis conf id - danger here of getting boats fishing under another licence?
     if (13 %in% mdCode) {
-      tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[ tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics 
+      tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[ tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics
                                        | tfpEnv$ISTRIPS$LICENSE_NO %in% thisFleetVRNs, ]
     }else{
       tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics, ]
@@ -207,7 +206,11 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     if (nrow(tfpEnv$ISTRIPS)>0){
       self_filter(env = tfpEnv, quiet = TRUE)
       #save_data(db="isdb",filename = "isdb",formats = c("shp","sp","raw"), env = tfpEnv)
-      this = summarize_catches(db="isdb", env = tfpEnv)
+      this = summarize_catches(db="isdb", drop.na.cols = FALSE, env = tfpEnv)
+      if (!is.data.frame(this)){
+        cat("\n","No Observer data matches filters")
+        return(NA)
+      }
     }else{
       cat("\n","No Observer data matches filters")
       return(NA)
@@ -232,9 +235,10 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                          (vmstracks@data[,"VR_NUMBER"] %in% as.character(c(marfisTrips[m,"VR_NUMBER_FISHING"], marfisTrips[m,"VR_NUMBER_LANDING"]))),"MARFISMATCH"]<-1
       }
     }
+    if(is.data.frame(obTrips) && nrow(obTrips)>0){
     if (!quiet)cat("\n","Associating VMS data with Observer data")
     obTrips = unique(obTrips[,c("MARFIS_LICENSE_NO","LICENSE_NO","BOARD_DATE","LANDING_DATE")])
-    obTrips = simple_date(obTrips, datefields = c("BOARD_DATE","LANDING_DATE"))
+    obTrips = Mar.utils::simple_date(obTrips, datefields = c("BOARD_DATE","LANDING_DATE"))
     if (!is.null(obTrips)) obTrips[,"meanDate"] = as.Date((as.integer(obTrips[,"LANDING_DATE"]) + as.integer(obTrips[,"BOARD_DATE"]))/2, origin="1970-01-01")
     if (!is.null(obTrips) && nrow(obTrips) >0){
       if (nrow(vmstracks@data)>0){
@@ -244,6 +248,9 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
         }
       }
     }
+  }else{
+    if (!quiet)cat("\n","No observed trips to associate with the VMS data.")
+  }
     return(vmstracks)
   } 
   
@@ -255,14 +262,20 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                             agg.poly.field = agg.poly.field){
     #get distribution percentages of observer data
     if (!obsCovByArea){
-      allAreas <- data.frame(OBS = length(unique(OBS$TRIP_ID)),
+      if (!is.data.frame(OBS)){
+        theseObs = 0
+      }else{
+        theseObs = length(unique(OBS$TRIP_ID))
+      }
+      allAreas <- data.frame(OBS = theseObs,
                              MARFIS = length(unique(MARFIS$TRIP_ID)),
-                             PERCENT = (length(unique(OBS$TRIP_ID))/
+                             PERCENT = (theseObs/
                                           length(unique(MARFIS$TRIP_ID))*100))
+ 
     }else{
       if (is.null(agg.poly.field))agg.poly.field="NAFO_1"
   
-      if (!is.null(OBS)){
+      if (is.data.frame(OBS)){
         if (!quiet)cat("\n","Determining location of Observer data.","\n",
                        "\tNote that observer data locations are recorded for each set while MARFIS data is recorded for each logbook record.","\n",
                        "n\tIn some cases, different sets within a trip can occur in different defined areas.",
@@ -312,7 +325,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       }
       
       allAreas = data.frame(area = unique(agg.poly@data[,agg.poly.field]))
-      if (nrow(isdb_agg)>0) {
+      if (exists("isdb_agg")) {
         allAreas = merge(allAreas, isdb_agg, all.x = T)
       }else{
         allAreas$OBS <- 0
@@ -322,8 +335,8 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       }else{
         allAreas$MARFIS <- 0
       }
-        allAreas = allAreas[which(!is.na(allAreas$OBS) | !is.na(allAreas$MARFIS)),]
-        allAreas[is.na(allAreas)] <- 0
+        allAreas[c("OBS", "MARFIS")][is.na(allAreas[c("OBS", "MARFIS")])] <- 0
+        allAreas = allAreas[allAreas$OBS+allAreas$MARFIS >0,]
         allAreas$PERCENT <- allAreas$OBS/allAreas$MARFIS *100
       
     }
@@ -427,8 +440,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                            agg.poly.shp=agg.poly.shp, 
                            agg.poly.field=agg.poly.field)
 
-  drawPlot(qplot, marfData=marfData, obsData=obsData$data,smartTracks=smartTracks )
-  browser()
+  drawPlot(qplot, marfData=marfData, obsData=obsData,smartTracks=smartTracks )
   if (create.shps) createShapefiles(obsData=obsData, marfData=marfData, smartTracks=smartTracks)
   res = list()
   res[["obs_raw"]]<- obsData

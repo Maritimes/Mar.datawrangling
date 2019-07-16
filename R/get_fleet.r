@@ -142,14 +142,13 @@ get_fleet<-function(fn.oracle.username = "_none_",
     fleetEnv$GEARS = Mar.utils::clean_crap_fields(fleetEnv$GEARS)
     fleetEnv$GEARS = unique(fleetEnv$GEARS[, names(fleetEnv$GEARS) %in% c("GEAR_CODE", 
                                                                     "DESC_ENG")])
-    if (gearCode != "all" && length(gearCode)>0) fleetEnv$GEARS = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearCode,]
 
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOCS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
     fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[, names(fleetEnv$MON_DOCS) %in% c("MON_DOC_ID", 
                                                                              "MON_DOC_DEFN_ID",
                                                                              "VR_NUMBER",
                                                                              "FV_GEAR_CODE")]
-    if (gearCode != "all" && length(gearCode)>0) fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% gearCode,]
+
     if (length(mdCode)>0 && mdCode != "all") fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdCode,] 
     
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOC_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
@@ -178,25 +177,27 @@ get_fleet<-function(fn.oracle.username = "_none_",
                                                                                          "MON_DOC_ID",
                                                                                          "DATE_FISHED",
                                                                                          "LANDED_DATE")]
-      if (gearCode != "all" && length(gearCode)>0)fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[fleetEnv$PRO_SPC_INFO$GEAR_CODE %in% gearCode,]
       fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[which((fleetEnv$PRO_SPC_INFO$DATE_FISHED < dateEnd | fleetEnv$PRO_SPC_INFO$LANDED_DATE < dateEnd)
                                                           & (fleetEnv$PRO_SPC_INFO$DATE_FISHED > dateStart | fleetEnv$PRO_SPC_INFO$LANDED_DATE > dateStart)),]
 
-
+      if (gearCode != "all" && length(gearCode)>0) {
+        fleetEnv$GEARS = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearCode,]
+        fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% gearCode,]
+        fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[fleetEnv$PRO_SPC_INFO$GEAR_CODE %in% gearCode,]
+      }
+      
     filternator()
 
     fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[with(fleetEnv$MON_DOC_DEFNS,order(DOCUMENT_TITLE, MON_DOC_DEFN_ID)),]
     mdCheck = unique(fleetEnv$MON_DOC_DEFNS$MON_DOC_DEFN_ID)
     
-   
-    
-    if (length(mdCheck)>1 ){
+    if (is.null(mdCheck) & length(mdCheck)>1 ){
       mdPick = getMD(mdCode)
       fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdPick,]  
     }
     filternator()
     grCheck = unique(fleetEnv$GEARS$GEAR_CODE)
-    if (length(grCheck)>1 ){
+    if (is.null(gearCode) & length(grCheck)>1 ){
       gearPick = getGCd(gearCode)
       fleetEnv$GEARS  = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearPick,]  
     }
