@@ -8,9 +8,9 @@ total_fishing_picture(fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
   usepkg = "rodbc", dateStart = NULL, dateEnd = NULL,
   mdCode = NULL, gearCode = NULL, sectors = 7,
-  maxBreak_mins = 1440, obsCovByArea = FALSE, agg.poly.shp = "NAFO",
-  agg.poly.field = "NAFO_1", data.dir = NULL, qplot = FALSE,
-  quiet = FALSE)
+  maxBreak_mins = 1440, obsCovByArea = FALSE, agg.poly.shp = NULL,
+  agg.poly.field = NULL, data.dir = NULL, qplot = FALSE,
+  create.shps = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{fn.oracle.username}{default is \code{'_none_'} This is your username for
@@ -83,6 +83,10 @@ load existing data, this folder should identify the folder containing your
 \item{qplot}{default is \code{FALSE}. If set to TRUE, a quick and dirty plot 
 of the vms (grey (unobserved) and blue (observed)), Marfis (small black crosses) 
 and Observer data (blue dots) will be generated.}
+
+\item{create.shps}{default is \code{FALSE}.  This indicates whether or not 
+shapefiles should be created for 1) Marfis data, 2) Observer data and 3) VMS 
+data.}
 
 \item{quiet}{default is \code{FALSE}. If set to TRUE, no output messages will
 be displayed as the script runs.}
