@@ -6,7 +6,7 @@
 \usage{
 get_fleet(fn.oracle.username = "_none_", fn.oracle.password = "_none_",
   fn.oracle.dsn = "_none_", usepkg = "rodbc", dateStart = NULL,
-  dateEnd = NULL, mdCode = NULL, gearCode = "all", sectors = 7,
+  dateEnd = NULL, mdCode = NULL, gearCode = NULL, sectors = 7,
   data.dir = getwd())
 }
 \arguments{

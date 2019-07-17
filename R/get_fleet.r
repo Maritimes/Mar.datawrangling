@@ -75,7 +75,7 @@ get_fleet<-function(fn.oracle.username = "_none_",
                         fn.oracle.dsn = "_none_",
                         usepkg = "rodbc",
                         dateStart = NULL, dateEnd = NULL, 
-                        mdCode = NULL, gearCode = 'all',
+                        mdCode = NULL, gearCode = NULL,
                         sectors = 7, data.dir = getwd()){
   mdCode=tolower(mdCode)
   gearCode=tolower(gearCode)
@@ -191,13 +191,14 @@ get_fleet<-function(fn.oracle.username = "_none_",
     fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[with(fleetEnv$MON_DOC_DEFNS,order(DOCUMENT_TITLE, MON_DOC_DEFN_ID)),]
     mdCheck = unique(fleetEnv$MON_DOC_DEFNS$MON_DOC_DEFN_ID)
     
-    if (is.null(mdCheck) & length(mdCheck)>1 ){
+
+    if (length(mdCode)<1 && length(mdCheck)>1 ){
       mdPick = getMD(mdCode)
       fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdPick,]  
     }
     filternator()
     grCheck = unique(fleetEnv$GEARS$GEAR_CODE)
-    if (is.null(gearCode) & length(grCheck)>1 ){
+    if (length(gearCode)<1 && length(grCheck)>1 ){
       gearPick = getGCd(gearCode)
       fleetEnv$GEARS  = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearPick,]  
     }

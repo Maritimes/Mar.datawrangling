@@ -147,7 +147,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     if (!quiet)cat("\n","Retrieving VMS data")
     vmsRecs = Mar.utils::VMS_get_recs(fn.oracle.username = fn.oracle.username, 
                            fn.oracle.password = fn.oracle.password, 
-                           fn.oracle.dsn = fn.oracle.dsn,
+                           fn.oracle.dsn = fn.oracle.dsn,usepkg = usepkg,
                            dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = thisFleetVRNs)
     vmsRecsCln = Mar.utils::VMS_clean_recs(vmsRecs, maxBreak_mins = maxBreak_mins)
     vmsRecsCln$OBSERVED <- 0
