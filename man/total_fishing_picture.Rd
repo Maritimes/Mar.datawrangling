@@ -7,7 +7,7 @@
 total_fishing_picture(fn.oracle.username = "_none_",
   fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
   usepkg = "rodbc", dateStart = NULL, dateEnd = NULL,
-  mdCode = NULL, gearCode = NULL, sectors = 7,
+  mdCode = NULL, gearCode = NULL, sectors = 7, getVMS = FALSE,
   maxBreak_mins = 1440, obsCovByArea = FALSE, agg.poly.shp = NULL,
   agg.poly.field = NULL, data.dir = NULL, qplot = FALSE,
   create.shps = FALSE, quiet = FALSE)
@@ -53,6 +53,10 @@ select gears from the available values (if there are multiple).  Setting it to
 (e.g. \code{c(51,81)}) will only return those gear codes.}
 
 \item{sectors}{default is \code{7} (i.e. Maritimes). This identifies the region.}
+
+\item{getVMS}{default is \code{FALSE}.  This indicates whether or not you want to 
+also get VMS data as part of your call.  If TRUE, it will try to associate the 
+VMS data with the Observer data.}
 
 \item{maxBreak_mins}{default is \code{1440} (minutes, or 24 hours).  This is the 
 amount of time that can pass for a vessel between successive VMS points before 
