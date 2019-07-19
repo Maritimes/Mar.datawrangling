@@ -34,6 +34,9 @@
 #' \code{'all'} will get all gear types.  Entering a vector of MARFIS gear codes 
 #' (e.g. \code{c(51,81)}) will only return those gear codes.
 #' @param sectors default is \code{7} (i.e. Maritimes). This identifies the region.
+#' @param getVMS default is \code{FALSE}.  This indicates whether or not you want to 
+#' also get VMS data as part of your call.  If TRUE, it will try to associate the 
+#' VMS data with the Observer data.
 #' @param maxBreak_mins default is \code{1440} (minutes, or 24 hours).  This is the 
 #' amount of time that can pass for a vessel between successive VMS points before 
 #' a new "trek" is imposed.  For example, if a vessel sits motionless at port 
@@ -89,6 +92,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                                 dateStart = NULL, dateEnd =NULL, 
                                 mdCode = NULL, gearCode = NULL,
                                 sectors = 7,
+                                getVMS = FALSE,
                                 maxBreak_mins = 1440,
                                 obsCovByArea = FALSE, agg.poly.shp = NULL, 
                                 agg.poly.field =NULL,
@@ -381,7 +385,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   }
   
 
-# create shapefiles -------------------------------------------------------
+  # create shapefiles -------------------------------------------------------
   createShapefiles<-function(obsData=obsData, marfData=marfData, smartTracks=smartTracks){
     ts = format(Sys.time(), "%Y%m%d_%H%M")
     if (is.data.frame(marfData)){
@@ -417,11 +421,15 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   
   thisFleetVRNs = unique(c(marfData$VR_NUMBER_FISHING, marfData$VR_NUMBER_LANDING))
   
-  vmsRecsCln <- get_VMS(fn.oracle.username = fn.oracle.username, 
+  if (getVMS) {
+    vmsRecsCln <- get_VMS(fn.oracle.username = fn.oracle.username, 
                         fn.oracle.password = fn.oracle.password, 
                         fn.oracle.dsn = fn.oracle.dsn,maxBreak_mins=maxBreak_mins,
                         dateStart = dateStart, dateEnd = dateEnd, vrnList = thisFleetVRNs,
                         marfisRange=range(marfData$DATE_FISHED)) 
+  }else{
+    vmsRecsCln <-NA
+  }
   
   obsData = get_OBS(fn.oracle.username = fn.oracle.username, 
                     fn.oracle.password = fn.oracle.password, 
@@ -431,8 +439,12 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                     thisFleet = thisFleet)
   
   
-  smartTracks = informVMSTracks(marfisTrips =  marfData[,c("VR_NUMBER_FISHING","VR_NUMBER_LANDING","LICENCE_ID","DATE_FISHED", "LANDED_DATE")], 
+  if (!is.na(vmsRecsCln)) {
+    smartTracks = informVMSTracks(marfisTrips =  marfData[,c("VR_NUMBER_FISHING","VR_NUMBER_LANDING","LICENCE_ID","DATE_FISHED", "LANDED_DATE")], 
                                 thisFleet = thisFleet, vmstracks =vmsRecsCln$tracks, obTrips = obsData)
+  }else{
+    smartTracks<-NA
+  }
   
   
   obsCov = calcOBSCoverage(obsCovByArea = obsCovByArea, 
