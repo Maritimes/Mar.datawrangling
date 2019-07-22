@@ -140,8 +140,7 @@ get_fleet<-function(fn.oracle.username = "_none_",
   # Get Data ----------------------------------------------------------------
   Mar.datawrangling::get_data_custom('marfissci', tables = "GEARS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
     fleetEnv$GEARS = Mar.utils::clean_crap_fields(fleetEnv$GEARS)
-    fleetEnv$GEARS = unique(fleetEnv$GEARS[, names(fleetEnv$GEARS) %in% c("GEAR_CODE", 
-                                                                    "DESC_ENG")])
+    fleetEnv$GEARS = unique(fleetEnv$GEARS[, names(fleetEnv$GEARS) %in% c("GEAR_CODE", "GEAR","DESC_ENG")])
 
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOCS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
     fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[, names(fleetEnv$MON_DOCS) %in% c("MON_DOC_ID", 
