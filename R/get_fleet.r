@@ -63,7 +63,7 @@
 #' load existing data, this folder should identify the folder containing your 
 #' *.rdata files.
 #' @family fleets
-#' @importFrom Mar.utils clean_crap_fields
+#' @importFrom Mar.utils clean_dfo_fields
 #' @importFrom Mar.utils rename_fields
 #' @importFrom Mar.utils simple_date
 #' @return returns a data.frame with 4 columns - "MON_DOC_DEFN_ID", "MON_DOC_ID", 
@@ -138,8 +138,40 @@ get_fleet<-function(fn.oracle.username = "_none_",
   }
   
   # Get Data ----------------------------------------------------------------
+  # #crap starts
+  # Mar.datawrangling::get_data_custom('marfissci', tables = "HAIL_IN_CALLS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+  # fleetEnv$HAIL_IN_CALLS = Mar.utils::clean_dfo_fields(fleetEnv$HAIL_IN_CALLS)
+  # Mar.datawrangling::get_data_custom('marfissci', tables = "HAIL_OUTS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+  # fleetEnv$HAIL_OUTS = Mar.utils::clean_dfo_fields(fleetEnv$HAIL_OUTS)
+  # Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
+  # fleetEnv$PRO_SPC_INFO = Mar.utils::clean_dfo_fields(fleetEnv$PRO_SPC_INFO) 
+  # Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
+  # fleetEnv$PRO_SPC_INFO = Mar.utils::clean_dfo_fields(fleetEnv$PRO_SPC_INFO) 
+  # #filt
+  # fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[which(fleetEnv$PRO_SPC_INFO$TRIP_ID==28259),]
+  # fleetEnv$HAIL_IN_CALLS =Mar.utils::drop_cols(fleetEnv$HAIL_IN_CALLS[which(fleetEnv$HAIL_IN_CALLS$TRIP_ID==28259),] )
+  # fleetEnv$HAIL_OUTS = Mar.utils::drop_cols(fleetEnv$HAIL_OUTS[which(fleetEnv$HAIL_OUTS$TRIP_ID==28259),])
+  # 
+  # View(fleetEnv$HAIL_IN_CALLS)
+  # View(fleetEnv$HAIL_OUTS)
+  # View(fleetEnv$PRO_SPC_INFO)
+  # browser()
+  # #crap ends
+  
+   Mar.datawrangling::get_data_custom('marfissci', tables = "HAIL_IN_CALLS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+    fleetEnv$HAIL_IN_CALLS = Mar.utils::clean_dfo_fields(fleetEnv$HAIL_IN_CALLS)
+    fleetEnv$HAIL_IN_CALLS =fleetEnv$HAIL_IN_CALLS[,c("HAIL_IN_CALL_ID", "HAIL_OUT_ID","TRIP_ID","CONF_NUMBER")]
+ 
+  Mar.datawrangling::get_data_custom('marfissci', tables = "HAIL_OUTS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+    fleetEnv$HAIL_OUTS = Mar.utils::clean_dfo_fields(fleetEnv$HAIL_OUTS)
+    fleetEnv$HAIL_OUTS =fleetEnv$HAIL_OUTS[,c("HAIL_OUT_ID","TRIP_ID","CONF_NUMBER")]
+    
+    #added HAIL_IN_CALLS and HAIL_OUTS
+    #will use PRO_SP_INFO$TRIP_ID to check
+    #chk = merge(fleetEnv$HAIL_IN_CALLS, fleetEnv$HAIL_OUTS, all=T, by="TRIP_ID")
+  
   Mar.datawrangling::get_data_custom('marfissci', tables = "GEARS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
-    fleetEnv$GEARS = Mar.utils::clean_crap_fields(fleetEnv$GEARS)
+    fleetEnv$GEARS = Mar.utils::clean_dfo_fields(fleetEnv$GEARS)
     fleetEnv$GEARS = unique(fleetEnv$GEARS[, names(fleetEnv$GEARS) %in% c("GEAR_CODE", "GEAR","DESC_ENG")])
 
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOCS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
@@ -147,23 +179,20 @@ get_fleet<-function(fn.oracle.username = "_none_",
                                                                              "MON_DOC_DEFN_ID",
                                                                              "VR_NUMBER",
                                                                              "FV_GEAR_CODE")]
-
-    if (length(mdCode)>0 && mdCode != "all") fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdCode,] 
     
   Mar.datawrangling::get_data_custom('marfissci', tables = "MON_DOC_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
     fleetEnv$MON_DOC_DEFNS = unique(fleetEnv$MON_DOC_DEFNS[, names(fleetEnv$MON_DOC_DEFNS) %in% c("MON_DOC_DEFN_ID", 
                                                                                            "DOCUMENT_TITLE",
                                                                                            "SECTOR_ID")] )
-    if (!is.null(sectors)) fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[fleetEnv$MON_DOC_DEFNS$SECTOR_ID  %in% sectors,]
 
   Mar.datawrangling::get_data_custom('marfissci', tables = "V_LICENCE_HISTORY", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
-    fleetEnv$V_LICENCE_HISTORY = Mar.utils::clean_crap_fields(fleetEnv$V_LICENCE_HISTORY)
+    fleetEnv$V_LICENCE_HISTORY = Mar.utils::clean_dfo_fields(fleetEnv$V_LICENCE_HISTORY)
     fleetEnv$V_LICENCE_HISTORY = unique(fleetEnv$V_LICENCE_HISTORY[, names(fleetEnv$V_LICENCE_HISTORY) %in% c("START_DATE_TIME", 
                                                                                                         "END_DATE_TIME",
                                                                                                         "SECTOR_ID",
                                                                                                         "LICENCE_ID",
                                                                                                         "SPECIES_CODE")])
-    if (!is.null(sectors)) fleetEnv$V_LICENCE_HISTORY = fleetEnv$V_LICENCE_HISTORY[fleetEnv$V_LICENCE_HISTORY$SECTOR_ID %in% sectors,]
+
     fleetEnv$V_LICENCE_HISTORY = fleetEnv$V_LICENCE_HISTORY[fleetEnv$V_LICENCE_HISTORY$START_DATE_TIME != fleetEnv$V_LICENCE_HISTORY$END_DATE_TIME 
                                                             & fleetEnv$V_LICENCE_HISTORY$START_DATE_TIME< dateEnd
                                                             & fleetEnv$V_LICENCE_HISTORY$END_DATE_TIME> dateStart,]
@@ -175,7 +204,8 @@ get_fleet<-function(fn.oracle.username = "_none_",
                                                                                          "LICENCE_ID",
                                                                                          "MON_DOC_ID",
                                                                                          "DATE_FISHED",
-                                                                                         "LANDED_DATE")]
+                                                                                         "LANDED_DATE",
+                                                                                         "TRIP_ID")]
       fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[which((fleetEnv$PRO_SPC_INFO$DATE_FISHED < dateEnd | fleetEnv$PRO_SPC_INFO$LANDED_DATE < dateEnd)
                                                           & (fleetEnv$PRO_SPC_INFO$DATE_FISHED > dateStart | fleetEnv$PRO_SPC_INFO$LANDED_DATE > dateStart)),]
 
@@ -184,6 +214,11 @@ get_fleet<-function(fn.oracle.username = "_none_",
         fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% gearCode,]
         fleetEnv$PRO_SPC_INFO = fleetEnv$PRO_SPC_INFO[fleetEnv$PRO_SPC_INFO$GEAR_CODE %in% gearCode,]
       }
+      if (length(mdCode)>0 && mdCode != "all") fleetEnv$MON_DOCS  = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$MON_DOC_DEFN_ID %in% mdCode,] 
+      if (!is.null(sectors)){
+        fleetEnv$V_LICENCE_HISTORY = fleetEnv$V_LICENCE_HISTORY[fleetEnv$V_LICENCE_HISTORY$SECTOR_ID %in% sectors,]
+        fleetEnv$MON_DOC_DEFNS = fleetEnv$MON_DOC_DEFNS[fleetEnv$MON_DOC_DEFNS$SECTOR_ID  %in% sectors,]
+      } 
       
     filternator()
 
@@ -202,6 +237,6 @@ get_fleet<-function(fn.oracle.username = "_none_",
       fleetEnv$GEARS  = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearPick,]  
     }
     filternator()
-  res = unique(merge(fleetEnv$PRO_SPC_INFO[,c("LICENCE_ID", "MON_DOC_ID", "GEAR_CODE")], fleetEnv$MON_DOCS[,c("MON_DOC_ID","MON_DOC_DEFN_ID","VR_NUMBER")]))
+  res = unique(merge(fleetEnv$PRO_SPC_INFO[,c("LICENCE_ID", "MON_DOC_ID", "GEAR_CODE","TRIP_ID")], fleetEnv$MON_DOCS[,c("MON_DOC_ID","MON_DOC_DEFN_ID","VR_NUMBER")]))
   return(res)
 }

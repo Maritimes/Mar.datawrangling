@@ -180,7 +180,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                       thisFleet = thisFleet){
     thisFleetLics = unique(thisFleet$LICENCE_ID)
     mdCode = unique(thisFleet$MON_DOC_DEFN_ID)
-    get_data('isdb' ,data.dir = data.dir, quiet = TRUE, env = tfpEnv, 
+    Mar.datawrangling::get_data('isdb' ,data.dir = data.dir, quiet = TRUE, env = tfpEnv, 
              fn.oracle.username = fn.oracle.username, 
              fn.oracle.password = fn.oracle.password, 
              fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
@@ -204,6 +204,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[ tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics
                                        | tfpEnv$ISTRIPS$LICENSE_NO %in% thisFleetVRNs, ]
     }else{
+      browser()
       tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics, ]
       #MARFIS_CONF_NUMBER?
     }
