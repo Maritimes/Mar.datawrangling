@@ -7,14 +7,11 @@
 #' extracted files to go.
 #' @family internal
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
-#' @importFrom stats setNames
-#' @importFrom lubridate ymd_hms
-#' @importFrom lubridate year
-#' @importFrom geosphere distGeo
 #' @export
 #' @note data is not added to the global environment by this function - changes are made, saved, and
 #' dropped.
 data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
+  ISFISHSETS <- NULL
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   these.tables = unlist(ds_all[[.GlobalEnv$db]]$tables)
   prefix = toupper(db)
@@ -247,7 +244,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
       cat("\nRFINF: Added a year field")
       
       months <- strptime(RFINF$SDATE, format='%Y-%m-%d %H:%M')$mon +1
-      indx <- setNames( rep(c('Winter', 'Spring', 'Summer', 'Fall'),each=3), c(12,1:11))
+      indx <- stats::setNames( rep(c('Winter', 'Spring', 'Summer', 'Fall'),each=3), c(12,1:11))
       RFINF$SEASON <- unname(indx[as.character(months)])
       
       cat("\nRFINF: Added a season field")

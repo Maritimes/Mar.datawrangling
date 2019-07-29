@@ -63,9 +63,6 @@
 #' load existing data, this folder should identify the folder containing your 
 #' *.rdata files.
 #' @family fleets
-#' @importFrom Mar.utils clean_dfo_fields
-#' @importFrom Mar.utils rename_fields
-#' @importFrom Mar.utils simple_date
 #' @return returns a data.frame with 4 columns - "MON_DOC_DEFN_ID", "MON_DOC_ID", 
 #' "LICENCE_ID" and "VR_NUMBER".
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
@@ -139,21 +136,21 @@ get_fleet<-function(fn.oracle.username = "_none_",
   }
 
   # Get code tables or select boxes -----------------------------------------  
-  get_data_custom('marfissci', tables = "GEARS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+  get_data_custom('MARFISSCI', tables = "GEARS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
   fleetEnv$GEARS = unique(fleetEnv$GEARS[, names(fleetEnv$GEARS) %in% c("GEAR_CODE", "GEAR","DESC_ENG")])
 
-  get_data_custom('marfissci', tables = "MON_DOC_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+  get_data_custom('MARFISSCI', tables = "MON_DOC_DEFNS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
   fleetEnv$MON_DOC_DEFNS = unique(fleetEnv$MON_DOC_DEFNS[, names(fleetEnv$MON_DOC_DEFNS) %in% c("MON_DOC_DEFN_ID", 
                                                                                                 "DOCUMENT_TITLE",
                                                                                                 "SECTOR_ID")] )
   # Get Data ----------------------------------------------------------------
-  get_data_custom('marfissci', tables = "MON_DOCS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
+  get_data_custom('MARFISSCI', tables = "MON_DOCS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg) 
   fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[, names(fleetEnv$MON_DOCS) %in% c("MON_DOC_ID", 
                                                                           "MON_DOC_DEFN_ID",
                                                                           "VR_NUMBER",
                                                                           "FV_GEAR_CODE")]
   
-  get_data_custom('marfissci', tables = "V_LICENCE_HISTORY", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
+  get_data_custom('MARFISSCI', tables = "V_LICENCE_HISTORY", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
   fleetEnv$V_LICENCE_HISTORY = Mar.utils::clean_dfo_fields(fleetEnv$V_LICENCE_HISTORY)
   fleetEnv$V_LICENCE_HISTORY = unique(fleetEnv$V_LICENCE_HISTORY[, names(fleetEnv$V_LICENCE_HISTORY) %in% c("START_DATE_TIME", 
                                                                                                             "END_DATE_TIME",
@@ -164,8 +161,18 @@ get_fleet<-function(fn.oracle.username = "_none_",
                                                           & fleetEnv$V_LICENCE_HISTORY$END_DATE_TIME> dateStart,]
   
   get_data_custom(schema = 'MARFISSCI', tables = "MON_DOC_LICS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)  
-    fleetEnv$MON_DOC_LICS = Mar.utils::clean_dfo_fields(fleetEnv$MON_DOC_LICS)
+  fleetEnv$MON_DOC_LICS = Mar.utils::clean_dfo_fields(fleetEnv$MON_DOC_LICS)
   fleetEnv$MON_DOC_LICS = fleetEnv$MON_DOC_LICS[, names(fleetEnv$MON_DOC_LICS) %in% c("MON_DOC_ID", "LICENCE_ID")]
+
+  get_data_custom('MARFISSCI', tables = "MON_DOC_ENTRD_DETS", data.dir = data.dir, quiet=T,env = fleetEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+  fleetEnv$MON_DOC_ENTRD_DETS = fleetEnv$MON_DOC_ENTRD_DETS[fleetEnv$MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID %in%  c(21,741,835),c("MON_DOC_ID","COLUMN_DEFN_ID","DATA_VALUE")] 
+  fleetEnv$MON_DOC_ENTRD_DETS = reshape2::dcast(fleetEnv$MON_DOC_ENTRD_DETS, MON_DOC_ID ~ COLUMN_DEFN_ID, value.var = "DATA_VALUE")
+  colnames(fleetEnv$MON_DOC_ENTRD_DETS)[colnames(fleetEnv$MON_DOC_ENTRD_DETS)=="21"] <- "OBS_PRESENT"
+  colnames(fleetEnv$MON_DOC_ENTRD_DETS)[colnames(fleetEnv$MON_DOC_ENTRD_DETS)=="741"] <- "OBS_TRIP_CLN"
+  colnames(fleetEnv$MON_DOC_ENTRD_DETS)[colnames(fleetEnv$MON_DOC_ENTRD_DETS)=="835"] <- "OBS_ID"
+  
+  fleetEnv$MON_DOC_ENTRD_DETS$OBS_TRIP_CLN = gsub(pattern = "[^[:alnum:]]", replacement = "", x= fleetEnv$MON_DOC_ENTRD_DETS$OBS_TRIP_CLN)
+  
    if (gearCode != "all" && length(gearCode)>0) {
     fleetEnv$GEARS = fleetEnv$GEARS[fleetEnv$GEARS$GEAR_CODE %in% gearCode,]
     fleetEnv$MON_DOCS = fleetEnv$MON_DOCS[fleetEnv$MON_DOCS$FV_GEAR_CODE %in% gearCode,]
@@ -193,6 +200,7 @@ get_fleet<-function(fn.oracle.username = "_none_",
   }
   filternator()
   res = unique(merge(fleetEnv$MON_DOC_LICS,fleetEnv$MON_DOCS, all.x = T))
+  res = merge(res, fleetEnv$MON_DOC_ENTRD_DETS, all.x=T)
   return(res)
 }
 

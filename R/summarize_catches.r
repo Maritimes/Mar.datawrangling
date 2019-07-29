@@ -28,7 +28,6 @@
 #' default value is \code{.GlobalEnv}.
 #' @return a data frame, and if \code{req.coords=TRUE}, a message indicating how
 #' many positions were lost due to the constraint.
-#' @importFrom Mar.utils df_qc_spatial
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export

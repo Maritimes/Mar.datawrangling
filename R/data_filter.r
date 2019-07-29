@@ -33,14 +33,6 @@
 #' @return list of the filters that were applied to generate the remaining dataset
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
-#' @importFrom utils select.list
-#' @importFrom lubridate year
-#' @importFrom lubridate month
-#' @importFrom lubridate day
-#' @importFrom lubridate ymd
-#' @importFrom RODBC odbcConnect
-#' @importFrom RODBC sqlQuery
-#' @importFrom RODBC odbcClose
 #' @export
 #' @note This line is here to prevent an error message claiming the export is mult-line
 data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep_nullsets = TRUE, env=.GlobalEnv) {
@@ -79,54 +71,54 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
     #' values.
     #' It returns a vector of 2 dates corresponding with the selected start and end values
     start.df = df
-    start.year = select.list(
-      as.character.POSIXt(sort(unique(year(start.df[,1])))),
+    start.year = utils::select.list(
+      as.character.POSIXt(sort(unique(lubridate::year(start.df[,1])))),
       multiple = F,
       graphics = T,
       title = paste("Data as early as (Year)")
     )
-    if (start.year == "") start.year = min(year(start.df))
-    start.df = start.df[,1][year(start.df[,1]) >= start.year]
-    start.month = select.list(
-      as.character.POSIXt(formatC(sort(unique(month(start.df[year(start.df) == start.year]))), width = 2, flag = "0")),
+    if (start.year == "") start.year = min(lubridate::year(start.df))
+    start.df = start.df[,1][lubridate::year(start.df[,1]) >= start.year]
+    start.month = utils::select.list(
+      as.character.POSIXt(formatC(sort(unique(lubridate::month(start.df[lubridate::year(start.df) == start.year]))), width = 2, flag = "0")),
       multiple = F,
       graphics = T,
       title = paste("Data as early as (Month)")
     )
     
-    if (start.month == "") start.month = min(month(start.df))
-    start.day = select.list(
-      as.character.POSIXt(formatC(sort(unique(day(start.df[year(start.df) == start.year &  month(start.df) == as.numeric(start.month)]))), width = 2, flag = "0")),
+    if (start.month == "") start.month = min(lubridate::month(start.df))
+    start.day = utils::select.list(
+      as.character.POSIXt(formatC(sort(unique(lubridate::day(start.df[lubridate::year(start.df) == start.year &  lubridate::month(start.df) == as.numeric(start.month)]))), width = 2, flag = "0")),
       multiple = F,
       graphics = T,
       title = paste("Data as early as (Day)")
     )
-    if (start.day == "") start.day = min(day(start.df))
+    if (start.day == "") start.day = min(lubridate::day(start.df))
     end.df = start.df
-    end.year = select.list(
-      as.character.POSIXt(sort(unique(year(end.df)))),
+    end.year = utils::select.list(
+      as.character.POSIXt(sort(unique(lubridate::year(end.df)))),
       multiple = F,
       graphics = T,
       title = paste("Until Date (Year)")
     )
-    if (end.year == "") end.year = max(year(end.df))
-    end.df = end.df[year(end.df) == end.year]
-    end.month = select.list(
-      as.character.POSIXt(formatC(sort(unique(month(end.df[year(end.df) == end.year]))), width = 2, flag = "0")),
+    if (end.year == "") end.year = max(lubridate::year(end.df))
+    end.df = end.df[lubridate::year(end.df) == end.year]
+    end.month = utils::select.list(
+      as.character.POSIXt(formatC(sort(unique(lubridate::month(end.df[lubridate::year(end.df) == end.year]))), width = 2, flag = "0")),
       multiple = F,
       graphics = T,
       title = paste("Until Date (Month)")
     )
-    if (end.month == "") end.month = max(month(end.df))
-    end.day = select.list(
-      as.character.POSIXt(formatC(sort(unique(day(end.df[year(end.df) == end.year & month(end.df) == as.numeric(end.month)]))), width = 2, flag = "0")),
+    if (end.month == "") end.month = max(lubridate::month(end.df))
+    end.day = utils::select.list(
+      as.character.POSIXt(formatC(sort(unique(lubridate::day(end.df[lubridate::year(end.df) == end.year & lubridate::month(end.df) == as.numeric(end.month)]))), width = 2, flag = "0")),
       multiple = F,
       graphics = T,
       title = paste("Until Date (Day)")
     )
-    if (end.day == "") end.day = max(day(end.df))
-    start.date = ymd(paste(start.year,start.month, start.day))
-    end.date = ymd(paste(end.year, end.month, end.day))
+    if (end.day == "") end.day = max(lubridate::day(end.df))
+    start.date = lubridate::ymd(paste(start.year,start.month, start.day))
+    end.date = lubridate::ymd(paste(end.year, end.month, end.day))
     
     res = c(start.date, end.date)
     return(res)
@@ -143,10 +135,10 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
   getChoice = function(choice) {
     if (names(choice) == 'Date Range') {
       this.df = sort(unique(get(choice[[1]]$filt_tab)[choice[[1]]$filt_disp[1]][, 1]))
-      df.yr = year(this.df)
-      df.mo = month(this.df)
-      df.day = day(this.df)
-      this.df.date = data.frame(sort(unique(ymd(paste(df.yr, df.mo, df.day)))))
+      df.yr = lubridate::year(this.df)
+      df.mo = lubridate::month(this.df)
+      df.day = lubridate::day(this.df)
+      this.df.date = data.frame(sort(unique(lubridate::ymd(paste(df.yr, df.mo, df.day)))))
       colnames(this.df.date)[1] = "date"
       selected.option.sanitized = get_date(this.df.date)
     } else if (names(choice) == 'By Polygon') {
@@ -176,7 +168,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
         these.options = unique(cbind(this.df[this.name], this.df[this.id]))
         these.options = these.options[order(these.options[, choice[[1]]$filt_disp[choice[[1]]$filt_ord]]), ]
 
-        selected.option = select.list(
+        selected.option = utils::select.list(
           paste(these.options[, 1], " (", these.options[, 2], ")", sep = ""),
           multiple = T,
           graphics = T,
@@ -193,7 +185,7 @@ data_filter = function(db=.GlobalEnv$db, refresh.data = FALSE, safe = TRUE, keep
       } else{
         these.options = unique(this.df[this.name])
         these.options = these.options[order(these.options[, choice[[1]]$filt_field]), ]
-        selected.option = select.list(
+        selected.option = utils::select.list(
           as.character(these.options),
           multiple = T,
           graphics = T,
@@ -283,7 +275,7 @@ so that you can examine them more closely.")
 if (safe==TRUE)self_filter(db,keep_nullsets = keep_nullsets)
   while (length(filters) > 0) {
     cat("\n","R isn't frozen - it's awaiting your selection in the pop-ups.","\n")
-    this.filter.name =  select.list(unlist(lapply(names(filters), function(l)l)),
+    this.filter.name =  utils::select.list(unlist(lapply(names(filters), function(l)l)),
       multiple = F,
       graphics = T,
       title = "Choose the Filter to Apply"

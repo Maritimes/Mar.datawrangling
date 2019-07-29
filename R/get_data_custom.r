@@ -34,12 +34,6 @@
 #' @param quiet default is \code{FALSE}.  If TRUE, no output messages will be shown.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
-#' @importFrom lubridate year
-#' @importFrom lubridate month
-#' @importFrom lubridate day
-#' @importFrom lubridate ymd
-#' @importFrom utils data
-#' @importFrom Mar.utils make_oracle_cxn
 #' @export
 get_data_custom<-function(schema=NULL,
                           data.dir = file.path(getwd(), 'data'),

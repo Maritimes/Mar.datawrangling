@@ -51,12 +51,6 @@
 #' will be shown.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
-#' @importFrom lubridate year
-#' @importFrom lubridate month
-#' @importFrom lubridate day
-#' @importFrom lubridate ymd
-#' @importFrom utils data
-#' @importFrom Mar.utils make_oracle_cxn
 #' @export
 get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE, 
                      data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
@@ -70,7 +64,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
                                                    "[[", "name")), db = names(unlist(lapply(ds_all, 
                                                                                             "[[", "db"))), desc = unlist(lapply(ds_all, "[[", 
                                                                                                                                 "desc"))))
-    db_choice = select.list(c(as.character(ds_nms$names), 
+    db_choice = utils::select.list(c(as.character(ds_nms$names), 
                               "Cancel"), multiple = F, graphics = T, title = "Please select a data source")
     if (db_choice == "Cancel") {
       cat("\nCancelled at user request")

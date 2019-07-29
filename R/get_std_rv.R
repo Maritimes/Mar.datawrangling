@@ -30,7 +30,6 @@
 #' @param sp default is \code{NULL}.  This is the species code you want data for
 #' @param len_min default is \code{NULL}.  This is the minimum length you want data to be returned for.
 #' @param len_max default is \code{NULL}. This is the maximum length you want data to be returned for.
-#' @importFrom stats aggregate
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -98,7 +97,7 @@ get_std_rv<-function(fn.oracle.username = "_none_",
   results[is.na(results$SPEC),"SPEC"]<-sp 
   results[is.na(results$STDCLEN),"STDCLEN"]<-0
   results[is.na(results$STDWGT),"STDWGT"]<-0
-  results = aggregate(
+  results = stats::aggregate(
     x = list(STDNO = results$STDCLEN,
              STDWGT = results$STDWGT),
     by = list(MISSION = results$MISSION, 

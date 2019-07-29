@@ -72,16 +72,6 @@
 #' SpatialPointsDataFrames. "vmstracks" is a SpatialLinesDataFrame with identified 
 #' "treks". "obs_coverage" is a table showing the number of observed trips vs the 
 #' total number of trips (by area if obsCovByArea is TRUE)  
-#' @importFrom rgdal readOGR
-#' @importFrom lubridate years
-#' @importFrom stats aggregate
-#' @importFrom graphics plot
-#' @importFrom Mar.utils VMS_get_recs
-#' @importFrom Mar.utils VMS_clean_recs
-#' @importFrom Mar.utils make_segments
-#' @importFrom Mar.utils identify_area
-#' @importFrom Mar.utils df_to_sp
-#' @importFrom Mar.utils prepare_shape_fields
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 #' 
@@ -114,7 +104,6 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   mdCode = unique(thisFleet$MON_DOC_DEFN_ID)
   thisFleetLics = unique(thisFleet$LICENCE_ID)
   thisFleetUnq = paste0(thisFleet$MON_DOC_ID,"_",thisFleet$LICENCE_ID,"_",thisFleet$VR_NUMBER,"_",thisFleet$GEAR_CODE)
-  # thisFleetVRNs = unique(thisFleet$VR_NUMBER)
   #create an environ for all this stuff
   tfpEnv = new.env()
   
@@ -124,14 +113,24 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
                          fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, 
                          fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg, quiet = F, thisFleetUnq = thisFleetUnq){
     # MARFIS Data  
-    Mar.datawrangling::get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, 
+    get_data_custom('marfissci', tables = "PRO_SPC_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, 
                                        fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, 
                                        fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+    tfpEnv$PRO_SPC_INFO = Mar.utils::clean_dfo_fields(tfpEnv$PRO_SPC_INFO)
     tfpEnv$PRO_SPC_INFO =  tfpEnv$PRO_SPC_INFO[which((tfpEnv$PRO_SPC_INFO$DATE_FISHED >= dateStart & tfpEnv$PRO_SPC_INFO$DATE_FISHED <= dateEnd)
                                                      & ((paste0(tfpEnv$PRO_SPC_INFO$MON_DOC_ID,"_",tfpEnv$PRO_SPC_INFO$LICENCE_ID,"_",tfpEnv$PRO_SPC_INFO$VR_NUMBER_FISHING,"_",tfpEnv$PRO_SPC_INFO$GEAR_CODE) %in% thisFleetUnq)
                                                         | (paste0(tfpEnv$PRO_SPC_INFO$MON_DOC_ID,"_",tfpEnv$PRO_SPC_INFO$LICENCE_ID,"_",tfpEnv$PRO_SPC_INFO$VR_NUMBER_LANDING,"_",tfpEnv$PRO_SPC_INFO$GEAR_CODE) %in% thisFleetUnq))), ]
-    Mar.datawrangling::get_data_custom('marfissci', tables = "LOG_EFRT_STD_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+    get_data_custom('marfissci', tables = "LOG_EFRT_STD_INFO", data.dir = data.dir, quiet=T, env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+    tfpEnv$LOG_EFRT_STD_INFO = Mar.utils::clean_dfo_fields(tfpEnv$LOG_EFRT_STD_INFO)
+    
+    get_data_custom('marfissci', tables = "MON_DOC_ENTRD_DETS", data.dir = data.dir, quiet=T,env = tfpEnv, fn.oracle.username = fn.oracle.username, fn.oracle.password = fn.oracle.password, fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
+    tfpEnv$MON_DOC_ENTRD_DETS = tfpEnv$MON_DOC_ENTRD_DETS[tfpEnv$MON_DOC_ENTRD_DETS$COLUMN_DEFN_ID %in%  c(741,72),c("MON_DOC_ID","COLUMN_DEFN_ID","DATA_VALUE")] #741 is the defn where MARF stores Obs #
+    tfpEnv$MON_DOC_ENTRD_DETS$DATA_VALUE = gsub(pattern = "[^[:alnum:]]", replacement = "", x= tfpEnv$MON_DOC_ENTRD_DETS$DATA_VALUE)
+    colnames(tfpEnv$MON_DOC_ENTRD_DETS)[colnames(tfpEnv$MON_DOC_ENTRD_DETS)=="DATA_VALUE"] <- "TRIP_cln"
+    
     this  = merge(tfpEnv$PRO_SPC_INFO,tfpEnv$LOG_EFRT_STD_INFO, by = c("LOG_EFRT_STD_INFO_ID", "MON_DOC_ID"), all.x =T)
+    crap =merge(this, tfpEnv$MON_DOC_ENTRD_DETS, all.x=T)
+    browser()
     if (nrow(this)>0){
       # save_data(df=res,filename = 'marfis',formats = c("sp","shp","raw"), lat.field = "LATITUDE", lon.field = "LONGITUDE", env = tfpEnv)
       cat(paste0("\n","MARFIS data range: ",min(this$DATE_FISHED), " - ", max(this$DATE_FISHED)))
@@ -146,13 +145,14 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   get_VMS <- function(fn.oracle.username = fn.oracle.username, 
                       fn.oracle.password = fn.oracle.password, 
                       fn.oracle.dsn = fn.oracle.dsn, maxBreak_mins=maxBreak_mins,
-                      dateStart = dateStart, dateEnd = dateEnd, vrnList = thisFleetVRNs,
+                      dateStart = dateStart, dateEnd = dateEnd, vrnList = NULL,
                       marfisRange=marfisRange){
+    
     if (!quiet)cat("\n","Retrieving VMS data")
     vmsRecs = Mar.utils::VMS_get_recs(fn.oracle.username = fn.oracle.username, 
                            fn.oracle.password = fn.oracle.password, 
                            fn.oracle.dsn = fn.oracle.dsn,usepkg = usepkg,
-                           dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = thisFleetVRNs)
+                           dateStart = dateStart, dateEnd = dateEnd, hrBuffer = 0, vrnList = vrnList)
     vmsRecsCln = Mar.utils::VMS_clean_recs(vmsRecs, maxBreak_mins = maxBreak_mins)
     vmsRecsCln$OBSERVED <- 0
     vmsRecsCln$MARFISMATCH <- 0
@@ -175,42 +175,17 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   get_OBS <- function(fn.oracle.username = fn.oracle.username, 
                       fn.oracle.password = fn.oracle.password, 
                       fn.oracle.dsn = fn.oracle.dsn, 
-                      marfisRange = marfisRange, 
-                      thisFleetVRNs = thisFleetVRNs,
                       thisFleet = thisFleet){
-    thisFleetLics = unique(thisFleet$LICENCE_ID)
-    mdCode = unique(thisFleet$MON_DOC_DEFN_ID)
-    Mar.datawrangling::get_data('isdb' ,data.dir = data.dir, quiet = TRUE, env = tfpEnv, 
+    get_data('isdb' ,data.dir = data.dir, quiet = TRUE, env = tfpEnv, 
              fn.oracle.username = fn.oracle.username, 
              fn.oracle.password = fn.oracle.password, 
              fn.oracle.dsn = fn.oracle.dsn, usepkg = usepkg)
-    #add specific dates so we can search by finer date range than year:
-    thed = data.frame(fsDate = as.POSIXct(
-      ifelse(lubridate::year(tfpEnv$ISSETPROFILE_WIDE$DATE_TIME1) > 2500, 
-             ifelse(lubridate::year(tfpEnv$ISSETPROFILE_WIDE$DATE_TIME2) > 2500, 
-                    ifelse(lubridate::year(tfpEnv$ISSETPROFILE_WIDE$DATE_TIME3) > 2500, tfpEnv$ISSETPROFILE_WIDE$DATE_TIME4, 
-                           tfpEnv$ISSETPROFILE_WIDE$DATE_TIME3), 
-                    tfpEnv$ISSETPROFILE_WIDE$DATE_TIME2), tfpEnv$ISSETPROFILE_WIDE$DATE_TIME1), 
-      origin = "1970-01-01"))
-    thed = Mar.utils::simple_date(thed, "fsDate")
-    tfpEnv$ISSETPROFILE_WIDE = cbind(tfpEnv$ISSETPROFILE_WIDE,thed)
-    tfpEnv$ISSETPROFILE_WIDE = tfpEnv$ISSETPROFILE_WIDE[tfpEnv$ISSETPROFILE_WIDE$fsDate >= min(marfisRange) 
-                                                        & tfpEnv$ISSETPROFILE_WIDE$fsDate < max(marfisRange),]
-    tfpEnv$ISTRIPTYPECODES = tfpEnv$ISTRIPTYPECODES[tfpEnv$ISTRIPTYPECODES$TRIPCD_ID < 7010 
-                                                    | tfpEnv$ISTRIPTYPECODES$TRIPCD_ID == 7099 ,]
-    #first part of condition below seems enough, but fisheries like clam don't have values for marfis licence No 
-    #or marfis conf id - danger here of getting boats fishing under another licence?
-    if (13 %in% mdCode) {
-      tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[ tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics
-                                       | tfpEnv$ISTRIPS$LICENSE_NO %in% thisFleetVRNs, ]
-    }else{
-      browser()
-      tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[tfpEnv$ISTRIPS$MARFIS_LICENSE_NO %in% thisFleetLics, ]
-      #MARFIS_CONF_NUMBER?
-    }
+    browser()
+    tfpEnv$ISTRIPS$TRIP_cln <- gsub(pattern = "[^[:alnum:]]", replacement = "", x=  tfpEnv$ISTRIPS$TRIP)
+    obsTrips = unique(thisFleet[!is.na(thisFleet$TRIP_cln),"TRIP_cln"])
+    tfpEnv$ISTRIPS = tfpEnv$ISTRIPS[tfpEnv$ISTRIPS$TRIP_cln %in% obsTrips,]
     if (nrow(tfpEnv$ISTRIPS)>0){
       self_filter(env = tfpEnv, quiet = TRUE)
-      #save_data(db="isdb",filename = "isdb",formats = c("shp","sp","raw"), env = tfpEnv)
       this = summarize_catches(db="isdb", drop.na.cols = FALSE, env = tfpEnv)
       if (!is.data.frame(this)){
         cat("\n","No Observer data matches filters")
@@ -374,7 +349,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
       datwindow = data.frame(LATITUDES = obsData_sp@bbox[2,], 
                              LONGITUDES = obsData_sp@bbox[1,])
     }
-    plot(datwindow$LONGITUDES, datwindow$LATITUDES, col="transparent")
+    graphics::plot(datwindow$LONGITUDES, datwindow$LATITUDES, col="transparent")
     sp::plot(Mar.data::coast_lores,add=T, col="tan")
     if (class(smartTracks) == "SpatialLinesDataFrame"){
       colors = c("grey", "cornflowerblue")
@@ -426,7 +401,7 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
     vmsRecsCln <- get_VMS(fn.oracle.username = fn.oracle.username, 
                         fn.oracle.password = fn.oracle.password, 
                         fn.oracle.dsn = fn.oracle.dsn,maxBreak_mins=maxBreak_mins,
-                        dateStart = dateStart, dateEnd = dateEnd, vrnList = thisFleetVRNs,
+                        dateStart = dateStart, dateEnd = dateEnd, vrnList = unique(thisFleet$VR_NUMBER),
                         marfisRange=range(marfData$DATE_FISHED)) 
   }else{
     vmsRecsCln <-NA
@@ -435,11 +410,8 @@ total_fishing_picture<-function(fn.oracle.username = "_none_",
   obsData = get_OBS(fn.oracle.username = fn.oracle.username, 
                     fn.oracle.password = fn.oracle.password, 
                     fn.oracle.dsn = fn.oracle.dsn, 
-                    marfisRange = range(marfData$DATE_FISHED), 
-                    thisFleetVRNs = thisFleetVRNs,
                     thisFleet = thisFleet)
-  
-  
+
   if (!is.na(vmsRecsCln)) {
     smartTracks = informVMSTracks(marfisTrips =  marfData[,c("VR_NUMBER_FISHING","VR_NUMBER_LANDING","LICENCE_ID","DATE_FISHED", "LANDED_DATE")], 
                                 thisFleet = thisFleet, vmstracks =vmsRecsCln$tracks, obTrips = obsData)

@@ -19,11 +19,6 @@
 #' written externally also get a timestamp.  
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
-#' @importFrom rgdal writeOGR
-#' @importFrom sp SpatialPoints
-#' @importFrom utils write.csv
-#' @importFrom Mar.utils df_qc_spatial
-#' @importFrom Mar.utils prepare_shape_fields
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
@@ -73,7 +68,7 @@ records necessarily have positions and will not be visible in your shapefile")
     }
   }
   if ('csv' %in% formats){
-    write.csv(df, paste0(fn,".csv"))
+    utils::write.csv(df, paste0(fn,".csv"))
   }
   if ('rds' %in% formats){
     saveRDS(df, paste0(fn,".rds"))

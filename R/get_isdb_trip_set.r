@@ -26,7 +26,7 @@ get_isdb_trip_set <- function(FS_ID=NULL, data.dir=NULL){
     load(fs, envir = tmp)
     load(tr, envir = tmp)
   }else if (all(c(exists("ISFISHSETS"),exists("ISTRIPS")))){
-    data(list = list("ISDB.ISFISHSETS", "ISDB.ISTRIPS"), envir = tmp)
+    utils::data(list = list("ISDB.ISFISHSETS", "ISDB.ISTRIPS"), envir = tmp)
   }else{
     cat("\n","Please include a value for data.dir that contains your extracted RData files for ISDB")
     stop()
