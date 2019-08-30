@@ -1,6 +1,6 @@
 .onAttach <- function(libname, pkgname) {
   
-  assign("ds_all", load_datasources(), envir = .GlobalEnv)
+  assign("ds_all", Mar.datawrangling::load_datasources(), envir = .GlobalEnv)
   localVer = utils::packageDescription('Mar.datawrangling')$Version
   packageStartupMessage(paste0("Version: ", localVer))
 }
