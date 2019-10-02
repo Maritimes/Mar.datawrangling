@@ -1,6 +1,6 @@
 Package: Mar.datawrangling
 Title: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases
-Version: 2019.07.29
+Version: 2019.10.02
 Authors@R: c( person("Mike", "McMahon", email="Mike.McMahon@dfo-mpo.gc.ca", role=c("aut", "cre")) )
 Maintainer: Mike McMahon <Mike.McMahon@dfo-mpo.gc.ca>
 Description: This package facilitates the extraction and handling of data from various Maritimes databases.

@@ -11,7 +11,6 @@
 #' @note data is not added to the global environment by this function - changes are made, saved, and
 #' dropped.
 data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
-  ISFISHSETS <- NULL
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   these.tables = unlist(ds_all[[.GlobalEnv$db]]$tables)
   prefix = toupper(db)

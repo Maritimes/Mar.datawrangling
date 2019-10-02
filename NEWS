@@ -2,6 +2,9 @@ Mar.datawrangling
 ==============
 
 Changes:
+2019.10.02
+* fixes issue with data_tweaks() that caused it to fail
+* forces use of Halifax time zone to match data
 2019.07.29
 * removes @importFrom from all functions - ensures full reference everywhere (i.e. package::function())
 2019.07.05
