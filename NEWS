@@ -2,6 +2,9 @@ Mar.datawrangling
 ==============
 
 Changes:
+2019.10.22
+* adds size classes within a set to prevent confusion
+* removes FGP_TOWS_NW2 as a required table
 2019.10.02
 * fixes issue with data_tweaks() that caused it to fail
 * forces use of Halifax time zone to match data

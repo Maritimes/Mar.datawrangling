@@ -124,7 +124,7 @@ load_datasources <- function(db=NULL){
 	a number of fish and invertebrate species. This information is then used along 
 	with fisheries catch data to assess the status of commercial species such as 
 	cod, haddock, pollock, halibut, offshore lobster, shrimp etc.",
-    tables = c("GSCAT","GSINF","GSDET","GSMISSIONS","GSSTRATUM","GSXTYPE","GSSPECIES","FGP_TOWS_NW2"),
+    tables = c("GSCAT","GSINF","GSDET","GSMISSIONS","GSSTRATUM","GSXTYPE","GSSPECIES"), #,"FGP_TOWS_NW2"),
     table_cat = "GSCAT",
     table_det = "GSDET",
     table_pos = "GSINF",
@@ -172,11 +172,12 @@ load_datasources <- function(db=NULL){
       "GSXTYPE" = list(
         "GSINF" = list(pk_fields=c("XTYPE"),
                        fk_fields=c("TYPE"))
-      ),
-      "FGP_TOWS_NW2" = list(
-        "GSCAT" = list(pk_fields=c("MISSION","SETNUMBER","SPECIES"),
-                       fk_fields=c("MISSION","SETNO","SPEC"))
       )
+      # ,
+      # "FGP_TOWS_NW2" = list(
+      #   "GSCAT" = list(pk_fields=c("MISSION","SETNUMBER","SPECIES"),
+      #                  fk_fields=c("MISSION","SETNO","SPEC"))
+      # )
     ),
     filters = list(
       "Mission Name" = list(filt_tab = "GSMISSIONS",
