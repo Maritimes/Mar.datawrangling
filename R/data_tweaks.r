@@ -145,8 +145,8 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
         #REMARKS=GSCAT$REMARKS,
         LENGTH_TYPE=GSCAT$LENGTH_TYPE,
         LENGTH_UNITS=GSCAT$LENGTH_UNITS,
-        WEIGHT_TYPE=GSCAT$WEIGHT_TYPE,
-        WEIGHT_UNITS=GSCAT$WEIGHT_UNITS
+        WEIGHT_TYPE=GSCAT$WEIGHT_TYPE
+        #WEIGHT_UNITS=GSCAT$WEIGHT_UNITS
       ),
       sum
     )

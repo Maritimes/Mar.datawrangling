@@ -53,7 +53,7 @@ data frame.
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
   \code{\link{get_data_custom}}, \code{\link{get_data}},
-  \code{\link{get_std_rv}}, \code{\link{self_filter}}
+  \code{\link{self_filter}}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

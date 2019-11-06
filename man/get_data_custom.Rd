@@ -56,8 +56,7 @@ access to the tables to extract them.
 }
 \seealso{
 Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data}}, \code{\link{get_std_rv}},
-  \code{\link{self_filter}},
+  \code{\link{get_data}}, \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{

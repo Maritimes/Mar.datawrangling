@@ -65,8 +65,7 @@ Vessels are a pain - replace special chars and remove spaces
 }
 \seealso{
 Other dfo_extractions: \code{\link{get_data_custom}},
-  \code{\link{get_data}}, \code{\link{get_std_rv}},
-  \code{\link{self_filter}},
+  \code{\link{get_data}}, \code{\link{self_filter}},
   \code{\link{summarize_catches}}
 }
 \author{
