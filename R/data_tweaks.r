@@ -129,27 +129,43 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     #'the following are special data handling processes specific to the rv tables (beyond
     #'getting the whole table)
     load(file.path(data.dir,"RV.GSCAT.RData"), envir = .GlobalEnv)
-    if ('SIZE_CLASS' %in% colnames(GSCAT)){
+    if ('WEIGHT_TYPE' %in% colnames(GSCAT)){
 
+    # GSCAT <- aggregate(
+    #   x = list(
+    #     SAMPWGT=GSCAT$SAMPWGT,
+    #     TOTWGT=GSCAT$TOTWGT,
+    #     TOTNO=GSCAT$TOTNO),
+    #   by = list(
+    #     MISSION=GSCAT$MISSION,
+    #     SETNO=GSCAT$SETNO,
+    #     SPEC=GSCAT$SPEC,
+    #     #MARKET=GSCAT$MARKET,
+    #     CALWT=GSCAT$CALWT,
+    #     #REMARKS=GSCAT$REMARKS,
+    #     LENGTH_TYPE=GSCAT$LENGTH_TYPE,
+    #     LENGTH_UNITS=GSCAT$LENGTH_UNITS,
+    #     WEIGHT_TYPE=GSCAT$WEIGHT_TYPE
+    #     #WEIGHT_UNITS=GSCAT$WEIGHT_UNITS
+    #   ),
+    #   sum
+    # )
+    GSCAT[is.na(GSCAT$TOTNO),"TOTNO"]<-0
+    GSCAT[is.na(GSCAT$TOTWGT),"TOTWGT"]<-0
+    GSCAT[is.na(GSCAT$SAMPWGT),"SAMPWGT"]<-0
+      
     GSCAT <- aggregate(
       x = list(
-        SAMPWGT=GSCAT$SAMPWGT,
-        TOTWGT=GSCAT$TOTWGT,
-        TOTNO=GSCAT$TOTNO),
+        SAMPWGT = GSCAT$SAMPWGT, 
+        TOTWGT = GSCAT$TOTWGT, 
+        TOTNO = GSCAT$TOTNO), 
       by = list(
-        MISSION=GSCAT$MISSION,
-        SETNO=GSCAT$SETNO,
-        SPEC=GSCAT$SPEC,
-        #MARKET=GSCAT$MARKET,
-        CALWT=GSCAT$CALWT,
-        #REMARKS=GSCAT$REMARKS,
-        LENGTH_TYPE=GSCAT$LENGTH_TYPE,
-        LENGTH_UNITS=GSCAT$LENGTH_UNITS,
-        WEIGHT_TYPE=GSCAT$WEIGHT_TYPE
-        #WEIGHT_UNITS=GSCAT$WEIGHT_UNITS
-      ),
+        MISSION = GSCAT$MISSION, 
+        SETNO = GSCAT$SETNO, 
+        SPEC = GSCAT$SPEC), 
       sum
-    )
+      )
+    
     cat(paste("\nGSCAT:  Combined numbers and weights for different size classes within a set..."))
     save( GSCAT, file=file.path(data.dir, "RV.GSCAT.RData"), compress=TRUE)
     }

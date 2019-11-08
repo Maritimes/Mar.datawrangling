@@ -3,6 +3,9 @@ Mar.datawrangling
 
 Changes:
 2019.11.06
+* removes UNITS and TYPE for both Lengths and Weights from GSCAT
+* turns all empty TOTNO, TOTWGT and SAMPWGT to 0
+2019.11.06
 * removes units from GSCAT as they are often unreliable (always kg)
 * removes get_std_rv() which needs work
 2019.10.22
