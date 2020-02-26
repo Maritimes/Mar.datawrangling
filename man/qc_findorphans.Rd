@@ -4,8 +4,12 @@
 \alias{qc_findorphans}
 \title{qc_findorphans}
 \usage{
-qc_findorphans(db = NULL, usepkg = "rodbc",
-  data.dir = file.path(getwd(), "data"), debug = F)
+qc_findorphans(
+  db = NULL,
+  usepkg = "rodbc",
+  data.dir = file.path(getwd(), "data"),
+  debug = F
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working

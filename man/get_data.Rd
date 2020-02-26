@@ -4,10 +4,17 @@
 \alias{get_data}
 \title{get_data}
 \usage{
-get_data(db = NULL, usepkg = "rodbc", force.extract = FALSE,
-  data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_",
-  fn.oracle.password = "_none_", fn.oracle.dsn = "_none_",
-  env = .GlobalEnv, quiet = FALSE)
+get_data(
+  db = NULL,
+  usepkg = "rodbc",
+  force.extract = FALSE,
+  data.dir = file.path(getwd(), "data"),
+  fn.oracle.username = "_none_",
+  fn.oracle.password = "_none_",
+  fn.oracle.dsn = "_none_",
+  env = .GlobalEnv,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -72,9 +79,11 @@ to re-extract, it will get their oracle credentials and verify that the user has
 the required tables prior to attempting an extraction.
 }
 \seealso{
-Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data_custom}}, \code{\link{self_filter}},
-  \code{\link{summarize_catches}}
+Other dfo_extractions: 
+\code{\link{data_filter}()},
+\code{\link{get_data_custom}()},
+\code{\link{self_filter}()},
+\code{\link{summarize_catches}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

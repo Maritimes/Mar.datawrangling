@@ -4,10 +4,17 @@
 \alias{save_data}
 \title{save_data}
 \usage{
-save_data(db = NULL, df = NULL, filename = NULL,
-  df.crs = "+init=epsg:4326", req.coords = TRUE,
-  lat.field = "LATITUDE", lon.field = "LONGITUDE", formats = c("csv",
-  "shp"), env = .GlobalEnv)
+save_data(
+  db = NULL,
+  df = NULL,
+  filename = NULL,
+  df.crs = "+init=epsg:4326",
+  req.coords = TRUE,
+  lat.field = "LATITUDE",
+  lon.field = "LONGITUDE",
+  formats = c("csv", "shp"),
+  env = .GlobalEnv
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -42,9 +49,10 @@ This function takes either a dataframe or all of the data you've filtered, and r
 or a shapefile for continued analysis
 }
 \seealso{
-Other general_use: \code{\link{cleanup}},
-  \code{\link{clip_by_poly}},
-  \code{\link{get_isdb_trip_set}}
+Other general_use: 
+\code{\link{cleanup}()},
+\code{\link{clip_by_poly}()},
+\code{\link{get_isdb_trip_set}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

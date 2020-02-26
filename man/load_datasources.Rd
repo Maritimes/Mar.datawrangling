@@ -17,7 +17,8 @@ If done correctly, this should remove the need for a variety of files and
 generally clarify the code.
 }
 \seealso{
-Other internal: \code{\link{data_tweaks}}
+Other internal: 
+\code{\link{data_tweaks}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

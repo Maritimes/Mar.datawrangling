@@ -21,8 +21,10 @@ This function removes the R objects associated with the various objects created
 by each of the databases it connects to.
 }
 \seealso{
-Other general_use: \code{\link{clip_by_poly}},
-  \code{\link{get_isdb_trip_set}}, \code{\link{save_data}}
+Other general_use: 
+\code{\link{clip_by_poly}()},
+\code{\link{get_isdb_trip_set}()},
+\code{\link{save_data}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

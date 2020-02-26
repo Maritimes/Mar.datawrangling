@@ -22,8 +22,10 @@ This function takes  one or more FISHSET_IDs and returns the
 name and set number for the FISHSET_ID.
 }
 \seealso{
-Other general_use: \code{\link{cleanup}},
-  \code{\link{clip_by_poly}}, \code{\link{save_data}}
+Other general_use: 
+\code{\link{cleanup}()},
+\code{\link{clip_by_poly}()},
+\code{\link{save_data}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

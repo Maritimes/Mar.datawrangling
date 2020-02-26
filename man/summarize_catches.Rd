@@ -4,9 +4,16 @@
 \alias{summarize_catches}
 \title{summarize_catches}
 \usage{
-summarize_catches(db = NULL, morph_dets = FALSE, gear_dets = FALSE,
-  valid.coords = FALSE, quiet = FALSE, drop.na.cols = TRUE,
-  debug = FALSE, env = .GlobalEnv)
+summarize_catches(
+  db = NULL,
+  morph_dets = FALSE,
+  gear_dets = FALSE,
+  valid.coords = FALSE,
+  quiet = FALSE,
+  drop.na.cols = TRUE,
+  debug = FALSE,
+  env = .GlobalEnv
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -51,9 +58,11 @@ This function joins together all the rdata files into a single
 data frame.
 }
 \seealso{
-Other dfo_extractions: \code{\link{data_filter}},
-  \code{\link{get_data_custom}}, \code{\link{get_data}},
-  \code{\link{self_filter}}
+Other dfo_extractions: 
+\code{\link{data_filter}()},
+\code{\link{get_data_custom}()},
+\code{\link{get_data}()},
+\code{\link{self_filter}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

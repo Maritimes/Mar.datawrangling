@@ -4,9 +4,16 @@
 \alias{clip_by_poly}
 \title{clip_by_poly}
 \usage{
-clip_by_poly(db = NULL, df = NULL, lat.field = "LATITUDE",
-  lon.field = "LONGITUDE", clip.poly = NULL, buffer.m = NULL,
-  return.spatial = FALSE, env = .GlobalEnv)
+clip_by_poly(
+  db = NULL,
+  df = NULL,
+  lat.field = "LATITUDE",
+  lon.field = "LONGITUDE",
+  clip.poly = NULL,
+  buffer.m = NULL,
+  return.spatial = FALSE,
+  env = .GlobalEnv
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -46,8 +53,10 @@ WGS84. FYI, during buffering, the polygon is briefly converted to UTMZone20, and
 since the use of distances requires projecting the data.
 }
 \seealso{
-Other general_use: \code{\link{cleanup}},
-  \code{\link{get_isdb_trip_set}}, \code{\link{save_data}}
+Other general_use: 
+\code{\link{cleanup}()},
+\code{\link{get_isdb_trip_set}()},
+\code{\link{save_data}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

@@ -274,8 +274,8 @@ load_datasources <- function(db=NULL){
                                       fk_fields=c("SPECSCD_ID")),
         "ISSETPROFILE_WIDE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
                                    fk_fields=c("FISHSET_ID","SET_NO")),
-        "ISCATCHES" = list(pk_fields=c("FISHSET_ID","SET_NO"),
-                                   fk_fields=c("FISHSET_ID","SET_NO")),
+        # "ISCATCHES" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+        #                            fk_fields=c("FISHSET_ID","SET_NO")),
         combine = "ALL"
       ),
       "ISOBSERVERCODES" = list(

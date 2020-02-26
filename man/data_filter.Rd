@@ -4,8 +4,13 @@
 \alias{data_filter}
 \title{data_filter}
 \usage{
-data_filter(db = .GlobalEnv$db, refresh.data = FALSE, safe = TRUE,
-  keep_nullsets = TRUE, env = .GlobalEnv)
+data_filter(
+  db = .GlobalEnv$db,
+  refresh.data = FALSE,
+  safe = TRUE,
+  keep_nullsets = TRUE,
+  env = .GlobalEnv
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
@@ -64,9 +69,11 @@ create the select list, and order it as specified
 Vessels are a pain - replace special chars and remove spaces
 }
 \seealso{
-Other dfo_extractions: \code{\link{get_data_custom}},
-  \code{\link{get_data}}, \code{\link{self_filter}},
-  \code{\link{summarize_catches}}
+Other dfo_extractions: 
+\code{\link{get_data_custom}()},
+\code{\link{get_data}()},
+\code{\link{self_filter}()},
+\code{\link{summarize_catches}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

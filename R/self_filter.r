@@ -44,7 +44,7 @@ self_filter <-
     
     posTable = ds_all[[.GlobalEnv$db]]$table_pos
     
-    if (!quiet) cat("\n","Records remaining in each table after each loop:")
+    if (!quiet) cat("\n","Records remaining in each table after each loop:","\n")
     get_joiner = function(combine) {
       if (is.null(combine)) combine = "missing"
       switch(combine,

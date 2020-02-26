@@ -27,7 +27,8 @@ the following are special data handling processes specific to the rvp70 tables (
 getting the whole table)
 }
 \seealso{
-Other internal: \code{\link{load_datasources}}
+Other internal: 
+\code{\link{load_datasources}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
