@@ -1067,10 +1067,7 @@ load_datasources <- function(db=NULL){
       ),
       "HAIL_IN_CALLS" = list(
         "MON_DOCS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                          fk_fields=c("HAIL_IN_CALL_ID")),
-        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                         fk_fields=c("VR_NUMBER")),
-        combine = "OR"
+                          fk_fields=c("HAIL_IN_CALL_ID"))
       ),
       "LOG_EFRT_STD_INFO" = list(
         # "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
@@ -1087,7 +1084,7 @@ load_datasources <- function(db=NULL){
                          fk_fields=c("SPECIES_CODE")),
         # "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
         #                       fk_fields=c("CATCH_USAGE_CODE")),
-        combine = "OR"
+        combine = "AND"
       ),
       # "MON_DOCS" = list(
       #   #not sure I can reference same table 3 different times like this
@@ -1098,10 +1095,6 @@ load_datasources <- function(db=NULL){
                                    fk_fields=c("MON_DOC_ID")),
         "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
                                   fk_fields=c("MON_DOC_ID")),
-        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                         fk_fields=c("VR_NUMBER")),
-        "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                               fk_fields=c("HAIL_IN_CALL_ID")),
         combine = "OR"
       ),
       "MON_DOCS" = list(
@@ -1110,6 +1103,14 @@ load_datasources <- function(db=NULL){
         "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
                        fk_fields=c("AREA_ID")),
         combine = "OR"
+      ),
+      "MON_DOCS" = list(
+      "VESSELS" = list(pk_fields=c("VR_NUMBER"),
+                       fk_fields=c("VR_NUMBER"))
+      ),
+      "MON_DOCS" = list(
+      "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
+                             fk_fields=c("HAIL_IN_CALL_ID"))
       ),
       "NAFO_UNIT_AREAS" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
@@ -1143,6 +1144,10 @@ load_datasources <- function(db=NULL){
         "LOG_EFRT_STD_INFO"=  list(pk_fields=c("GEAR_CODE"),
                                    fk_fields=c("FV_GEAR_CODE")),
         combine = "OR"
+      ),
+      "PRO_SPC_INFO" = list(
+        "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
+                       fk_fields=c("MON_DOC_ID"))
       ),
       "SPECIES" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
