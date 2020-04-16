@@ -350,9 +350,8 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     PRO_SPC_INFO$YEAR_LANDED[!is.na(PRO_SPC_INFO$LANDED_DATE)]  = 
       lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[!is.na(PRO_SPC_INFO$LANDED_DATE)], origin = "1970-01-01"))
     cat("\nPRO_SPC_INFO: Added a year field")
-    PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700] =
-      lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
-    PRO_SPC_INFO[PRO_SPC_INFO$SPECIES_CODE==700,"LANDED_DATE"] <- PRO_SPC_INFO[PRO_SPC_INFO$SPECIES_CODE==700,"YEAR"]
+    PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700] = lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
+    PRO_SPC_INFO$YEAR_LANDED[PRO_SPC_INFO$SPECIES_CODE==700] = PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700]
     cat("\nPRO_SPC_INFO: Ensured correct year for lobster data (i.e. LANDED_DATE)") 
     save( PRO_SPC_INFO, file=file.path(data.dir, "MARFIS.PRO_SPC_INFO.RData"), compress=TRUE)
     

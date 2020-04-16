@@ -82,14 +82,23 @@ get_data_custom<-function(schema=NULL,
   if (is.null(loadsuccess)){
     return(invisible(NULL))
   } else if (loadsuccess==-1){
-    oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
-    
+    oracle_cxn_custom = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
+    if (oracle_cxn ==-1){
+      cat("\nCan't get the data without a DB connection.  Aborting.\n")
+      return(NULL)
+    }
     if (class(oracle_cxn_custom$channel)=="RODBC"){
       thecmd= RODBC::sqlQuery
     }else if (class(oracle_cxn_custom$channel)=="OraConnection"){
       thecmd = ROracle::dbGetQuery
     }
     prefix=theschema=toupper(schema)
+    #somewhere here I need to ensure I save the schema id such that MARFIS = MARFISSCI, etc
+    # cat("implement proper name saving when back online","\n")
+    # prefix = gsub(x = prefix,pattern = "MARFISSCI", replacement = "MARFIS",ignore.case = T)
+    # prefix = gsub(x = prefix,pattern = "GROUNDFISH", replacement = "RV",ignore.case = T)
+    # prefix = gsub(x = prefix,pattern = "OBSERVER", replacement = "ISDB",ignore.case = T)
+
     
     for (i in 1:length(tables)){
       if (!quiet) cat(paste0("\n","Verifying access to ",tables[i]," ..."))

@@ -77,9 +77,7 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     assign("db", tolower(db), envir = .GlobalEnv)
   }
   local_table_status_check <- function(db = .GlobalEnv$db) {
-    localTables <- list.files(path = data.dir, pattern = paste0("^", 
-                                                                toupper(db), ".*\\.rdata$"), full.names = T, ignore.case = TRUE, 
-                              recursive = FALSE)
+    localTables <- list.files(path = data.dir, pattern = paste0("^", toupper(db), ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)
     prefixed.localTables = gsub(".RData", "", gsub(paste0(data.dir, 
                                                           .Platform$file.sep), "", localTables))
     prefixed.reqdTables = paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables)
@@ -135,13 +133,11 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     }
   }
   try_extract <- function(usepkg, tables) {
-    oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, 
-                                            fn.oracle.password, fn.oracle.dsn, quiet)
+    oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
     if (!is.list(oracle_cxn)) {
       tries = 0
       while (tries < 2 & !(is.list(oracle_cxn))) {
-        oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, 
-                                                fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
+        oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
         tries = tries + 1
       }
       if (oracle_cxn == -1) 

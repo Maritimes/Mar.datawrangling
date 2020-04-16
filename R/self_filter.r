@@ -65,6 +65,7 @@ self_filter <-
         p_stuff_ns = NULL
         f_stuff_ns = NULL
         combine = NULL
+
         for (j in 1:length(names(ds_all[[.GlobalEnv$db]]$joins[[i]])[names(ds_all[[.GlobalEnv$db]]$joins[[i]]) != "combine"])) {
           if (j > 1) combine = ds_all[[.GlobalEnv$db]]$joins[[i]]$combine
           tab_foreign = names(ds_all[[.GlobalEnv$db]]$joins[[i]][j])

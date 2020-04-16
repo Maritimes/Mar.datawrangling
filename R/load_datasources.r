@@ -9,6 +9,7 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 load_datasources <- function(db=NULL){
+  #pk_ Always refers to the main table in the join section
   usnefsc = list(
     db="usnefsc",
     name = "US",
@@ -39,7 +40,7 @@ load_datasources <- function(db=NULL){
         "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
                              fk_fields=c("CRUISE6","TOW","STATION")),
         "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
-                        fk_fields=c("SVSPP")),
+                                   fk_fields=c("SVSPP")),
         combine = "ALL"),
       "USS_LENGTHS"= list(
         "USS_CATCH" = list(pk_fields=c("CRUISE6","STATION","SVSPP"),
@@ -49,7 +50,7 @@ load_datasources <- function(db=NULL){
                            fk_fields=c("CRUISE6","TOW","SVSPP"))),
       "US_VESSEL_NET_CONVERSIONS"= list(
         "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
-                        fk_fields=c("SVSPP"))),
+                                   fk_fields=c("SVSPP"))),
       "STRANL_CRUISE"= list(
         "USS_STATION" = list(pk_fields=c("CRUISE6"),
                              fk_fields=c("CRUISE6")),
@@ -89,19 +90,19 @@ load_datasources <- function(db=NULL){
                        filt_ord = 1
       ),
       "Species (by sci name)" = list(filt_tab = "USS_SPECIES_CODES",
-                                 filt_field = c("SVSPP"),
-                                 filt_disp = c("SCINAME","SVSPP"),
-                                 filt_ord = 1
+                                     filt_field = c("SVSPP"),
+                                     filt_disp = c("SCINAME","SVSPP"),
+                                     filt_ord = 1
       ),
       "Species (by common name)" = list(filt_tab = "USS_SPECIES_CODES",
-                                 filt_field = c("SVSPP"),
-                                 filt_disp = c("COMNAME","SVSPP"),
-                                 filt_ord = 1
-      ),
-      "Species (by code)" = list(filt_tab = "USS_SPECIES_CODES",
                                         filt_field = c("SVSPP"),
                                         filt_disp = c("COMNAME","SVSPP"),
-                                        filt_ord = 2
+                                        filt_ord = 1
+      ),
+      "Species (by code)" = list(filt_tab = "USS_SPECIES_CODES",
+                                 filt_field = c("SVSPP"),
+                                 filt_disp = c("COMNAME","SVSPP"),
+                                 filt_ord = 2
       ),
       "Year" = list(filt_tab = "USS_STATION",
                     filt_field = c("EST_YEAR"),
@@ -117,13 +118,13 @@ load_datasources <- function(db=NULL){
     name = "Groundfish/RV/Ecosystem Surveys",
     schema = "GROUNDFISH",
     desc = "
-	DFO\'s annual Multi-Species Bottom Trawl began on the Scotian Shelf/Bay of 
-	Fundy in 1970, and on Georges Bank in 1987. Primarily, these surveys are used 
-	as fisheries independent tools to estimate stock abundance (the magnitude of the 
-	marine populations) and recruitment (the abundance of juveniles) over time for 
-	a number of fish and invertebrate species. This information is then used along 
-	with fisheries catch data to assess the status of commercial species such as 
-	cod, haddock, pollock, halibut, offshore lobster, shrimp etc.",
+    DFO\'s annual Multi-Species Bottom Trawl began on the Scotian Shelf/Bay of 
+    Fundy in 1970, and on Georges Bank in 1987. Primarily, these surveys are used 
+    as fisheries independent tools to estimate stock abundance (the magnitude of the 
+    marine populations) and recruitment (the abundance of juveniles) over time for 
+    a number of fish and invertebrate species. This information is then used along 
+    with fisheries catch data to assess the status of commercial species such as 
+    cod, haddock, pollock, halibut, offshore lobster, shrimp etc.",
     tables = c("GSCAT","GSINF","GSDET","GSMISSIONS","GSSTRATUM","GSXTYPE","GSSPECIES"), #,"FGP_TOWS_NW2"),
     table_cat = "GSCAT",
     table_det = "GSDET",
@@ -228,26 +229,26 @@ load_datasources <- function(db=NULL){
     name = "Industry Surveys Database",
     schema = "OBSERVER",
     desc = "Department of Fisheries and Oceans (DFO) at-sea fish catch observations from 
-	commercial fishing vessels operating in the North West Atlantic. Data are 
-	collected by trained fisheries observers and industry technicians. The program 
-	provides extremely detailed data particularly in terms of information on the 
-	type of gear used, size of organisms caught and by-catches (e.g. non target 
-	species). All of which are not available from conventional log and landings data 
-	systems. Data are organized by trip, gear, set, sample and specimen. Trip types 
-	can be either commercial fishing or industry surveys employing a range of mobile 
-	and fixed gears (e.g. trawls, traps and hooks). \n
-	\n
-	Notable data within this source includes:\n
-	\n
-	-Maritimes Observer Program
-	-ITQ Survey
-	-4VN Sentinel Survey
-	-4VsW Sentinel Sentinel
-	-4VsW Skate Survey
-	-4X Monkfish Survey
-	-5Z Fixed Gear Survey
-	-GEAC (Groundfish Enterprise Allocation Council) Juvenile and Forage Survey
-	-Snow Crab Survey",
+    commercial fishing vessels operating in the North West Atlantic. Data are 
+    collected by trained fisheries observers and industry technicians. The program 
+    provides extremely detailed data particularly in terms of information on the 
+    type of gear used, size of organisms caught and by-catches (e.g. non target 
+    species). All of which are not available from conventional log and landings data 
+    systems. Data are organized by trip, gear, set, sample and specimen. Trip types 
+    can be either commercial fishing or industry surveys employing a range of mobile 
+    and fixed gears (e.g. trawls, traps and hooks). \n
+    \n
+    Notable data within this source includes:\n
+    \n
+    -Maritimes Observer Program
+    -ITQ Survey
+    -4VN Sentinel Survey
+    -4VsW Sentinel Sentinel
+    -4VsW Skate Survey
+    -4X Monkfish Survey
+    -5Z Fixed Gear Survey
+    -GEAC (Groundfish Enterprise Allocation Council) Juvenile and Forage Survey
+    -Snow Crab Survey",
     tables = c("ISSPECIESCODES","ISSPECIESSOUGHTCODES","ISOBSERVERCODES","ISGEARFEATURECLASSES","ISSETTYPECODES","ISVESSELS","ISTRIPTYPECODES","ISGEARFEATURECODES","ISGEARFEATURES","ISCATCHES","ISGEARCODES","ISSETPROFILE_WIDE","ISTRIPS","ISGEARS","ISFISHSETS","ISFISH","ISFISHMORPHS","ISMORPHCODES","ISMORPHVALUECODES"),
     table_cat = "ISCATCHES",
     table_det = c("ISFISH", "ISFISHMORPHS", "ISMORPHCODES", "ISMORPHVALUECODES"),
@@ -452,7 +453,7 @@ load_datasources <- function(db=NULL){
     name = "Cape Chidley Surveys",
     schema = "CAPECHIDLEY",
     desc = "Exploratory fishing surveys of the benthic fish fauna at 900-1800m.(Bottom 
-	Trawl Survey",
+    Trawl Survey",
     tables = c("DSINF","DSDET","DSCAT","DSSPEC","DSSTRATUM","GSXTYPE"),
     table_cat = "DSCAT",
     table_det = "DSDET",
@@ -537,9 +538,9 @@ load_datasources <- function(db=NULL){
     name="Redfish Surveys",
     schema = "REDFISH",
     desc= "A survey using stratified random design with day/night replication targeting 
-	deep sea redfish.  Data collected includes bycatch, hydro, morphometrics, 
-	length, and weight. Database components include Fishing events, catch, and 
-	sampling data",
+    deep sea redfish.  Data collected includes bycatch, hydro, morphometrics, 
+    length, and weight. Database components include Fishing events, catch, and 
+    sampling data",
     tables = c("RFINF","RFDET","RFCAT","GSSPECIES","GSSTRATUM","GSXTYPE"),
     table_cat = "RFCAT",
     table_det = "RFDET",
@@ -798,7 +799,7 @@ load_datasources <- function(db=NULL){
         "GSINF" = list(pk_fields=c("MISSION","SETNO"),
                        fk_fields=c("MISSION","SETNO")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
-                       fk_fields=c("CODE"))
+                           fk_fields=c("CODE"))
       ),
       "GSGEAR" = list(
         "GSINF" = list(pk_fields=c("GEAR"),
@@ -913,7 +914,7 @@ load_datasources <- function(db=NULL){
     name = "Pre-1970s Research Surveys",
     schema = "GROUNDFISH",
     desc = "Data collected on Groundfish Surveys prior to 1970. Database components include 
-	Fishing event, catch, and sampling data.",
+    Fishing event, catch, and sampling data.",
     tables = c("GSCATP70","GSINFP70","GSDETP70","GSCRUP70","GSSEXP70","GSSPECP70","GSVESP70","GSXTYPE","SPECIES_CODES","GSGEAR"),
     table_cat = "GSCATP70",
     table_det = "GSDETP70",
@@ -1020,7 +1021,7 @@ load_datasources <- function(db=NULL){
     name = "MARFIS (Maritime Fishery Information System)",
     schema = "MARFISSCI",
     desc = "A Policy and Economics Branch database that houses information on the fisheries 
-	of the Scotia-Fundy region, including data related to catch and effort.",
+    of the Scotia-Fundy region, including data related to catch and effort.",
     tables = c("LOG_SPC_STD_INFO","LOG_EFRT_STD_INFO","GEARS","SPECIES","SPECIES_CATEGORIES","NAFO_UNIT_AREAS","AREAS","CATCH_USAGES","MON_DOCS","PRO_SPC_INFO","VESSELS","HAIL_IN_CALLS"),
     table_cat = "LOG_SPC_STD_INFO",
     table_pos = "PRO_SPC_INFO",
@@ -1041,39 +1042,35 @@ load_datasources <- function(db=NULL){
                       'LICENCE_ID',
                       'MON_DOC_LIC_ID'),
     joins = list(
-      "MON_DOCS" = list(
-        #not sure I can reference same table 3 different times like this
+      "AREAS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
+                              fk_fields=c("FISHING_AREA_ID")),
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("AREA_ID"),
+                                   fk_fields=c("FV_FISHING_AREA_ID")),
+        "MON_DOCS" = list(pk_fields=c("AREA_ID"),
+                                   fk_fields=c("FV_FISHING_AREA_ID")),
+        combine = "OR"
+      ),
+      "CATCH_USAGES" = list(
+        "LOG_SPC_STD_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                                  fk_fields=c("CATCH_USAGE_CODE")),
+        "PRO_SPC_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                              fk_fields=c("CATCH_USAGE_CODE")),
+        combine = "OR"
+      ),
+      "GEARS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
+                              fk_fields=c("GEAR_CODE")),
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("GEAR_CODE"),
+                                   fk_fields=c("FV_GEAR_CODE")),
+        combine = "OR"
+      ),
+      "HAIL_IN_CALLS" = list(
+        "MON_DOCS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
+                          fk_fields=c("HAIL_IN_CALL_ID")),
         "VESSELS" = list(pk_fields=c("VR_NUMBER"),
                          fk_fields=c("VR_NUMBER")),
-        "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                               fk_fields=c("HAIL_IN_CALL_ID")),
-        combine = "ALL"
-      ),
-      "MON_DOCS" = list(
-        "LOG_EFRT_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
-                                   fk_fields=c("MON_DOC_ID")),
-        "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
-                                  fk_fields=c("MON_DOC_ID")),
         combine = "OR"
-      ),
-      "MON_DOCS" = list(
-        "NAFO_UNIT_AREAS" = list(pk_fields=c("FV_NAFO_UNIT_AREA_ID"),
-                                 fk_fields=c("AREA_ID")),
-        "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
-                       fk_fields=c("AREA_ID")),
-        combine = "OR"
-      ),
-      "VESSELS" = list(
-        #not sure I can reference same table 3 different times like this
-        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
-                              fk_fields=c("VR_NUMBER_FISHING")),
-        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
-                              fk_fields=c("VR_NUMBER_LANDING")),
-        combine = "OR"
-      ),
-      "SPECIES_CATEGORIES" = list(
-        "SPECIES" = list(pk_fields=c("SPECIES_CATEGORY_ID"),
-                         fk_fields=c("SPECIES_CATEGORY_ID"))
       ),
       "LOG_EFRT_STD_INFO" = list(
         # "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
@@ -1087,10 +1084,41 @@ load_datasources <- function(db=NULL){
         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
                               fk_fields=c("LOG_EFRT_STD_INFO_ID")),
         "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
-                         fk_fields=c("SPECIES_CODE"))
+                         fk_fields=c("SPECIES_CODE")),
         # "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
         #                       fk_fields=c("CATCH_USAGE_CODE")),
-        # combine = "ALL"
+        combine = "OR"
+      ),
+      # "MON_DOCS" = list(
+      #   #not sure I can reference same table 3 different times like this
+      #   combine = "OR"
+      # ),
+      "MON_DOCS" = list(
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
+                                   fk_fields=c("MON_DOC_ID")),
+        "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
+                                  fk_fields=c("MON_DOC_ID")),
+        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
+                         fk_fields=c("VR_NUMBER")),
+        "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
+                               fk_fields=c("HAIL_IN_CALL_ID")),
+        combine = "OR"
+      ),
+      "MON_DOCS" = list(
+        "NAFO_UNIT_AREAS" = list(pk_fields=c("FV_NAFO_UNIT_AREA_ID"),
+                                 fk_fields=c("AREA_ID")),
+        "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
+                       fk_fields=c("AREA_ID")),
+        combine = "OR"
+      ),
+      "NAFO_UNIT_AREAS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
+                              fk_fields=c("NAFO_UNIT_AREA_ID")),
+        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("AREA_ID"),
+                                   fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
+        "MON_DOCS" = list(pk_fields=c("AREA_ID"),
+                          fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
+        combine = "OR"
       ),
       "PRO_SPC_INFO" = list(
         # "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
@@ -1102,40 +1130,42 @@ load_datasources <- function(db=NULL){
         combine = "ALL"
       ),
       "PRO_SPC_INFO" = list(
-         "GEARS" = list(pk_fields=c("GEAR_CODE"),
-                                 fk_fields=c("GEAR_CODE")),
+        
         "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
                                  fk_fields=c("AREA_ID")),
-        combine = "ALL"
+        "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
+                       fk_fields=c("AREA_ID")),
+        combine = "OR"
       ),
-      "HAIL_IN_CALLS" = list(
-        "MON_DOCS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                          fk_fields=c("HAIL_IN_CALL_ID")),
-        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                         fk_fields=c("VR_NUMBER")),
-        combine = "ALL"
-      ),
-      "GEARS" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
-                              fk_fields=c("GEAR_CODE"))
+      "PRO_SPC_INFO" = list(
+        "GEARS" = list(pk_fields=c("GEAR_CODE"),
+                       fk_fields=c("GEAR_CODE")),
+        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("GEAR_CODE"),
+                                   fk_fields=c("FV_GEAR_CODE")),
+        combine = "OR"
       ),
       "SPECIES" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
-                              fk_fields=c("SPECIES_CODE"))
+                              fk_fields=c("SPECIES_CODE")),
+        
+        "LOG_SPC_STD_INFO" = list(pk_fields=c("SPECIES_CODE"),
+                         fk_fields=c("SSF_SPECIES_CODE")),
+        combine = "OR"
       ),
-      "AREAS" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
-                              fk_fields=c("FISHING_AREA_ID"))
+      "SPECIES_CATEGORIES" = list(
+        "SPECIES" = list(pk_fields=c("SPECIES_CATEGORY_ID"),
+                         fk_fields=c("SPECIES_CATEGORY_ID"))
       ),
-      "NAFO_UNIT_AREAS" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
-                              fk_fields=c("NAFO_UNIT_AREA_ID"))
-      ),
-      "CATCH_USAGES" = list(
-        "LOG_SPC_STD_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                                  fk_fields=c("CATCH_USAGE_CODE")),
-        "PRO_SPC_INFO" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                              fk_fields=c("CATCH_USAGE_CODE")),
+      "VESSELS" = list(
+        #not sure I can reference same table 3 different times like this
+        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
+                              fk_fields=c("VR_NUMBER_FISHING")),
+        "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
+                              fk_fields=c("VR_NUMBER_LANDING")),
+        "MON_DOCS" = list(pk_fields=c("VR_NUMBER"),
+                              fk_fields=c("VR_NUMBER")),
+        "HAIL_IN_CALLS" = list(pk_fields=c("VR_NUMBER"),
+                          fk_fields=c("VR_NUMBER")),
         combine = "OR"
       )
     ),
@@ -1647,7 +1677,7 @@ load_datasources <- function(db=NULL){
                      inshore=inshore, meso=meso, meso_gully = meso_gully,
                      juvesh=juvesh, usnefsc=usnefsc
                      #, odf = odf 
-                     )
+  )
   
   
   generic_filts = list(
