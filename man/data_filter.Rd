@@ -72,6 +72,7 @@ Vessels are a pain - replace special chars and remove spaces
 Other dfo_extractions: 
 \code{\link{get_data_custom}()},
 \code{\link{get_data}()},
+\code{\link{get_survey}()},
 \code{\link{self_filter}()},
 \code{\link{summarize_catches}()}
 }

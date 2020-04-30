@@ -44,6 +44,7 @@ get_data_custom<-function(schema=NULL,
                           fn.oracle.dsn="_none_",
                           env=.GlobalEnv,
                           quiet=F){
+
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {
       this = paste0(x, ".RData")
@@ -82,8 +83,8 @@ get_data_custom<-function(schema=NULL,
   if (is.null(loadsuccess)){
     return(invisible(NULL))
   } else if (loadsuccess==-1){
-    oracle_cxn_custom = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)
-    if (oracle_cxn ==-1){
+    oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)  
+    if (!class(oracle_cxn_custom) =="list"){
       cat("\nCan't get the data without a DB connection.  Aborting.\n")
       return(NULL)
     }

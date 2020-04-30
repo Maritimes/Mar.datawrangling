@@ -18,6 +18,9 @@
 #' }
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
+#' @family dfo_extractions
+#' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
+#' @export
 get_survey<- function(db=NULL, survey=NULL, env=.GlobalEnv){
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   if(db !='rv'){

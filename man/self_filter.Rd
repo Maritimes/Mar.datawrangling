@@ -53,6 +53,7 @@ Other dfo_extractions:
 \code{\link{data_filter}()},
 \code{\link{get_data_custom}()},
 \code{\link{get_data}()},
+\code{\link{get_survey}()},
 \code{\link{summarize_catches}()}
 }
 \author{

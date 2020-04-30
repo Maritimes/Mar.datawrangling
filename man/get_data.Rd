@@ -82,6 +82,7 @@ the required tables prior to attempting an extraction.
 Other dfo_extractions: 
 \code{\link{data_filter}()},
 \code{\link{get_data_custom}()},
+\code{\link{get_survey}()},
 \code{\link{self_filter}()},
 \code{\link{summarize_catches}()}
 }
