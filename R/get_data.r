@@ -133,11 +133,11 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     }
   }
   try_extract <- function(usepkg, tables) {
-    oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
+    oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
     if (!is.list(oracle_cxn)) {
       tries = 0
       while (tries < 2 & !(is.list(oracle_cxn))) {
-        oracle_cxn = make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
+        oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
         tries = tries + 1
       }
       if (oracle_cxn == -1) 
