@@ -154,7 +154,7 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     GSCAT[is.na(GSCAT$TOTWGT),"TOTWGT"]<-0
     GSCAT[is.na(GSCAT$SAMPWGT),"SAMPWGT"]<-0
       
-    GSCAT <- aggregate(
+    GSCAT <- stats::aggregate(
       x = list(
         SAMPWGT = GSCAT$SAMPWGT, 
         TOTWGT = GSCAT$TOTWGT, 

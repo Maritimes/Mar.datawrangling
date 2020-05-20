@@ -52,7 +52,9 @@ or a shapefile for continued analysis
 Other general_use: 
 \code{\link{cleanup}()},
 \code{\link{clip_by_poly}()},
-\code{\link{get_isdb_trip_set}()}
+\code{\link{get_isdb_trip_set}()},
+\code{\link{restore_tables}()},
+\code{\link{save_tables}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

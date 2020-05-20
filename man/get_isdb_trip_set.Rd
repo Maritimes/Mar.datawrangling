@@ -25,7 +25,9 @@ name and set number for the FISHSET_ID.
 Other general_use: 
 \code{\link{cleanup}()},
 \code{\link{clip_by_poly}()},
-\code{\link{save_data}()}
+\code{\link{restore_tables}()},
+\code{\link{save_data}()},
+\code{\link{save_tables}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

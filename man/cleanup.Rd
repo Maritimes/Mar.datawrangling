@@ -24,7 +24,9 @@ by each of the databases it connects to.
 Other general_use: 
 \code{\link{clip_by_poly}()},
 \code{\link{get_isdb_trip_set}()},
-\code{\link{save_data}()}
+\code{\link{restore_tables}()},
+\code{\link{save_data}()},
+\code{\link{save_tables}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}

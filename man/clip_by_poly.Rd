@@ -56,7 +56,9 @@ since the use of distances requires projecting the data.
 Other general_use: 
 \code{\link{cleanup}()},
 \code{\link{get_isdb_trip_set}()},
-\code{\link{save_data}()}
+\code{\link{restore_tables}()},
+\code{\link{save_data}()},
+\code{\link{save_tables}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
