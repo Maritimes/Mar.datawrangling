@@ -8,13 +8,18 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 restore_tables <- function(db=NULL){
-  if(!exists("dw")){
-    cat("\nsave_tables() must be run before restore_tables() can be run\n")
-  }else{
-    sapply(ds_all[[db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
-      assign(x,value = get(paste0("tmp_",x), envir = dw), envir = .GlobalEnv)
+  if (is.null(db)){
+    cat("\nNothing restored.  Please specify the db.")
+  } else{
+    if(!exists("dw")){
+      cat("\nsave_tables() must be run before restore_tables() can be run (Missing 'dw').\n")
+    }else{
+      sapply(ds_all[[db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
+        assign(x,value = get(paste0("tmp_",x), envir = dw), envir = .GlobalEnv)
+      }
+      ) 
+      rm(dw, envir = .GlobalEnv)
     }
-    ) 
   }
   return(invisible())
 }

@@ -8,10 +8,14 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 save_tables <- function(db=NULL){
-  assign("dw", value = new.env(), envir = .GlobalEnv)
-  sapply(ds_all[[db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
-    assign(paste0("tmp_",x),value = get(x), envir = dw)
+  if (is.null(db)){
+    cat("\nNothing saved.  Please specify the db.")
+  } else{
+    assign("dw", value = new.env(), envir = .GlobalEnv)
+    sapply(ds_all[[db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
+      assign(paste0("tmp_",x),value = get(x), envir = dw)
+    }
+    ) 
   }
-  ) 
   return(invisible())
 }
