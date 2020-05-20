@@ -1085,8 +1085,8 @@ load_datasources <- function(db=NULL){
                               fk_fields=c("LOG_EFRT_STD_INFO_ID")),
         "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
                          fk_fields=c("SPECIES_CODE")),
-        # "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
-        #                       fk_fields=c("CATCH_USAGE_CODE")),
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+        fk_fields=c("LOG_EFRT_STD_INFO_ID")),
         combine = "AND"
       ),
       # "MON_DOCS" = list(
@@ -1105,11 +1105,9 @@ load_datasources <- function(db=NULL){
                                  fk_fields=c("AREA_ID")),
         "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
                        fk_fields=c("AREA_ID")),
+        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
+                         fk_fields=c("VR_NUMBER")),
         combine = "OR"
-      ),
-      "MON_DOCS" = list(
-      "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                       fk_fields=c("VR_NUMBER"))
       ),
       "MON_DOCS" = list(
       "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
