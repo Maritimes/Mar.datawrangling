@@ -4,11 +4,15 @@
 \alias{restore_tables}
 \title{restore_tables}
 \usage{
-restore_tables(db = NULL)
+restore_tables(db = NULL, clean = "TRUE")
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working 
 with.}
+
+\item{clean}{default is \code{TRUE}. If this is true, the temporary environment that held the 
+tables will be removed when the tables are restored.  If it is false, the environment will not be 
+removed when the data is loaded.}
 }
 \value{
 nothing
