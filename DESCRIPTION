@@ -1,13 +1,12 @@
 Package: Mar.datawrangling
 Title: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases
-Version: 2020.05.20
+Version: 2020.06.08
 Authors@R: c( person("Mike", "McMahon", email="Mike.McMahon@dfo-mpo.gc.ca", role=c("aut", "cre")) )
 Maintainer: Mike McMahon <Mike.McMahon@dfo-mpo.gc.ca>
 Description: This package facilitates the extraction and handling of data from various Maritimes databases.
 Depends:
     R (>= 2.10)
 Imports:
-    RODBC,
     lubridate,
     rgdal,
     sp,
@@ -22,6 +21,7 @@ Imports:
     Mar.utils
 Enhances:
     ROracle,
+    RODBC,
     DBI,
     Mar.data
 Remotes:
@@ -30,4 +30,4 @@ Remotes:
 License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/Maritimes/Mar.datawrangling/
-RoxygenNote: 7.0.2
+RoxygenNote: 7.1.0
