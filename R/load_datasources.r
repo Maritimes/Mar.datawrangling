@@ -39,21 +39,18 @@ load_datasources <- function(db=NULL){
       "USS_CATCH"= list(
         "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
                              fk_fields=c("CRUISE6","TOW","STATION")),
-        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP", "SEX"),
-                                   fk_fields=c("SVSPP","CATCHSEX")),
+        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
+                                   fk_fields=c("SVSPP")),
         combine = "ALL"),
       "USS_LENGTHS"= list(
         "USS_CATCH" = list(pk_fields=c("CRUISE6","STATION","SVSPP"),
                            fk_fields=c("CRUISE6","STATION","SVSPP"))),
-      "US_VESSEL_NET_CONVERSIONS"= list(
-        "USS_LENGTHS" = list(pk_fields=c("SVSPP","LENGTH"),
-                           fk_fields=c("SVSPP","LENGTH"))),
       "USS_DETAIL"= list(
-        "USS_CATCH" = list(pk_fields=c("ID"),
-                           fk_fields=c("ID"))),
-      # "US_VESSEL_NET_CONVERSIONS"= list(
-      #   "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
-      #                              fk_fields=c("SVSPP"))),
+        "USS_CATCH" = list(pk_fields=c("CRUISE6","TOW","SVSPP"),
+                           fk_fields=c("CRUISE6","TOW","SVSPP"))),
+      "US_VESSEL_NET_CONVERSIONS"= list(
+        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
+                                   fk_fields=c("SVSPP"))),
       "STRANL_CRUISE"= list(
         "USS_STATION" = list(pk_fields=c("CRUISE6"),
                              fk_fields=c("CRUISE6")),
@@ -73,8 +70,8 @@ load_datasources <- function(db=NULL){
                              fk_fields=c("STRATUM"))
       ),
       "USS_SPECIES_CODES"= list(
-        "USS_CATCH" = list(pk_fields=c("SVSPP","SEX"),
-                           fk_fields=c("SVSPP","CATCHSEX")))
+        "USS_CATCH" = list(pk_fields=c("SVSPP"),
+                           fk_fields=c("SVSPP")))
     ),
     filters = list(  
       "Cruise" = list(filt_tab = "STRANL_CRUISE",
@@ -1044,6 +1041,7 @@ load_datasources <- function(db=NULL){
                       'VESSEL_NAME',
                       'LICENCE_ID',
                       'MON_DOC_LIC_ID'),
+    
     joins = list(
       "AREAS" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
@@ -1051,7 +1049,16 @@ load_datasources <- function(db=NULL){
         "LOG_EFRT_STD_INFO" = list(pk_fields=c("AREA_ID"),
                                    fk_fields=c("FV_FISHING_AREA_ID")),
         "MON_DOCS" = list(pk_fields=c("AREA_ID"),
-                                   fk_fields=c("FV_FISHING_AREA_ID")),
+                          fk_fields=c("FV_FISHING_AREA_ID")),
+        combine = "OR"
+      ),
+      "NAFO_UNIT_AREAS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
+                              fk_fields=c("NAFO_UNIT_AREA_ID")),
+        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("AREA_ID"),
+                                   fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
+        "MON_DOCS" = list(pk_fields=c("AREA_ID"),
+                          fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
         combine = "OR"
       ),
       "CATCH_USAGES" = list(
@@ -1064,7 +1071,9 @@ load_datasources <- function(db=NULL){
       "GEARS" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("GEAR_CODE"),
                               fk_fields=c("GEAR_CODE")),
-        "LOG_EFRT_STD_INFO" = list(pk_fields=c("GEAR_CODE"),
+        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("GEAR_CODE"),
+                                   fk_fields=c("FV_GEAR_CODE")),
+        "MON_DOCS"=  list(pk_fields=c("GEAR_CODE"),
                                    fk_fields=c("FV_GEAR_CODE")),
         combine = "OR"
       ),
@@ -1073,89 +1082,31 @@ load_datasources <- function(db=NULL){
                           fk_fields=c("HAIL_IN_CALL_ID"))
       ),
       "LOG_EFRT_STD_INFO" = list(
-        # "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
-        #                         fk_fields=c("MON_DOC_ID"))
-        # ,
         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
                               fk_fields=c("LOG_EFRT_STD_INFO_ID"))
-        # combine = "AND"
       ),
       "LOG_SPC_STD_INFO" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
                               fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-        "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
-                         fk_fields=c("SPECIES_CODE")),
-        "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-        fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-        combine = "AND"
+
+        combine = "OR"
       ),
-      # "MON_DOCS" = list(
-      #   #not sure I can reference same table 3 different times like this
-      #   combine = "OR"
-      # ),
+
+      
       "MON_DOCS" = list(
+        "PRO_SPC_INFO" = list(pk_fields=c("MON_DOC_ID"),
+                              fk_fields=c("MON_DOC_ID")),
         "LOG_EFRT_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
                                    fk_fields=c("MON_DOC_ID")),
         "LOG_SPC_STD_INFO" = list(pk_fields=c("MON_DOC_ID"),
                                   fk_fields=c("MON_DOC_ID")),
         combine = "OR"
       ),
-      "MON_DOCS" = list(
-        "NAFO_UNIT_AREAS" = list(pk_fields=c("FV_NAFO_UNIT_AREA_ID"),
-                                 fk_fields=c("AREA_ID")),
-        "AREAS" = list(pk_fields=c("FV_FISHING_AREA_ID"),
-                       fk_fields=c("AREA_ID")),
-        "VESSELS" = list(pk_fields=c("VR_NUMBER"),
-                         fk_fields=c("VR_NUMBER")),
-        combine = "OR"
-      ),
-      "MON_DOCS" = list(
-      "HAIL_IN_CALLS" = list(pk_fields=c("HAIL_IN_CALL_ID"),
-                             fk_fields=c("HAIL_IN_CALL_ID"))
-      ),
-      "NAFO_UNIT_AREAS" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("AREA_ID"),
-                              fk_fields=c("NAFO_UNIT_AREA_ID")),
-        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("AREA_ID"),
-                                   fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
-        "MON_DOCS" = list(pk_fields=c("AREA_ID"),
-                          fk_fields=c("FV_NAFO_UNIT_AREA_ID")),
-        combine = "OR"
-      ),
-      "PRO_SPC_INFO" = list(
-        # "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
-        #                            fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-        "SPECIES" = list(pk_fields=c("SPECIES_CODE"),
-                         fk_fields=c("SPECIES_CODE")),
-        "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
-                              fk_fields=c("CATCH_USAGE_CODE")),
-        combine = "ALL"
-      ),
-      "PRO_SPC_INFO" = list(
-        
-        "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
-                                 fk_fields=c("AREA_ID")),
-        "AREAS" = list(pk_fields=c("FISHING_AREA_ID"),
-                       fk_fields=c("AREA_ID")),
-        combine = "OR"
-      ),
-      "PRO_SPC_INFO" = list(
-        "GEARS" = list(pk_fields=c("GEAR_CODE"),
-                       fk_fields=c("GEAR_CODE")),
-        "LOG_EFRT_STD_INFO"=  list(pk_fields=c("GEAR_CODE"),
-                                   fk_fields=c("FV_GEAR_CODE")),
-        combine = "OR"
-      ),
-      "PRO_SPC_INFO" = list(
-        "MON_DOCS" = list(pk_fields=c("MON_DOC_ID"),
-                       fk_fields=c("MON_DOC_ID"))
-      ),
       "SPECIES" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
                               fk_fields=c("SPECIES_CODE")),
-        
         "LOG_SPC_STD_INFO" = list(pk_fields=c("SPECIES_CODE"),
-                         fk_fields=c("SSF_SPECIES_CODE")),
+                                  fk_fields=c("SSF_SPECIES_CODE")),
         combine = "OR"
       ),
       "SPECIES_CATEGORIES" = list(
@@ -1169,9 +1120,9 @@ load_datasources <- function(db=NULL){
         "PRO_SPC_INFO" = list(pk_fields=c("VR_NUMBER"),
                               fk_fields=c("VR_NUMBER_LANDING")),
         "MON_DOCS" = list(pk_fields=c("VR_NUMBER"),
-                              fk_fields=c("VR_NUMBER")),
-        "HAIL_IN_CALLS" = list(pk_fields=c("VR_NUMBER"),
                           fk_fields=c("VR_NUMBER")),
+        "HAIL_IN_CALLS" = list(pk_fields=c("VR_NUMBER"),
+                               fk_fields=c("VR_NUMBER")),
         combine = "OR"
       )
     ),
