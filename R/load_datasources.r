@@ -1088,8 +1088,9 @@ load_datasources <- function(db=NULL){
       "LOG_SPC_STD_INFO" = list(
         "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
                               fk_fields=c("LOG_EFRT_STD_INFO_ID")),
-
-        combine = "OR"
+        "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
+                                  fk_fields=c("SPECIES_CODE")),
+        combine = "AND"
       ),
 
       
@@ -1102,12 +1103,24 @@ load_datasources <- function(db=NULL){
                                   fk_fields=c("MON_DOC_ID")),
         combine = "OR"
       ),
+      "PRO_SPC_INFO" = list(
+        "SPECIES" = list(pk_fields=c("SPECIES_CODE"),
+                         fk_fields=c("SPECIES_CODE")),
+        "CATCH_USAGES" = list(pk_fields=c("CATCH_USAGE_CODE"),
+                              fk_fields=c("CATCH_USAGE_CODE")),
+        "GEARS" = list(pk_fields=c("GEAR_CODE"),
+                       fk_fields=c("GEAR_CODE")),
+        "NAFO_UNIT_AREAS" = list(pk_fields=c("NAFO_UNIT_AREA_ID"),
+                                 fk_fields=c("AREA_ID")),
+        combine = "ALL"
+      ),
+
       "SPECIES" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
-                              fk_fields=c("SPECIES_CODE")),
-        "LOG_SPC_STD_INFO" = list(pk_fields=c("SPECIES_CODE"),
+         "PRO_SPC_INFO" = list(pk_fields=c("SPECIES_CODE"),
+                               fk_fields=c("SPECIES_CODE")),
+         "LOG_SPC_STD_INFO" = list(pk_fields=c("SPECIES_CODE"),
                                   fk_fields=c("SSF_SPECIES_CODE")),
-        combine = "OR"
+         combine = "OR"
       ),
       "SPECIES_CATEGORIES" = list(
         "SPECIES" = list(pk_fields=c("SPECIES_CATEGORY_ID"),

@@ -97,7 +97,7 @@ self_filter <-
         }
         
         if (debug) {
-          # cat(paste0("\n-----\n",tab_prim,":\n",filt,"\n"))
+          cat(paste0("\n-----\n",tab_prim,":\n",filt,"\n"))
           tab_prim_n_0 = nrow(get(tab_prim, env))
         }
         if (ncol(get(tab_prim, env)) == 1) {
