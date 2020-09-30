@@ -82,12 +82,13 @@ data_tweaks <- function(db=NULL, data.dir= file.path(getwd(),'data')){
     #'the following are special data handling processes specific to the ISDB tables
     load(file.path(data.dir,"ISDB.ISCATCHES.RData"), envir = .GlobalEnv)
     load(file.path(data.dir,"ISDB.ISFISHSETS.RData"), envir = .GlobalEnv)
+ 
     if (!'S_EST_NUM_CAUGHT' %in% colnames(ISCATCHES)){
-      ISFISHSETS.directed=ISFISHSETS[c("FISHSET_ID","SET_NO","SPECSCD_ID")]  #keep only the field identifying the sought spp for each set
-      ISCATCHES.directed = merge(ISCATCHES,ISFISHSETS.directed, by.x=c("FISHSET_ID","SET_NO","SPECCD_ID"), by.y=c("FISHSET_ID","SET_NO","SPECSCD_ID")) #get the catches of directed for each set
-      ISCATCHES.directed = ISCATCHES.directed[c("FISHSET_ID", "SET_NO", "SPECCD_ID", "EST_NUM_CAUGHT", "EST_KEPT_WT", "EST_DISCARD_WT", "EST_REDUCTION_WT", "EST_COMBINED_WT")] #keep some fields
-      names(ISCATCHES.directed) <- c("FISHSET_ID", "SET_NO","SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
-      ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID","SET_NO"), by.y=c("FISHSET_ID","SET_NO")) #get the catches of directed for each set
+      ISFISHSETS.directed=ISFISHSETS[c("FISHSET_ID","SPECSCD_ID")]  #keep only the field identifying the sought spp for each set
+      ISCATCHES.directed = merge(ISCATCHES,ISFISHSETS.directed, by.x=c("FISHSET_ID","SPECCD_ID"), by.y=c("FISHSET_ID","SPECSCD_ID")) #get the catches of directed for each set
+      ISCATCHES.directed = ISCATCHES.directed[c("FISHSET_ID", "SPECCD_ID", "EST_NUM_CAUGHT", "EST_KEPT_WT", "EST_DISCARD_WT", "EST_REDUCTION_WT", "EST_COMBINED_WT")] #keep some fields
+      names(ISCATCHES.directed) <- c("FISHSET_ID", "SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
+      ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID"), by.y=c("FISHSET_ID")) #get the catches of directed for each set
       save( ISCATCHES, file=file.path(data.dir, "ISDB.ISCATCHES.RData"), compress=TRUE)
       cat("\nISCATCHES: Added directed species catch numbers and weights onto each record......")
     }
