@@ -284,8 +284,8 @@ load_datasources <- function(db=NULL){
                          fk_fields=c("OBSCD_ID"))
       ),
       "ISCATCHES" = list(
-        "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
-                            fk_fields=c("FISHSET_ID","SET_NO")),
+        "ISFISHSETS" = list(pk_fields=c("FISHSET_ID"), #,"SET_NO"),
+                            fk_fields=c("FISHSET_ID")), #,"SET_NO")),
         "ISSPECIESCODES" = list(pk_fields=c("SPECCD_ID"),
                                 fk_fields=c("SPECCD_ID")),
         combine = "ALL"
