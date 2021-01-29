@@ -4,7 +4,13 @@
 \alias{get_survey}
 \title{get_survey}
 \usage{
-get_survey(db = NULL, survey = NULL, env = .GlobalEnv)
+get_survey(
+  db = NULL,
+  survey = NULL,
+  data.dir = NULL,
+  quiet = TRUE,
+  env = .GlobalEnv
+)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
@@ -20,6 +26,10 @@ values include the following:
 \item \code{SUMMER} - Type 1; Summer (i.e. months 5:8); specific strata
 \item \code{FALL} - Type 1; Fall (i.e. months 9:!2)
 }}
+
+\item{data.dir}{The default is NULL. This should be a path to a folder containing your rdata files.}
+
+\item{quiet}{default is \code{TRUE}.  If TRUE, no output messages will be shown.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}

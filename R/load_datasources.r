@@ -1086,11 +1086,11 @@ load_datasources <- function(db=NULL){
                               fk_fields=c("LOG_EFRT_STD_INFO_ID"))
       ),
       "LOG_SPC_STD_INFO" = list(
-        "PRO_SPC_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
+        "LOG_EFRT_STD_INFO" = list(pk_fields=c("LOG_EFRT_STD_INFO_ID"),
                               fk_fields=c("LOG_EFRT_STD_INFO_ID")),
         "SPECIES" = list(pk_fields=c("SSF_SPECIES_CODE"),
                                   fk_fields=c("SPECIES_CODE")),
-        combine = "AND"
+        combine = "ALL"
       ),
 
       
