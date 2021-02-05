@@ -3,7 +3,7 @@
 export(cleanup)
 export(clip_by_poly)
 export(data_filter)
-export(data_tweaks)
+export(data_tweaks2)
 export(get_data)
 export(get_data_custom)
 export(get_isdb_trip_set)

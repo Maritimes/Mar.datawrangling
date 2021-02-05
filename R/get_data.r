@@ -60,32 +60,37 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
   if (substring(data.dir, nchar(data.dir)) == "/") 
     data.dir = substr(data.dir, 1, nchar(data.dir) - 1)
   if (is.null(db)) {
-    ds_nms = data.frame(list(names = unlist(lapply(ds_all, 
-                                                   "[[", "name")), db = names(unlist(lapply(ds_all, 
-                                                                                            "[[", "db"))), desc = unlist(lapply(ds_all, "[[", 
-                                                                                                                                "desc"))))
-    db_choice = utils::select.list(c(as.character(ds_nms$names), 
-                              "Cancel"), multiple = F, graphics = T, title = "Please select a data source")
+    ds_nms = data.frame(list(names = unlist(lapply(ds_all, "[[", "name")), db = names(unlist(lapply(ds_all,  "[[", "db"))), desc = unlist(lapply(ds_all, "[[", "desc"))))
+    db_choice = utils::select.list(c(as.character(ds_nms$names), "Cancel"), multiple = F, graphics = T, title = "Please select a data source")
     if (db_choice == "Cancel") {
       cat("\nCancelled at user request")
       return(NULL)
     }
-    assign("db", ds_nms[ds_nms$names == db_choice, ]$db, 
-           envir = .GlobalEnv)
+    assign("db", ds_nms[ds_nms$names == db_choice, ]$db, envir = .GlobalEnv)
   }
   else {
     assign("db", tolower(db), envir = .GlobalEnv)
   }
   local_table_status_check <- function(db = .GlobalEnv$db) {
-    localTables <- list.files(path = data.dir, pattern = paste0("^", toupper(db), ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)
-    prefixed.localTables = gsub(".RData", "", gsub(paste0(data.dir, 
-                                                          .Platform$file.sep), "", localTables))
-    prefixed.reqdTables = paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables)
-    reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
-    missingTables = sort(setdiff(prefixed.reqdTables, prefixed.localTables))
-    missingTables.clean = gsub("*.*?\\.", "", missingTables)
-    results = list(missingTables, missingTables.clean)
-    return(results)
+    reqdTables.clean = gsub("*.*?\\.", "", paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables))
+    # reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
+    
+    vers <- c(toupper(db), toupper(ds_all[[.GlobalEnv$db]]$schema))
+    locTables.clean <- NA 
+    for (v in 1:length(vers)){
+      these <- gsub("*.*?\\.", "", gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", list.files(path = data.dir, pattern = paste0("^",vers[v], ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE))))
+      locTables.clean <- c(locTables.clean,these) 
+    }
+    locTables.clean<- unique(locTables.clean[!is.na(locTables.clean)])
+    missingTables = sort(setdiff(reqdTables.clean, locTables.clean))
+    # localTables <- list.files(path = data.dir, pattern = paste0("^", toupper(db), ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)
+    # prefixed.localTables = gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", localTables))
+    # prefixed.reqdTables = paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables)
+    # reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
+    # missingTables = sort(setdiff(prefixed.reqdTables, prefixed.localTables))
+    # missingTables.clean = gsub("*.*?\\.", "", missingTables)
+    # results = list(missingTables, missingTables.clean)
+    return(missingTables)
   }
   oracle_activity <- function(tables = NULL, oracle_cxn, usepkg, 
                               theschema, prefix, action = "verify_acess") {
@@ -118,9 +123,9 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
         add.where = paste0(this$field, " NOT IN (", badvalues, 
                            ")")
         if (!quiet) cat(paste0("\n\tSkipping records ", theschema, 
-                   ".", tables, ".", this$field, " IN (", badvalues, 
-                   ")\n\n                   \tThis\\These are from ", 
-                   this$comments, "\n                   \n                   \tIf this is critical, use RODBC instead of ROracle\n"))
+                               ".", tables, ".", this$field, " IN (", badvalues, 
+                               ")\n\n                   \tThis\\These are from ", 
+                               this$comments, "\n                   \n                   \tIf this is critical, use RODBC instead of ROracle\n"))
       }
       table_naked = table_naked1 = gsub(".*\\.", "", tables)
       qry = paste0("SELECT * from ", theschema, ".", table_naked, 
@@ -155,8 +160,8 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
            ds_all[[.GlobalEnv$db]]$schema, toupper(db), "extract")
     elapsed = timer.start - proc.time()
     if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 
-                                                   0) * -1, "seconds"))
-    data_tweaks(db= .GlobalEnv$db, data.dir = data.dir)
+                                                               0) * -1, "seconds"))
+    data_tweaks2(db= .GlobalEnv$db, data.dir = data.dir)
   }
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {
@@ -178,30 +183,33 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     elapsed = timer.start - proc.time()
     if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
   }
-  reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
+  # reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
+  prefix = toupper(.GlobalEnv$db)
+  if (prefix == "RV")     prefix = "GROUNDFISH"
+  if (prefix == "MARFIS") prefix = "MARFISSCI"
+  reqd = paste0(prefix, ".",ds_all[[.GlobalEnv$db]]$tables)
   if (dir.exists(data.dir) == TRUE) {
     status = local_table_status_check()
-    if (length(status[[1]]) == 0 & force.extract == F) {
+    if (length(status)== 0 & force.extract == F) {
       try_load(reqd, data.dir)
-    }
-    else if (length(status[[1]]) == 0 & force.extract == T) {
+    } else if (length(status) == 0 & force.extract == T) {
       try_extract(usepkg, reqd)
       try_load(reqd, data.dir)
-    }
-    else {
+    } else {
+      if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(ds_all[[.GlobalEnv$db]]$schema,".",status)
+      if (toupper(.GlobalEnv$db)=="ISDB") status = paste0("ISDB.",status)
       cat(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:"))
-      cat("\n",status[[1]])
+      cat("\n",status)
       choice = toupper(readline(prompt = "\nPress 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
       print(choice)
       if (toupper(choice) == "C") {
         stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
-      }
-      else if (toupper(choice) == "A") {
+      } else if (toupper(choice) == "A") {
         try_extract(usepkg, reqd)
         try_load(reqd, data.dir)
-      }
-      else {
-        try_extract(usepkg, status[[1]])
+      } else {
+        #MMMM
+        try_extract(usepkg, status)
         try_load(reqd, data.dir)
       }
     }

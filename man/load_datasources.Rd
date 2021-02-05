@@ -18,7 +18,7 @@ generally clarify the code.
 }
 \seealso{
 Other internal: 
-\code{\link{data_tweaks}()}
+\code{\link{data_tweaks2}()}
 }
 \author{
 Mike McMahon, \email{Mike.McMahon@dfo-mpo.gc.ca}
