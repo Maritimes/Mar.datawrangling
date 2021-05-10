@@ -5,7 +5,7 @@
 #' (e.g. shapefile), it must have LATITUDE and LONGITUDE fields
 #' @param filename default is \code{NULL}.  This will be the prefix of your filename
 #' @param df.crs This is the CRS value for your dataframe.  This should be the reference system that your data is known to be in.
-#' The default value \code{"+init=epsg:4326"} is WGS84 and is appropriate for most data collected using a GPS.
+#' The default value \code{"EPSG:4326"} is WGS84 and is appropriate for most data collected using a GPS.
 #' @param db default is \code{NULL}. This identifies the dataset you are working
 #' with.
 #' @param req.coords default is TRUE.  This filters out records without values for LATITUDE or
@@ -22,7 +22,7 @@
 #' @family general_use
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "+init=epsg:4326",
+save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "EPSG:4326",
                       req.coords=TRUE, 
                       lat.field = "LATITUDE",
                       lon.field = "LONGITUDE",
@@ -55,7 +55,7 @@ records necessarily have positions and will not be visible in your shapefile")
     df.sp = sp::SpatialPointsDataFrame(
       coords = df.sp[, c(lon.field, lat.field)],
       data = df.sp,
-      proj4string = sp::CRS(df.crs)
+      proj4string = sp::CRS(SRS_string=df.crs)
     )
     if (nrow(df.sp@data) != nrow(df)) {
       cat("\n",paste0(nrow(df)-nrow(df.sp@data), " records were lost due to invalid coordinates"))
