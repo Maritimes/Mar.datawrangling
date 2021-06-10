@@ -7,6 +7,7 @@
 get_survey(
   db = NULL,
   survey = NULL,
+  keepBadSets = FALSE,
   data.dir = NULL,
   quiet = TRUE,
   env = .GlobalEnv
@@ -26,6 +27,9 @@ values include the following:
 \item \code{SUMMER} - Type 1; Summer (i.e. months 5:8); specific strata
 \item \code{FALL} - Type 1; Fall (i.e. months 9:!2)
 }}
+
+\item{keepBadSets}{default is \code{FALSE}.  This determines whether or not both type 1 and 3 
+sets are returned, or just type 1. Type 3 sets indicate an invalid tow.}
 
 \item{data.dir}{The default is NULL. This should be a path to a folder containing your rdata files.}
 

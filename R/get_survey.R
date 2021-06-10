@@ -16,6 +16,8 @@
 #' \item \code{SUMMER} - Type 1; Summer (i.e. months 5:8); specific strata
 #' \item \code{FALL} - Type 1; Fall (i.e. months 9:!2)
 #' }
+#' @param keepBadSets default is \code{FALSE}.  This determines whether or not both type 1 and 3 
+#' sets are returned, or just type 1. Type 3 sets indicate an invalid tow.
 #' @param data.dir The default is NULL. This should be a path to a folder containing your rdata files. 
 #' @param quiet default is \code{TRUE}.  If TRUE, no output messages will be shown.
 #' @param env This the the environment you want this function to work in.  The 
@@ -23,8 +25,9 @@
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.GlobalEnv){
-  
+get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL, quiet=TRUE, env=.GlobalEnv){
+  setTypes = 1
+  if (keepBadSets) setTypes <- c(setTypes,3)
   if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
   if(db !='rv'){
     cat(paste0("\n","This function currently only works for the rv database"))
@@ -79,7 +82,7 @@ get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.Gl
     do4X <-function(){
       #4X
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING' & env$GSMISSIONS$YEAR >= 2008,] 
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes &
                               env$GSINF$STRAT %in% c('434', '436', '437', '438', '439', 
                                                      '440', '441', '442', '443', '444', '445', '446', '447', '448', '449', 
                                                      '450', '451', '452', '453', '454', '455', '456', '457', '458', '459', 
@@ -92,7 +95,7 @@ get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.Gl
     doGEORGES <-function(){
       #GEORGES
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING',]
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes &
                               env$GSINF$STRAT %in% c("5Z1", "5Z2", "5Z3", "5Z4", "5Z5", "5Z6", "5Z7", "5Z8", "5Z9"),]
       
     }
@@ -100,7 +103,7 @@ get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.Gl
       #SPRING DATA (TYPE 1; MONTHS 1,2,3,4)
       #i.e. not 4X, not US stations, and not 4VVSW
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING' & env$GSMISSIONS$YEAR < 2008,]
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes &
                               !grepl(pattern = "5Z", x = env$GSINF$STRAT) &
                               !(env$GSINF$STRAT %in% c('551', '552', '553', '554', '555', '556', '557', '558', '559')) &
                               !(env$GSINF$STRAT %in% c('396','397', '398', '399',
@@ -110,7 +113,7 @@ get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.Gl
     doSUMMER <-function(){
       #SUMMER SURVEY (TYPE 1; MONTHS 5,6,7,8)
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SUMMER',]
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes &
                               env$GSINF$STRAT %in% c("434", "436", "437", "438", "439", #1971 only, Gulf region
                                                      "440", "441", "442", "443", "444", "445", "446", "447", "448", "449", 
                                                      "450", "451", "452", "453", "454", "455", "456", "457", "458", "459", 
@@ -124,12 +127,12 @@ get_survey<- function(db=NULL, survey=NULL, data.dir = NULL, quiet=TRUE, env=.Gl
     doFALL <-function(){
       #FALL
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'FALL',]
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1,]
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes,]
     }
     do4VSW <-function(){
       #4VSW
       env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING',]
-      env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
+      env$GSINF = env$GSINF[env$GSINF$TYPE %in% setTypes &
                               env$GSINF$STRAT %in% c('396','397', '398', '399', '400', 
                                                      '401', '402', '403', '404', '405', '406', '407', '408', '409', 
                                                      '410', '411'),]

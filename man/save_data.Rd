@@ -8,7 +8,7 @@ save_data(
   db = NULL,
   df = NULL,
   filename = NULL,
-  df.crs = "+init=epsg:4326",
+  df.crs = "EPSG:4326",
   req.coords = TRUE,
   lat.field = "LATITUDE",
   lon.field = "LONGITUDE",
@@ -26,7 +26,7 @@ with.}
 \item{filename}{default is \code{NULL}.  This will be the prefix of your filename}
 
 \item{df.crs}{This is the CRS value for your dataframe.  This should be the reference system that your data is known to be in.
-The default value \code{"+init=epsg:4326"} is WGS84 and is appropriate for most data collected using a GPS.}
+The default value \code{"EPSG:4326"} is WGS84 and is appropriate for most data collected using a GPS.}
 
 \item{req.coords}{default is TRUE.  This filters out records without values for LATITUDE or
 LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.}
