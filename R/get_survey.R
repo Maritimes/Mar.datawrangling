@@ -14,7 +14,7 @@
 #' \item \code{SPRING} - Type 1; Spring (i.e. months 1:4); pre-2008; specific strata 
 #' \item \code{4VSW}  - Type 1; Spring (i.e. months 1:4); 4VSW strata;  
 #' \item \code{SUMMER} - Type 1; Summer (i.e. months 5:8); specific strata
-#' \item \code{FALL} - Type 1; Fall (i.e. months 9:!2)
+#' \item \code{FALL} - Type 1; Fall (i.e. months 9:12)
 #' }
 #' @param keepBadSets default is \code{FALSE}.  This determines whether or not both type 1 and 3 
 #' sets are returned, or just type 1. Type 3 sets indicate an invalid tow.
@@ -75,6 +75,8 @@ get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL
   }
   get_data(db=db, data.dir = data.dir, quiet=quiet, env=env)
   if (db == 'rv'){
+    #ensure that we only resturn missions that had type 1 sets - don't want exploratory, etc
+    env$GSMISSIONS <- env$GSMISSIONS[env$GSMISSIONS$MISSION %in% unique(env$GSINF[GSINF$TYPE ==1, "MISSION"]),]
     #US Stations
     # env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING',]
     # env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
@@ -123,6 +125,7 @@ get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL
                                                      "490", "491", "492", "493", "494", "495", "496", "497", "498", 
                                                      "501", "502", "503", "504", "505", "557", "558", "559", 
                                                      "5Z1", "5Z2", "5Z3", "5Z4", "5Z5", "5Z6", "5Z7", "5Z8", "5Z9"),]
+      
     }
     doFALL <-function(){
       #FALL
