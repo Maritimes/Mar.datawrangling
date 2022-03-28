@@ -76,7 +76,7 @@ get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL
   get_data(db=db, data.dir = data.dir, quiet=quiet, env=env)
   if (db == 'rv'){
     #ensure that we only resturn missions that had type 1 sets - don't want exploratory, etc
-    env$GSMISSIONS <- env$GSMISSIONS[env$GSMISSIONS$MISSION %in% unique(env$GSINF[GSINF$TYPE ==1, "MISSION"]),]
+    env$GSMISSIONS <- env$GSMISSIONS[env$GSMISSIONS$MISSION %in% unique(env$GSINF[env$GSINF$TYPE ==1, "MISSION"]),]
     #US Stations
     # env$GSMISSIONS = env$GSMISSIONS[env$GSMISSIONS$SEASON == 'SPRING',]
     # env$GSINF = env$GSINF[env$GSINF$TYPE ==1 &
