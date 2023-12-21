@@ -24,7 +24,6 @@ to the global environment.  Existing tables with the same names will be overwrit
 \seealso{
 Other general_use: 
 \code{\link{cleanup}()},
-\code{\link{clip_by_poly}()},
 \code{\link{get_isdb_trip_set}()},
 \code{\link{save_data}()},
 \code{\link{save_tables}()}

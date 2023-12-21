@@ -11,3 +11,5 @@
   options(stringsAsFactors = FALSE)
   Sys.setenv(TZ = "America/Halifax")
 }
+
+utils::globalVariables(c("DETS_COL_LOOKUP","COLUMN_DEFN_ID", "SUM_DOC_DEFN_COL_ID"))

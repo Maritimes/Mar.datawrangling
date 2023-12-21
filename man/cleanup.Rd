@@ -22,7 +22,6 @@ by each of the databases it connects to.
 }
 \seealso{
 Other general_use: 
-\code{\link{clip_by_poly}()},
 \code{\link{get_isdb_trip_set}()},
 \code{\link{restore_tables}()},
 \code{\link{save_data}()},

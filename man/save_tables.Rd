@@ -20,7 +20,6 @@ exist in your environment, and stores them in a new environment (i.e.'dw').
 \seealso{
 Other general_use: 
 \code{\link{cleanup}()},
-\code{\link{clip_by_poly}()},
 \code{\link{get_isdb_trip_set}()},
 \code{\link{restore_tables}()},
 \code{\link{save_data}()}

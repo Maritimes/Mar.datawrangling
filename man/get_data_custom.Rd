@@ -63,7 +63,6 @@ access to the tables to extract them.
 }
 \seealso{
 Other dfo_extractions: 
-\code{\link{data_filter}()},
 \code{\link{get_data}()},
 \code{\link{get_survey}()},
 \code{\link{self_filter}()},

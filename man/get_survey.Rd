@@ -25,7 +25,7 @@ values include the following:
 \item \code{SPRING} - Type 1; Spring (i.e. months 1:4); pre-2008; specific strata 
 \item \code{4VSW}  - Type 1; Spring (i.e. months 1:4); 4VSW strata;  
 \item \code{SUMMER} - Type 1; Summer (i.e. months 5:8); specific strata
-\item \code{FALL} - Type 1; Fall (i.e. months 9:!2)
+\item \code{FALL} - Type 1; Fall (i.e. months 9:12)
 }}
 
 \item{keepBadSets}{default is \code{FALSE}.  This determines whether or not both type 1 and 3 
@@ -47,7 +47,6 @@ match the survey they should.
 }
 \seealso{
 Other dfo_extractions: 
-\code{\link{data_filter}()},
 \code{\link{get_data_custom}()},
 \code{\link{get_data}()},
 \code{\link{self_filter}()},

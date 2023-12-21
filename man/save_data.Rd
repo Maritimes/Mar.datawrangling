@@ -12,7 +12,7 @@ save_data(
   req.coords = TRUE,
   lat.field = "LATITUDE",
   lon.field = "LONGITUDE",
-  formats = c("csv", "shp"),
+  formats = c("csv", "gpkg"),
   env = .GlobalEnv
 )
 }
@@ -36,10 +36,10 @@ LONGITUDE.  The function aborts if req.coords=TRUE and no records remain.}
 \item{lon.field}{the default is \code{"LONGITUDE"}.  the name of the field holding longitude values (in decimal degrees)}
 
 \item{formats}{This is a vector of the formats in which you would like to save the current data,
-including "raw" for a (local) dataframe, "sp" for a (local) SpatialPointsDataFrame,  
-"shp" for a shapefile or "csv" (both written to the wd). The raw and sp objects will
-just have the name specified by filename, while the csv and shapefiles, since they're
-written externally also get a timestamp.}
+including "raw" for a (local) dataframe, "sf" for a (local) simple feature object,  
+"gpkg" for an ESRI-compatible geopackage or "csv" (both written to the wd). The raw and sp objects will
+just have the name specified by filename, while the csv also gets a timestamp, since it's written 
+externally .}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}
@@ -48,10 +48,14 @@ default value is \code{.GlobalEnv}.}
 This function takes either a dataframe or all of the data you've filtered, and rolls it up into a csv and/
 or a shapefile for continued analysis
 }
+\note{
+Note that with the retirement of rgeos,  rgdal and maptools, shapefiles are no longer supported
+by this package.  Instead, gpkg file are generated.  Additionally sp objects are also being phased 
+out and are being replaced by sf objects.
+}
 \seealso{
 Other general_use: 
 \code{\link{cleanup}()},
-\code{\link{clip_by_poly}()},
 \code{\link{get_isdb_trip_set}()},
 \code{\link{restore_tables}()},
 \code{\link{save_tables}()}

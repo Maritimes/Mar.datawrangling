@@ -24,7 +24,6 @@ name and set number for the FISHSET_ID.
 \seealso{
 Other general_use: 
 \code{\link{cleanup}()},
-\code{\link{clip_by_poly}()},
 \code{\link{restore_tables}()},
 \code{\link{save_data}()},
 \code{\link{save_tables}()}
