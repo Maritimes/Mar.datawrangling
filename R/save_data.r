@@ -62,7 +62,7 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "EPSG:4326"
     if ('sf' %in% formats)  assign(paste0("sf_",name), df.sf, envir = env)
   }
   if ('csv' %in% formats){
-    utils::write.csv(df, paste0(fn,".csv"))
+    utils::write.csv(df, row.names = F, paste0(fn,".csv"))
   }
   if ('rds' %in% formats){
     saveRDS(df, paste0(fn,".rds"))
