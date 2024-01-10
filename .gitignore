@@ -4,6 +4,7 @@
 .RData
 .Ruserdata
 data/
+inst/
 *.shp
 *.shx
 *.lock
