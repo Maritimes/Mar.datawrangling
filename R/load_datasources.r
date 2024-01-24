@@ -37,17 +37,19 @@ load_datasources <- function(db=NULL){
         #                      fk_fields=c("STATION")),
         combine = "ALL"),
       "USS_CATCH"= list(
-        "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
-                             fk_fields=c("CRUISE6","TOW","STATION")),
-        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
-                                   fk_fields=c("SVSPP")),
+        # "USS_STATION" = list(pk_fields=c("CRUISE6","TOW","STATION"),
+        #                      fk_fields=c("CRUISE6","TOW","STATION")),
+        "USS_STATION" = list(pk_fields=c("ID"),
+                                   fk_fields=c("ID")),
+        "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP","CATCHSEX"),
+                                   fk_fields=c("SVSPP", "SEX")),
         combine = "ALL"),
       "USS_LENGTHS"= list(
         "USS_CATCH" = list(pk_fields=c("CRUISE6","STATION","SVSPP"),
                            fk_fields=c("CRUISE6","STATION","SVSPP"))),
       "USS_DETAIL"= list(
-        "USS_CATCH" = list(pk_fields=c("CRUISE6","TOW","SVSPP"),
-                           fk_fields=c("CRUISE6","TOW","SVSPP"))),
+        "USS_CATCH" = list(pk_fields=c("CRUISE6","TOW","SVSPP","CATCHSEX"),
+                           fk_fields=c("CRUISE6","TOW","SVSPP","CATCHSEX"))),
       "US_VESSEL_NET_CONVERSIONS"= list(
         "USS_SPECIES_CODES" = list(pk_fields=c("SVSPP"),
                                    fk_fields=c("SVSPP"))),
@@ -70,8 +72,8 @@ load_datasources <- function(db=NULL){
                              fk_fields=c("STRATUM"))
       ),
       "USS_SPECIES_CODES"= list(
-        "USS_CATCH" = list(pk_fields=c("SVSPP"),
-                           fk_fields=c("SVSPP")))
+        "USS_CATCH" = list(pk_fields=c("SVSPP","SEX"),
+                           fk_fields=c("SVSPP","CATCHSEX")))
     ),
     filters = list(  
       "Cruise" = list(filt_tab = "STRANL_CRUISE",
