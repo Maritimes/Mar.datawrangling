@@ -95,10 +95,16 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"GROUNDFISH.GSINF.RData"))){
       load(file.path(data.dir,"GROUNDFISH.GSINF.RData"))
       if (!'LATITUDE' %in% colnames(GSINF)){
-        GSINF$LATITUDE = (as.numeric(substr(GSINF$SLAT,1,2))+(GSINF$SLAT - as.numeric(substr(GSINF$SLAT,1,2))*100)/60)
-        GSINF$LONGITUDE = (as.numeric(substr(GSINF$SLONG,1,2))+(GSINF$SLONG - as.numeric(substr(GSINF$SLONG,1,2))*100)/60)*-1
-        GSINF$ELATITUDE = (as.numeric(substr(GSINF$ELAT,1,2))+(GSINF$ELAT - as.numeric(substr(GSINF$ELAT,1,2))*100)/60)
-        GSINF$ELONGITUDE = (as.numeric(substr(GSINF$ELONG,1,2))+(GSINF$ELONG - as.numeric(substr(GSINF$ELONG,1,2))*100)/60)*-1
+        GSINF <- Mar.utils::DDMMx_to_DD(df=GSINF, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+        colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "LATITUDE"
+        colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "LONGITUDE"
+        GSINF <- Mar.utils::DDMMx_to_DD(df=GSINF, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+        colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "ELATITUDE"
+        colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "ELONGITUDE"
+        
+        
+        GSINF$SLAT <- GSINF$SLONG <- GSINF$ELAT <- GSINF$ELONG <- NULL
+        
         cat(paste("\nGSINF:  Converted DDMM coordinates to DDDD.DD ..."))
         save( GSINF, file=file.path(data.dir, "GROUNDFISH.GSINF.RData"), compress=TRUE)
       }
@@ -149,20 +155,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
         PRO_SPC_INFO$SSF_SPECIES_SIZE_CODE <-NULL
         PRO_SPC_INFO$SSF_LANDED_FORM_CODE <-NULL
         PRO_SPC_INFO$CDATE <- NULL
-        
-        PRO_SPC_INFO$LATITUDE[!is.na(PRO_SPC_INFO$LATITUDE)] =
-          as.numeric(substr(PRO_SPC_INFO$LATITUDE[!is.na(PRO_SPC_INFO$LATITUDE)], 1, 2)) +
-          as.numeric(substr(PRO_SPC_INFO$LATITUDE[!is.na(PRO_SPC_INFO$LATITUDE)], 3, 4)) / 60 +
-          as.numeric(substr(PRO_SPC_INFO$LATITUDE[!is.na(PRO_SPC_INFO$LATITUDE)], 5, 6)) / 3600
-        PRO_SPC_INFO$LONGITUDE[!is.na(PRO_SPC_INFO$LONGITUDE)] = -1 *
-          (as.numeric(substr(PRO_SPC_INFO$LONGITUDE[!is.na(PRO_SPC_INFO$LONGITUDE)], 1, 2)) +
-             as.numeric(substr(PRO_SPC_INFO$LONGITUDE[!is.na(PRO_SPC_INFO$LONGITUDE)], 3, 4)) / 60 +
-             as.numeric(substr(PRO_SPC_INFO$LONGITUDE[!is.na(PRO_SPC_INFO$LONGITUDE)], 5, 6)) / 3600)
-        cat(paste("\nPRO_SPC_INFO:  Converted DDMM coordinates to DDDD.DD and added default coord fields..."))
+        PRO_SPC_INFO <- Mar.utils::DDMMx_to_DD(df=PRO_SPC_INFO, format = "DDMMMM", lat.field = "LATITUDE", lon.field = "LONGITUDE", WestHemisphere = T)
+        PRO_SPC_INFO$LATITUDE <- PRO_SPC_INFO$LONGITUDE <- NULL
+        colnames(PRO_SPC_INFO)[colnames(PRO_SPC_INFO)=="LAT_DD"] <- "LATITUDE"
+        colnames(PRO_SPC_INFO)[colnames(PRO_SPC_INFO)=="LON_DD"] <- "LONGITUDE"
+        cat(paste("\nPRO_SPC_INFO:  Converted DDMMMM coordinates to DD.DDDDDD and added default coord fields..."))
         PRO_SPC_INFO$YEAR <- NA
         PRO_SPC_INFO$YEAR[!is.na(PRO_SPC_INFO$DATE_FISHED)]  =
           lubridate::year(as.POSIXct(PRO_SPC_INFO$DATE_FISHED[!is.na(PRO_SPC_INFO$DATE_FISHED)], origin = "1970-01-01"))
-        cat("\nPRO_SPC_INFO: Added a year field")
         PRO_SPC_INFO$YEAR_LANDED <- NA
         PRO_SPC_INFO$YEAR_LANDED[!is.na(PRO_SPC_INFO$LANDED_DATE)]  =
           lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[!is.na(PRO_SPC_INFO$LANDED_DATE)], origin = "1970-01-01"))
@@ -256,24 +256,17 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
         LOG_EFRT_STD_INFO$CDATE <- NULL
         LOG_EFRT_STD_INFO$UUSER <- NULL
         LOG_EFRT_STD_INFO$UDATE <- NULL
-        LOG_EFRT_STD_INFO$ENT_LATITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LATITUDE)] =
-          as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LATITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LATITUDE)], 1, 2)) +
-          as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LATITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LATITUDE)], 3, 4)) / 60 +
-          as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LATITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LATITUDE)], 5, 6)) / 3600
-        LOG_EFRT_STD_INFO$DET_LATITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LATITUDE)] =
-          as.numeric(substr(LOG_EFRT_STD_INFO$DET_LATITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LATITUDE)], 1, 2)) +
-          as.numeric(substr(LOG_EFRT_STD_INFO$DET_LATITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LATITUDE)], 3, 4)) / 60 +
-          as.numeric(substr(LOG_EFRT_STD_INFO$DET_LATITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LATITUDE)], 5, 6)) / 3600
-        LOG_EFRT_STD_INFO$ENT_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE)] = -1 *
-          (as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE)], 1, 2)) +
-             as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE)], 3, 4)) / 60 +
-             as.numeric(substr(LOG_EFRT_STD_INFO$ENT_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE)], 5, 6)) / 3600)
-        LOG_EFRT_STD_INFO$DET_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LONGITUDE)] = -1 *
-          (as.numeric(substr(LOG_EFRT_STD_INFO$DET_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LONGITUDE)], 1, 2)) +
-             as.numeric(substr(LOG_EFRT_STD_INFO$DET_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LONGITUDE)], 3, 4)) / 60 +
-             as.numeric(substr(LOG_EFRT_STD_INFO$DET_LONGITUDE[!is.na(LOG_EFRT_STD_INFO$DET_LONGITUDE)], 5, 6)) / 3600)
+        LOG_EFRT_STD_INFO <- Mar.utils::DDMMx_to_DD(df=LOG_EFRT_STD_INFO, format = "DDMMMM", lat.field = "ENT_LATITUDE", lon.field = "ENT_LONGITUDE", WestHemisphere = T)
+        LOG_EFRT_STD_INFO$ENT_LATITUDE <- LOG_EFRT_STD_INFO$ENT_LONGITUDE <- NULL
+        colnames(LOG_EFRT_STD_INFO)[colnames(LOG_EFRT_STD_INFO)=="LAT_DD"] <- "ENT_LATITUDE"
+        colnames(LOG_EFRT_STD_INFO)[colnames(LOG_EFRT_STD_INFO)=="LON_DD"] <- "ENT_LONGITUDE"
+        LOG_EFRT_STD_INFO <- Mar.utils::DDMMx_to_DD(df=LOG_EFRT_STD_INFO, format = "DDMMMM", lat.field = "DET_LATITUDE", lon.field = "DET_LONGITUDE", WestHemisphere = T)
+        LOG_EFRT_STD_INFO$DET_LATITUDE <- LOG_EFRT_STD_INFO$DET_LONGITUDE <- NULL
+        colnames(LOG_EFRT_STD_INFO)[colnames(LOG_EFRT_STD_INFO)=="LAT_DD"] <- "DET_LATITUDE"
+        colnames(LOG_EFRT_STD_INFO)[colnames(LOG_EFRT_STD_INFO)=="LON_DD"] <- "DET_LONGITUDE"
         LOG_EFRT_STD_INFO$LATITUDE_EFRT = ifelse(is.na(LOG_EFRT_STD_INFO$ENT_LATITUDE),LOG_EFRT_STD_INFO$DET_LATITUDE,LOG_EFRT_STD_INFO$ENT_LATITUDE)
         LOG_EFRT_STD_INFO$LONGITUDE_EFRT = ifelse(is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE),LOG_EFRT_STD_INFO$DET_LONGITUDE,LOG_EFRT_STD_INFO$ENT_LONGITUDE)
+        
         cat(paste("\nLOG_EFRT_STD_INFO:  Converted DDMM coordinates to DDDD.DD and added coord fields..."))
         save( LOG_EFRT_STD_INFO, file=file.path(data.dir, "MARFISSCI.LOG_EFRT_STD_INFO.RData"), compress=TRUE)
       }
@@ -316,10 +309,15 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (!'YEAR' %in% colnames(JVINF)){
       JVINF$YEAR = lubridate::year(JVINF$SDATE)
       cat("\nJVINF:  For convenience, added a YEAR field")
-      JVINF$LATITUDE = (as.numeric(substr(JVINF$SLAT,1,2))+(JVINF$SLAT - as.numeric(substr(JVINF$SLAT,1,2))*100)/60)
-      JVINF$LONGITUDE = (as.numeric(substr(JVINF$SLONG,1,2))+(JVINF$SLONG - as.numeric(substr(JVINF$SLONG,1,2))*100)/60)*-1
-      JVINF$ELATITUDE = (as.numeric(substr(JVINF$ELAT,1,2))+(JVINF$ELAT - as.numeric(substr(JVINF$ELAT,1,2))*100)/60)
-      JVINF$ELONGITUDE = (as.numeric(substr(JVINF$ELONG,1,2))+(JVINF$ELONG - as.numeric(substr(JVINF$ELONG,1,2))*100)/60)*-1
+      
+      JVINF <- Mar.utils::DDMMx_to_DD(df=JVINF, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "LATITUDE"
+      colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "LONGITUDE"
+      JVINF <- Mar.utils::DDMMx_to_DD(df=JVINF, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "ELATITUDE"
+      colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "ELONGITUDE"
+      
+      JVINF$SLAT<- JVINF$SLONG<- JVINF$ELAT<- JVINF$ELONG<- NULL
       cat(paste("\nJVINF:  Converted DDMM coordinates to DDDD.DD ..."))
       #sometimes the CRUNOs had leading 0s, and in the case of JVCAT, it sometimes has leading Os.  The following
       #removes these so that data can be related properly without orphaning records.
@@ -366,10 +364,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"RVP70.GSINFP70.RData"))){
     load(file.path(data.dir,"RVP70.GSINFP70.RData"))
     if (!'LATITUDE' %in% colnames(GSINFP70)){
-      GSINFP70$LATITUDE = (as.numeric(substr(GSINFP70$SLAT,1,2))+(GSINFP70$SLAT - as.numeric(substr(GSINFP70$SLAT,1,2))*100)/60)
-      GSINFP70$LONGITUDE = (as.numeric(substr(GSINFP70$SLONG,1,2))+(GSINFP70$SLONG - as.numeric(substr(GSINFP70$SLONG,1,2))*100)/60)*-1
-      GSINFP70$ELATITUDE = (as.numeric(substr(GSINFP70$ELAT,1,2))+(GSINFP70$ELAT - as.numeric(substr(GSINFP70$ELAT,1,2))*100)/60)
-      GSINFP70$ELONGITUDE = (as.numeric(substr(GSINFP70$ELONG,1,2))+(GSINFP70$ELONG - as.numeric(substr(GSINFP70$ELONG,1,2))*100)/60)*-1
+      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(GSINFP70)[colnames(GSINFP70)=="LAT_DD"] <- "LATITUDE"
+      colnames(GSINFP70)[colnames(GSINFP70)=="LON_DD"] <- "LONGITUDE"
+      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      colnames(GSINFP70)[colnames(GSINFP70)=="LAT_DD"] <- "ELATITUDE"
+      colnames(GSINFP70)[colnames(GSINFP70)=="LON_DD"] <- "ELONGITUDE"
+      
+      GSINFP70$SLAT<- GSINFP70$SLONG<- GSINFP70$ELAT<- GSINFP70$ELONG<- NULL
       cat(paste("\nGSINFP70:  Converted DDMM coordinates to DDDD.DD ..."))
       save( GSINFP70, file=file.path(data.dir, "RVP70.GSINFP70.RData"), compress=TRUE)
     }
@@ -381,10 +383,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"CHID.DSINF.RData"))){
     load(file.path(data.dir,"CHID.DSINF.RData"))
     if (!'LATITUDE' %in% colnames(DSINF)){
-      DSINF$LATITUDE = (as.numeric(substr(DSINF$SLAT,1,2))+(DSINF$SLAT - as.numeric(substr(DSINF$SLAT,1,2))*100)/60)
-      DSINF$LONGITUDE = (as.numeric(substr(DSINF$SLONG,1,2))+(DSINF$SLONG - as.numeric(substr(DSINF$SLONG,1,2))*100)/60)*-1
-      DSINF$ELATITUDE = (as.numeric(substr(DSINF$ELAT,1,2))+(DSINF$ELAT - as.numeric(substr(DSINF$ELAT,1,2))*100)/60)
-      DSINF$ELONGITUDE = (as.numeric(substr(DSINF$ELONG,1,2))+(DSINF$ELONG - as.numeric(substr(DSINF$ELONG,1,2))*100)/60)*-1
+      DSINF <- Mar.utils::DDMMx_to_DD(df=DSINF, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(DSINF)[colnames(DSINF)=="LAT_DD"] <- "LATITUDE"
+      colnames(DSINF)[colnames(DSINF)=="LON_DD"] <- "LONGITUDE"
+      DSINF <- Mar.utils::DDMMx_to_DD(df=DSINF, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      colnames(DSINF)[colnames(DSINF)=="LAT_DD"] <- "ELATITUDE"
+      colnames(DSINF)[colnames(DSINF)=="LON_DD"] <- "ELONGITUDE"
+      
+      DSINF$SLAT<- DSINF$SLONG<- DSINF$ELAT<- DSINF$ELONG<- NULL
       cat(paste("\nDSINF:  Converted DDMM coordinates to DDDD.DD ..."))
       DSINF$YEAR = lubridate::year(DSINF$SDATE)
       cat("\nDSINF: Added a year field")
@@ -406,15 +412,12 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (!'LATITUDE' %in% colnames(MESOPELAGIC)){
       MESOPELAGIC$theLat = paste0(sprintf("%02d",MESOPELAGIC$LAT_DEG),sprintf("%02d",MESOPELAGIC$LAT_MIN))  
       MESOPELAGIC$theLong = paste0(sprintf("%02d",MESOPELAGIC$LON_DEG),sprintf("%02d",MESOPELAGIC$LON_MIN))  
-      MESOPELAGIC$LATITUDE = (as.numeric(substr(MESOPELAGIC$theLat,1,2))+(as.numeric(MESOPELAGIC$theLat) - as.numeric(substr(MESOPELAGIC$theLat,1,2))*100)/60)
-      MESOPELAGIC$LONGITUDE = (as.numeric(substr(MESOPELAGIC$theLong,1,2))+(as.numeric(MESOPELAGIC$theLong) - as.numeric(substr(MESOPELAGIC$theLong,1,2))*100)/60)*-1
       
-      MESOPELAGIC$theLat<-NULL
-      MESOPELAGIC$theLong<-NULL
-      MESOPELAGIC$LAT_DEG<-NULL
-      MESOPELAGIC$LAT_MIN<-NULL
-      MESOPELAGIC$LON_DEG<-NULL
-      MESOPELAGIC$LON_MIN<-NULL
+      MESOPELAGIC <- Mar.utils::DDMMx_to_DD(df=MESOPELAGIC, format = "DDMMMM", lat.field = "theLat", lon.field = "theLong", WestHemisphere = T)
+      colnames(MESOPELAGIC)[colnames(MESOPELAGIC)=="LAT_DD"] <- "LATITUDE"
+      colnames(MESOPELAGIC)[colnames(MESOPELAGIC)=="LON_DD"] <- "LONGITUDE"
+
+      MESOPELAGIC$theLat<- MESOPELAGIC$theLong<- MESOPELAGIC$LAT_DEG<- MESOPELAGIC$LAT_MIN<- MESOPELAGIC$LON_DEG<- MESOPELAGIC$LON_MIN<-NULL
       cat(paste("\nMESOPELAGIC:  Converted DDMM coordinates to DDDD.DD ..."))
       save( MESOPELAGIC, file=file.path(data.dir, "MESO.MESOPELAGIC.RData"), compress=TRUE)
     }
@@ -426,15 +429,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"MESO_GULLY.GSINF.RData"))){
     load(file.path(data.dir,"MESO_GULLY.GSINF.RData"))
     if (!'LATITUDE' %in% colnames(GSINF)){
-      GSINF$LATITUDE = (as.numeric(substr(GSINF$SLAT,1,2))+(GSINF$SLAT - as.numeric(substr(GSINF$SLAT,1,2))*100)/60)
-      GSINF$LONGITUDE = (as.numeric(substr(GSINF$SLONG,1,2))+(GSINF$SLONG - as.numeric(substr(GSINF$SLONG,1,2))*100)/60)*-1
-      GSINF$ELATITUDE = (as.numeric(substr(GSINF$ELAT,1,2))+(GSINF$ELAT - as.numeric(substr(GSINF$ELAT,1,2))*100)/60)
-      GSINF$ELONGITUDE = (as.numeric(substr(GSINF$ELONG,1,2))+(GSINF$ELONG - as.numeric(substr(GSINF$ELONG,1,2))*100)/60)*-1
+      GSINF <- Mar.utils::DDMMx_to_DD(df=GSINF, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "LATITUDE"
+      colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "LONGITUDE"
+      GSINF <- Mar.utils::DDMMx_to_DD(df=GSINF, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      colnames(GSINF)[colnames(GSINF)=="LAT_DD"] <- "ELATITUDE"
+      colnames(GSINF)[colnames(GSINF)=="LON_DD"] <- "ELONGITUDE"
       
-      GSINF$SLAT<-NULL
-      GSINF$SLONG<-NULL
-      GSINF$ELAT<-NULL
-      GSINF$ELONG<-NULL
+      GSINF$SLAT <- GSINF$SLONG <- GSINF$ELAT <- GSINF$ELONG<-NULL
       cat(paste("\nGSINF:  Converted DDMM coordinates to DDDD.DD ..."))
       save( GSINF, file=file.path(data.dir, "MESO_GULLY.GSINF.RData"), compress=TRUE)
     }
@@ -446,10 +448,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"INSHORE.INS_INF.RData"))){
     load(file.path(data.dir,"INSHORE.INS_INF.RData"))
     if (!'LATITUDE' %in% colnames(INS_INF)){
-      INS_INF$LATITUDE = (as.numeric(substr(INS_INF$SLATDDMM,1,2))+(INS_INF$SLATDDMM - as.numeric(substr(INS_INF$SLATDDMM,1,2))*100)/60)
-      INS_INF$LONGITUDE = (as.numeric(substr(INS_INF$SLONGDDMM,1,2))+(INS_INF$SLONGDDMM - as.numeric(substr(INS_INF$SLONGDDMM,1,2))*100)/60)*-1
-      INS_INF$ELATITUDE = (as.numeric(substr(INS_INF$ELATDDMM,1,2))+(INS_INF$ELATDDMM - as.numeric(substr(INS_INF$ELATDDMM,1,2))*100)/60)
-      INS_INF$ELONGITUDE = (as.numeric(substr(INS_INF$ELONGDDMM,1,2))+(INS_INF$ELONGDDMM - as.numeric(substr(INS_INF$ELONGDDMM,1,2))*100)/60)*-1
+      INS_INF <- Mar.utils::DDMMx_to_DD(df=INS_INF, format = "DDMMMM", lat.field = "SLATDDMM", lon.field = "SLONGDDMM", WestHemisphere = T)
+      colnames(INS_INF)[colnames(INS_INF)=="LAT_DD"] <- "LATITUDE"
+      colnames(INS_INF)[colnames(INS_INF)=="LON_DD"] <- "LONGITUDE"
+      INS_INF <- Mar.utils::DDMMx_to_DD(df=INS_INF, format = "DDMMMM", lat.field = "ELATDDMM", lon.field = "ELONGDDMM", WestHemisphere = T)
+      colnames(INS_INF)[colnames(INS_INF)=="LAT_DD"] <- "ELATITUDE"
+      colnames(INS_INF)[colnames(INS_INF)=="LON_DD"] <- "ELONGITUDE"
+      
+      INS_INF$SLAT <- INS_INF$SLONG <- INS_INF$ELAT <- INS_INF$ELONG <-NULL
       #remove the many coord fields
       INS_INF$BLATDEG<-NULL
       INS_INF$BLATMIN<-NULL
@@ -460,11 +466,7 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
       INS_INF$ELATMIN<-NULL
       INS_INF$ELONGDEG<-NULL
       INS_INF$ELONGMIN<-NULL
-      
-      INS_INF$SLATDDMM<-NULL
-      INS_INF$SLONGDDMM<-NULL
-      INS_INF$ELATDDMM<-NULL
-      INS_INF$ELONGDDMM<-NULL
+
       cat(paste("\nINS_INF:  Converted DDMM coordinates to DDDD.DD ..."))
       save( INS_INF, file=file.path(data.dir, "INSHORE.INS_INF.RData"), compress=TRUE)
     }
@@ -476,10 +478,14 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"REDFISH.RFINF.RData"))){
     load(file.path(data.dir,"REDFISH.RFINF.RData"))
     if (!'LATITUDE' %in% colnames(RFINF)){
-      RFINF$LATITUDE = (as.numeric(substr(RFINF$SLAT,1,2))+(RFINF$SLAT - as.numeric(substr(RFINF$SLAT,1,2))*100)/60)
-      RFINF$LONGITUDE = (as.numeric(substr(RFINF$SLONG,1,2))+(RFINF$SLONG - as.numeric(substr(RFINF$SLONG,1,2))*100)/60)*-1
-      RFINF$ELATITUDE = (as.numeric(substr(RFINF$ELAT,1,2))+(RFINF$ELAT - as.numeric(substr(RFINF$ELAT,1,2))*100)/60)
-      RFINF$ELONGITUDE = (as.numeric(substr(RFINF$ELONG,1,2))+(RFINF$ELONG - as.numeric(substr(RFINF$ELONG,1,2))*100)/60)*-1
+      RFINF <- Mar.utils::DDMMx_to_DD(df=RFINF, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(RFINF)[colnames(RFINF)=="LAT_DD"] <- "LATITUDE"
+      colnames(RFINF)[colnames(RFINF)=="LON_DD"] <- "LONGITUDE"
+      RFINF <- Mar.utils::DDMMx_to_DD(df=RFINF, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      colnames(RFINF)[colnames(RFINF)=="LAT_DD"] <- "ELATITUDE"
+      colnames(RFINF)[colnames(RFINF)=="LON_DD"] <- "ELONGITUDE"
+      
+      RFINF$SLAT <- RFINF$SLONG <- RFINF$ELAT <- RFINF$ELONG <-NULL
       cat(paste("\nRFINF:  Converted DDMM coordinates to DDDD.DD ..."))
       
       RFINF$YEAR = lubridate::year(RFINF$SDATE)
@@ -533,8 +539,10 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"ASEF.RCSITE.RData"))){
     load(file.path(data.dir,"ASEF.RCSITE.RData"))
     if (!'LATITUDE' %in% colnames(RCSITE)){
-      RCSITE$LATITUDE = (as.numeric(substr(RCSITE$SLAT,1,2))+(RCSITE$SLAT - as.numeric(substr(RCSITE$SLAT,1,2))*100)/60)
-      RCSITE$LONGITUDE = (as.numeric(substr(RCSITE$SLONG,1,2))+(RCSITE$SLONG - as.numeric(substr(RCSITE$SLONG,1,2))*100)/60)*-1
+      RCSITE <- Mar.utils::DDMMx_to_DD(df=RCSITE, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      colnames(RCSITE)[colnames(RCSITE)=="LAT_DD"] <- "LATITUDE"
+      colnames(RCSITE)[colnames(RCSITE)=="LON_DD"] <- "LONGITUDE"
+      RCSITE$SLAT <- RCSITE$SLONG <- NULL
       cat(paste("\nRCSITE:  Converted DDMM coordinates to DDDD.DD ..."))
       save( RCSITE, file=file.path(data.dir, "ASEF.RCSITE.RData"), compress=TRUE)
     } 
