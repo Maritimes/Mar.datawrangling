@@ -364,15 +364,18 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
     if (file.exists(file.path(data.dir,"RVP70.GSINFP70.RData"))){
     load(file.path(data.dir,"RVP70.GSINFP70.RData"))
     if (!'LATITUDE' %in% colnames(GSINFP70)){
-      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMMM", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
+      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMSS", lat.field = "SLAT", lon.field = "SLONG", WestHemisphere = T)
       colnames(GSINFP70)[colnames(GSINFP70)=="LAT_DD"] <- "LATITUDE"
       colnames(GSINFP70)[colnames(GSINFP70)=="LON_DD"] <- "LONGITUDE"
-      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMMM", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
+      GSINFP70 <- Mar.utils::DDMMx_to_DD(df=GSINFP70, format = "DDMMSS", lat.field = "ELAT", lon.field = "ELONG", WestHemisphere = T)
       colnames(GSINFP70)[colnames(GSINFP70)=="LAT_DD"] <- "ELATITUDE"
       colnames(GSINFP70)[colnames(GSINFP70)=="LON_DD"] <- "ELONGITUDE"
       
       GSINFP70$SLAT<- GSINFP70$SLONG<- GSINFP70$ELAT<- GSINFP70$ELONG<- NULL
-      cat(paste("\nGSINFP70:  Converted DDMM coordinates to DDDD.DD ..."))
+      cat(paste("\nGSINFP70:  Converted DDMM.SS coordinates to DD.DD ..."))
+      #M McMahon 2024 - I can't find a reference specifying how the coordinate were formatted (DDMM.MM vs DDMM.SS, etc)
+      #but only 1 coordinate (out of ~3500) had a value immediately following the decimal with a value more than 5.
+      #If decimal minutes, they should be relatively between 0 and 9.  If seconds, they should be restricted between 0 and 5)
       save( GSINFP70, file=file.path(data.dir, "RVP70.GSINFP70.RData"), compress=TRUE)
     }
     rm(GSINFP70)

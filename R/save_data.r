@@ -58,7 +58,7 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "EPSG:4326"
       message("\n",paste0(nrow(df)-nrow(df.sf), " records were lost due to invalid coordinates"))
     }
     df.sf <- Mar.utils::df_to_sf(df.sf,lat.field=lat.field, lon.field = lon.field, type = "points")
-    if ('gpkg' %in% formats) df_sf_to_gpkg(df.sf, layerName = name, gpkgName = "save_data.gpkg")
+    if ('gpkg' %in% formats) Mar.utils::df_sf_to_gpkg(df.sf, layerName = name, gpkgName = "save_data.gpkg")
     if ('sf' %in% formats)  assign(paste0("sf_",name), df.sf, envir = env)
   }
   if ('csv' %in% formats){
