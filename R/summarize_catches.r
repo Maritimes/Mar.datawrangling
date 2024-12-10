@@ -44,7 +44,7 @@ summarize_catches <- function(db=NULL,
   summ = new.env()
   drop_fields <- function(table.name, sens.fields){
     table = get(table.name,envir = env)
-    assign(table.name,(unique(table[,!(names(table) %in% sens.fields)])), envir = summ)
+    assign(table.name,(table[,!(names(table) %in% sens.fields)]), envir = summ)
   }
   #drop certain fields from all tables
   drops = ds_all[[.GlobalEnv$db]]$field_drops
@@ -61,7 +61,7 @@ summarize_catches <- function(db=NULL,
         if (debug) cat(paste0("\nSkipping merge of ",ds_all[[.GlobalEnv$db]]$table_det))
         return(this_tab_prim_data)
       }else{
-
+        
       }
     }
     if (!is.null(ds_all[[.GlobalEnv$db]]$table_gear)){
@@ -76,7 +76,6 @@ summarize_catches <- function(db=NULL,
       this_tab_foreign[paste0("joinx_",j)]=this_tab_foreign[this_tab_foreign_dets$fk_fields[j]]
     }
     joinnames=names(this_tab_prim_data[grepl("joinx", names(this_tab_prim_data))])
-    
     merged = merge(x= this_tab_prim_data, y=this_tab_foreign, by = joinnames,  all.x = TRUE)
     merged = merged[, -grep("joinx_", colnames(merged))]
     dups.x = sort(names(merged)[grepl("\\.x", names(merged))])
@@ -108,20 +107,37 @@ summarize_catches <- function(db=NULL,
     all = ds_all[[.GlobalEnv$db]]$joins[names(ds_all[[.GlobalEnv$db]]$joins) %in% joiners]
     all_names = names(sapply(all, names))
     if (length(setdiff(all_names, joiners))!=0) warning("The tables remaining to be joined do not match the join information in the data_sources.")
+    
+    custom_order <- c("CAT", "DET", "SPECIES")
+    find_position <- function(x) {
+      for (i in seq_along(custom_order)) {
+        if (grepl(custom_order[i], x)) {
+          return(i)
+        }
+      }
+      return(length(custom_order) + 1)
+    }
+    order_vector <- sapply(names(all), find_position)
+    all <- all[order(order_vector)]
+    
     for (i in 1:length(all)){
       joinTable = names(all[i])
+      
       pk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$pk_fields
       fk = all[[i]][!names(all[[i]]) %in% 'combine'][[1]]$fk_fields
       all_this = all[[i]][!names(all[[i]]) %in% 'combine'][1]
       names(all_this) = joinTable
+
       if (all(fk %in% colnames(all_recs))){
         names(all_this[[1]]) = c("fk_fields","pk_fields")
         if (debug) {
           cat(paste0("\n\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')"))
         }
-        all_recs = doMerge(all_recs, all_this, morph_dets, debug)
-        joiners = joiners[!joiners %in% joinTable]
-        z=1
+        if (joinTable=="")browser()
+          all_recs = doMerge(all_recs, all_this, morph_dets, debug)
+          joiners = joiners[!joiners %in% joinTable]
+          z=1
+        
       }else{
         z=z+1
       }
