@@ -5,7 +5,7 @@
 #' with.
 #' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
-#' roracle will extract data ~ 5x faster.
+#' roracle will extract data ~ 5x faster. Deprecated; use \code{cxn} instead.
 #' @param data.dir  The default is a `data` folder under your working directory. 
 #' This identifies where your existing RData files are.
 #' @param debug default = \code{FALSE}.  This is passed to self_filter() which 
@@ -13,6 +13,11 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 qc_findorphans<-function(db = NULL, usepkg = 'rodbc', data.dir = file.path(getwd(), 'data'), debug=F){
+  deprecationCheck(fn.oracle.username = fn.oracle.username, 
+                   fn.oracle.password = fn.oracle.password, 
+                   fn.oracle.dsn = fn.oracle.dsn,
+                   usepkg = usepkg)
+  
   #remove possible trailing slash from data.dir path
   if (substring(data.dir, nchar(data.dir))=="/") data.dir = substr(data.dir, 1, nchar(data.dir)-1)
   

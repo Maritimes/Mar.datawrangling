@@ -7,6 +7,10 @@
 #' @param data.dir  The default is your working directory. If you are hoping to 
 #' load existing data, this folder should identify the folder containing your 
 #' *.rdata files.
+#' @param cxn A valid Oracle connection object. This parameter allows you to 
+#' pass an existing connection, reducing the need to establish a new connection 
+#' within the function. If provided, it takes precedence over the connection-
+#' related parameters.
 #' @param force.extract The default value is FALSE.  By default, existing data will be loaded.  If
 #' \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 #' data.
@@ -29,22 +33,23 @@
 #' }
 #' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 #' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
-#' roracle will extract data ~ 5x faster.
-#' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for \code{oracle.username} 
-#' stored in your environment (e.g. from an rprofile file), this can be left out
-#' and that value will be used.  If a value for this is provided, it will take 
-#' priority over your existing value.
-#' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for \code{oracle.password}  
-#' stored in your environment (e.g. from an rprofile file), this can be left out
-#' and that value will be used.  If a value for this is provided, it will take 
-#' priority over your existing value.
-#' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for 
-#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
-#' this can be left and that value will be used.  If a value for this is 
-#' provided, it will take priority over your existing value.
+#' roracle will extract data ~ 5x faster.Deprecated; use \code{cxn} instead.
+#' @param fn.oracle.username Default is \code{'_none_'}. This is your username 
+#' for accessing Oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g., from an rprofile file), this can be left 
+#' out and that value will be used. If a value for this is provided, it will 
+#' take priority over your existing value. Deprecated; use \code{cxn} instead.
+#' @param fn.oracle.password Default is \code{'_none_'}. This is your password 
+#' for accessing Oracle objects. If you have a value for \code{oracle.password} 
+#' stored in your environment (e.g., from an rprofile file), this can be left 
+#' out and that value will be used. If a value for this is provided, it will 
+#' take priority over your existing value. Deprecated; use \code{cxn} instead.
+#' @param fn.oracle.dsn Default is \code{'_none_'}. This is your DSN/ODBC 
+#' identifier for accessing Oracle objects. If you have a value 
+#' for \code{oracle.dsn} stored in your environment (e.g., from an rprofile 
+#' file), this can be left out and that value will be used. If a value for this 
+#' is provided, it will take priority over your existing value. Deprecated; use 
+#' \code{cxn} instead.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
@@ -52,11 +57,15 @@
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE, 
+get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FALSE, 
                      data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
-                     env=.GlobalEnv, quiet = FALSE) 
-{
+                     env = .GlobalEnv, quiet = FALSE) {
+  deprecationCheck(fn.oracle.username = fn.oracle.username, 
+                   fn.oracle.password = fn.oracle.password, 
+                   fn.oracle.dsn = fn.oracle.dsn,
+                   usepkg = usepkg)
+  
   if (substring(data.dir, nchar(data.dir)) == "/") 
     data.dir = substr(data.dir, 1, nchar(data.dir) - 1)
   if (is.null(db)) {
@@ -67,53 +76,36 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       return(NULL)
     }
     assign("db", ds_nms[ds_nms$names == db_choice, ]$db, envir = .GlobalEnv)
-  }
-  else {
+  } else {
     assign("db", tolower(db), envir = .GlobalEnv)
   }
   local_table_status_check <- function(db = .GlobalEnv$db) {
     reqdTables.clean = gsub("*.*?\\.", "", paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables))
-    # reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
     
     vers <- c(toupper(db), toupper(ds_all[[.GlobalEnv$db]]$schema))
     locTables.clean <- NA 
-    for (v in 1:length(vers)){
-      these <- gsub("*.*?\\.", "", gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", list.files(path = data.dir, pattern = paste0("^",vers[v], ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE))))
-      locTables.clean <- c(locTables.clean,these) 
+    for (v in 1:length(vers)) {
+      these <- gsub("*.*?\\.", "", gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", list.files(path = data.dir, pattern = paste0("^", vers[v], ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE))))
+      locTables.clean <- c(locTables.clean, these) 
     }
-    locTables.clean<- unique(locTables.clean[!is.na(locTables.clean)])
+    locTables.clean <- unique(locTables.clean[!is.na(locTables.clean)])
     missingTables = sort(setdiff(reqdTables.clean, locTables.clean))
-    # localTables <- list.files(path = data.dir, pattern = paste0("^", toupper(db), ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)
-    # prefixed.localTables = gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", localTables))
-    # prefixed.reqdTables = paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables)
-    # reqdTables.clean = gsub("*.*?\\.", "", prefixed.reqdTables)
-    # missingTables = sort(setdiff(prefixed.reqdTables, prefixed.localTables))
-    # missingTables.clean = gsub("*.*?\\.", "", missingTables)
-    # results = list(missingTables, missingTables.clean)
     return(missingTables)
   }
-  oracle_activity <- function(tables = NULL, oracle_cxn, usepkg, 
-                              theschema, prefix, action = "verify_acess") {
-    if (usepkg == "roracle") {
-      thecmd = ROracle::dbGetQuery
-    }
-    else {
-      thecmd = RODBC::sqlQuery
-    }
+  oracle_activity <- function(tables = NULL, cxn, thecmd, 
+                              theschema, prefix, action = "verify_access") {
     if (action == "verify_access") {
       if (!quiet) cat(paste0("\nVerifying access to ", tables, " ..."))
       qry = paste0("select '1' from ", theschema, ".", 
                    gsub(".*\\.", "", tables), " WHERE ROWNUM<=1")
-      if (is.character(thecmd(oracle_cxn, qry, rows_at_time = 1))) {
+      if (is.character(thecmd(cxn, qry, rows_at_time = 1))) {
         if (!quiet) cat(" failed")
         return(FALSE)
-      }
-      else {
+      } else {
         if (!quiet) cat(" success")
         return(TRUE)
       }
-    }
-    else if (action == "extract") {
+    } else if (action == "extract") {
       if (!quiet) cat(paste0("\nExtracting ", tables, "... "))
       add.where = "1=1"
       if (tables %in% names(ds_all[[.GlobalEnv$db]]$table_err_roracle)) {
@@ -130,44 +122,49 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
       table_naked = table_naked1 = gsub(".*\\.", "", tables)
       qry = paste0("SELECT * from ", theschema, ".", table_naked, 
                    " WHERE ", add.where)
-      res = thecmd(oracle_cxn, qry, rows_at_time = 1)
+      res = thecmd(cxn, qry, rows_at_time = 1)
       assign(table_naked, res)
       save(list = table_naked1, file = file.path(data.dir, 
                                                  paste0(tables, ".RData")))
       if (!quiet) cat(paste("Got", tables))
     }
   }
-  try_extract <- function(usepkg, tables) {
-    oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
-    if (!is.list(oracle_cxn)) {
-      tries = 0
-      while (tries < 2 & !(is.list(oracle_cxn))) {
-        oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
-        tries = tries + 1
+  try_extract <- function(cxn, usepkg, tables) {
+    if (is.null(cxn)) {
+      oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
+      if (!is.list(oracle_cxn)) {
+        tries = 0
+        while (tries < 2 & !(is.list(oracle_cxn))) {
+          oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
+          tries = tries + 1
+        }
+        if (oracle_cxn == -1) 
+          stop("Please check your credentials")
       }
-      if (oracle_cxn == -1) 
-        stop("Please check your credentials")
+      cxn = oracle_cxn$channel
+      thecmd = oracle_cxn$thecmd
+    } else {
+      thecmd = Mar.utils::connectionCheck(cxn)
     }
-    verified = sapply(tables, oracle_activity, oracle_cxn[[2]], 
-                      oracle_cxn[[1]], ds_all[[.GlobalEnv$db]]$schema, 
+    verified = sapply(tables, oracle_activity, cxn, thecmd, 
+                      ds_all[[.GlobalEnv$db]]$schema, 
                       toupper(db), "verify_access")
     if (!all(verified)) 
       stop("You do not have access to all of the required tables.\n      \nPlease ask the db custodian to grant you access to the tables listed above, and try again.\n\n      ")
     dir.create(data.dir, recursive = TRUE, showWarnings = FALSE)
     if (!quiet) cat("\n\nStarting extractions... ")
     timer.start = proc.time()
-    sapply(tables, oracle_activity, oracle_cxn[[2]], oracle_cxn[[1]], 
+    sapply(tables, oracle_activity, cxn, thecmd,
            ds_all[[.GlobalEnv$db]]$schema, toupper(db), "extract")
     elapsed = timer.start - proc.time()
-    if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 
-                                                               0) * -1, "seconds"))
-    data_tweaks2(db= .GlobalEnv$db, data.dir = data.dir)
+    if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 0) * -1, "seconds"))
+    data_tweaks2(db = .GlobalEnv$db, data.dir = data.dir)
   }
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {
       this = paste0(x, ".RData")
       thisP = file.path(data.dir, this)
-      load(file = thisP,envir = env)
+      load(file = thisP, envir = env)
       if (!quiet) cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
@@ -183,17 +180,16 @@ get_data<- function (db = NULL, usepkg = "rodbc", force.extract = FALSE,
     elapsed = timer.start - proc.time()
     if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
   }
-  # reqd = paste0(toupper(.GlobalEnv$db), ".", ds_all[[.GlobalEnv$db]]$tables)
   prefix = toupper(.GlobalEnv$db)
   if (prefix == "RV")     prefix = "GROUNDFISH"
   if (prefix == "MARFIS") prefix = "MARFISSCI"
-  reqd = paste0(prefix, ".",ds_all[[.GlobalEnv$db]]$tables)
+  reqd = paste0(prefix, ".", ds_all[[.GlobalEnv$db]]$tables)
   if (dir.exists(data.dir) == TRUE) {
     status = local_table_status_check()
-    if (length(status)== 0 & force.extract == F) {
+    if (length(status) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
     } else if (length(status) == 0 & force.extract == T) {
-      try_extract(usepkg, reqd)
+      try_extract(cxn, usepkg, reqd)
       try_load(reqd, data.dir)
     } else {
       if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(ds_all[[.GlobalEnv$db]]$schema,".",status)

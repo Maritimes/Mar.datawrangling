@@ -13,22 +13,27 @@
 #' @param usepkg default is \code{oracle_cxn$usepkg}. This indicates whether the 
 #' connection to Oracle should use \code{'rodbc'} or \code{'roracle'} to 
 #' connect.  rodbc is slightly easier to setup, but roracle will extract data ~ 
-#' 5x faster.
-#' @param fn.oracle.username default is \code{'_none_'} This is your username for
-#' accessing oracle objects. If you have a value for \code{oracle.username} 
-#' stored in your environment (e.g. from an rprofile file), this can be left out
-#' and that value will be used.  If a value for this is provided, it will take 
-#' priority over your existing value.
-#' @param fn.oracle.password default is \code{'_none_'} This is your password for
-#' accessing oracle objects. If you have a value for \code{oracle.password}  
-#' stored in your environment (e.g. from an rprofile file), this can be left out
-#' and that value will be used.  If a value for this is provided, it will take 
-#' priority over your existing value.
-#' @param fn.oracle.dsn default is \code{'_none_'} This is your dsn/ODBC
-#' identifier for accessing oracle objects. If you have a value for 
-#' \code{oracle.dsn} stored in your environment (e.g. from an rprofile file), 
-#' this can be left and that value will be used.  If a value for this is 
-#' provided, it will take priority over your existing value.
+#' 5x faster. Deprecated; use \code{cxn} instead.
+#' @param cxn A valid Oracle connection object. This parameter allows you to 
+#' pass an existing connection, reducing the need to establish a new connection 
+#' within the function. If provided, it takes precedence over the connection-
+#' related parameters.
+#' @param fn.oracle.username Default is \code{'_none_'}. This is your username 
+#' for accessing Oracle objects. If you have a value for \code{oracle.username} 
+#' stored in your environment (e.g., from an rprofile file), this can be left 
+#' out and that value will be used. If a value for this is provided, it will 
+#' take priority over your existing value. Deprecated; use \code{cxn} instead.
+#' @param fn.oracle.password Default is \code{'_none_'}. This is your password 
+#' for accessing Oracle objects. If you have a value for \code{oracle.password} 
+#' stored in your environment (e.g., from an rprofile file), this can be left 
+#' out and that value will be used. If a value for this is provided, it will 
+#' take priority over your existing value. Deprecated; use \code{cxn} instead.
+#' @param fn.oracle.dsn Default is \code{'_none_'}. This is your DSN/ODBC 
+#' identifier for accessing Oracle objects. If you have a value 
+#' for \code{oracle.dsn} stored in your environment (e.g., from an rprofile 
+#' file), this can be left out and that value will be used. If a value for this 
+#' is provided, it will take priority over your existing value. Deprecated; use 
+#' \code{cxn} instead.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If TRUE, no output messages will be shown.
@@ -38,13 +43,18 @@
 get_data_custom<-function(schema=NULL,
                           data.dir = file.path(getwd(), 'data'),
                           tables = NULL,
+                          cxn = NULL,
                           usepkg = 'rodbc', 
                           fn.oracle.username ="_none_",
                           fn.oracle.password="_none_",
                           fn.oracle.dsn="_none_",
                           env=.GlobalEnv,
                           quiet=F){
-
+  # Deprecation check
+  Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
+                              fn.oracle.password = fn.oracle.password, 
+                              fn.oracle.dsn = fn.oracle.dsn)
+  
   try_load <- function(tables, data.dir, thisenv = env) {
     loadit <- function(x, data.dir) {
       this = paste0(x, ".RData")
@@ -83,35 +93,29 @@ get_data_custom<-function(schema=NULL,
   if (is.null(loadsuccess)){
     return(invisible(NULL))
   } else if (loadsuccess==-1){
-    oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)  
-    if (!class(oracle_cxn_custom) =="list"){
-      cat("\nCan't get the data without a DB connection.  Aborting.\n")
-      return(NULL)
-    }
-    if (class(oracle_cxn_custom$channel)=="RODBC"){
-      thecmd= RODBC::sqlQuery
-    }else if (class(oracle_cxn_custom$channel)=="OraConnection"){
-      thecmd = ROracle::dbGetQuery
+    if (is.null(cxn)) {
+      oracle_cxn_custom = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn)  
+      if (!inherits(oracle_cxn_custom, "list")) {
+        cat("\nCan't get the data without a DB connection. Aborting.\n")
+        return(NULL)
+      }
+      cxn = oracle_cxn_custom$channel
+      thecmd = oracle_cxn_custom$thecmd
+    } else {
+      thecmd = Mar.utils::connectionCheck(cxn)
     }
     prefix=theschema=toupper(schema)
-    #somewhere here I need to ensure I save the schema id such that MARFIS = MARFISSCI, etc
-    # cat("implement proper name saving when back online","\n")
-    # prefix = gsub(x = prefix,pattern = "MARFISSCI", replacement = "MARFIS",ignore.case = T)
-    # prefix = gsub(x = prefix,pattern = "GROUNDFISH", replacement = "RV",ignore.case = T)
-    # prefix = gsub(x = prefix,pattern = "OBSERVER", replacement = "ISDB",ignore.case = T)
-
-    
     for (i in 1:length(tables)){
       if (!quiet) cat(paste0("\n","Verifying access to ",tables[i]," ..."))
       qry = paste0("select '1' from ",theschema,".",gsub(paste0(prefix,"."),"",tables[i])," WHERE ROWNUM<=1")
-      if (is.character(thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1))){
+      if (is.character(thecmd(cxn, qry, rows_at_time = 1))) {
         break("Can't find or access specified table")
       }else{
         cat(paste0("\n","Extracting ",tables[i],"..."))
         table_naked = gsub(paste0(prefix,"."),"",tables[i])
         table_naked1 = table_naked
         qry = paste0("SELECT * from ", theschema, ".",table_naked)
-        res= thecmd(oracle_cxn_custom$channel, qry, rows_at_time = 1)
+        res = thecmd(cxn, qry, rows_at_time = 1)
         assign(table_naked, res)
         save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
         if (!quiet) cat(paste("\n","Got", tables[i]))
