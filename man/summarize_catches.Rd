@@ -59,8 +59,8 @@ data frame.
 }
 \seealso{
 Other dfo_extractions: 
-\code{\link{get_data_custom}()},
 \code{\link{get_data}()},
+\code{\link{get_data_custom}()},
 \code{\link{get_survey}()},
 \code{\link{self_filter}()}
 }

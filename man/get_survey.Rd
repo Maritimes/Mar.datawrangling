@@ -47,8 +47,8 @@ match the survey they should.
 }
 \seealso{
 Other dfo_extractions: 
-\code{\link{get_data_custom}()},
 \code{\link{get_data}()},
+\code{\link{get_data_custom}()},
 \code{\link{self_filter}()},
 \code{\link{summarize_catches}()}
 }

@@ -17,7 +17,7 @@ with.}
 
 \item{usepkg}{default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
-roracle will extract data ~ 5x faster.}
+roracle will extract data ~ 5x faster. Deprecated; use \code{cxn} instead.}
 
 \item{data.dir}{The default is a `data` folder under your working directory. 
 This identifies where your existing RData files are.}
