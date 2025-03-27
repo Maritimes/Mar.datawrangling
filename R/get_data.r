@@ -61,7 +61,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
                      data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
                      env = .GlobalEnv, quiet = FALSE) {
-  deprecationCheck(fn.oracle.username = fn.oracle.username, 
+  Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
                    fn.oracle.password = fn.oracle.password, 
                    fn.oracle.dsn = fn.oracle.dsn,
                    usepkg = usepkg)
