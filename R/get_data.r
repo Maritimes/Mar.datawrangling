@@ -65,7 +65,6 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
                    fn.oracle.password = fn.oracle.password, 
                    fn.oracle.dsn = fn.oracle.dsn,
                    usepkg = usepkg)
-  
   if (substring(data.dir, nchar(data.dir)) == "/") 
     data.dir = substr(data.dir, 1, nchar(data.dir) - 1)
   if (is.null(db)) {
@@ -144,6 +143,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       cxn = oracle_cxn$channel
       thecmd = oracle_cxn$thecmd
     } else {
+      
       thecmd = Mar.utils::connectionCheck(cxn)
     }
     verified = sapply(tables, oracle_activity, cxn, thecmd, 
@@ -189,6 +189,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
     if (length(status) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
     } else if (length(status) == 0 & force.extract == T) {
+      print("1")
       try_extract(cxn, usepkg, reqd)
       try_load(reqd, data.dir)
     } else {
@@ -201,11 +202,13 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       if (toupper(choice) == "C") {
         stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
       } else if (toupper(choice) == "A") {
-        try_extract(usepkg, reqd)
+        print("2")
+        try_extract(cxn, usepkg, reqd)
         try_load(reqd, data.dir)
       } else {
         #MMMM
-        try_extract(usepkg, status)
+        print("3")
+        try_extract(cxn, usepkg, status)
         try_load(reqd, data.dir)
       }
     }
