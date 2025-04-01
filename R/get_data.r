@@ -128,24 +128,9 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       if (!quiet) cat(paste("Got", tables))
     }
   }
-  try_extract <- function(cxn, usepkg, tables) {
-    if (is.null(cxn)) {
-      oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
-      if (!is.list(oracle_cxn)) {
-        tries = 0
-        while (tries < 2 & !(is.list(oracle_cxn))) {
-          oracle_cxn = Mar.utils::make_oracle_cxn(usepkg, fn.oracle.username, fn.oracle.password, fn.oracle.dsn, quiet)
-          tries = tries + 1
-        }
-        if (oracle_cxn == -1) 
-          stop("Please check your credentials")
-      }
-      cxn = oracle_cxn$channel
-      thecmd = oracle_cxn$thecmd
-    } else {
-      
+  try_extract <- function(cxn, tables) {
       thecmd = Mar.utils::connectionCheck(cxn)
-    }
+
     verified = sapply(tables, oracle_activity, cxn, thecmd, 
                       ds_all[[.GlobalEnv$db]]$schema, 
                       toupper(db), "verify_access")
@@ -189,8 +174,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
     if (length(status) == 0 & force.extract == F) {
       try_load(reqd, data.dir)
     } else if (length(status) == 0 & force.extract == T) {
-      print("1")
-      try_extract(cxn, usepkg, reqd)
+      try_extract(cxn, reqd)
       try_load(reqd, data.dir)
     } else {
       if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(ds_all[[.GlobalEnv$db]]$schema,".",status)
@@ -202,13 +186,10 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       if (toupper(choice) == "C") {
         stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
       } else if (toupper(choice) == "A") {
-        print("2")
-        try_extract(cxn, usepkg, reqd)
+        try_extract(cxn, reqd)
         try_load(reqd, data.dir)
       } else {
-        #MMMM
-        print("3")
-        try_extract(cxn, usepkg, status)
+        try_extract(cxn, status)
         try_load(reqd, data.dir)
       }
     }
