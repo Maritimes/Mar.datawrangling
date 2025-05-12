@@ -229,7 +229,7 @@ load_datasources <- function(db=NULL){
   isdb = list (
     db="isdb",
     name = "Industry Surveys Database",
-    schema = "OBSERVER",
+    schema = NA,
     desc = "Department of Fisheries and Oceans (DFO) at-sea fish catch observations from 
     commercial fishing vessels operating in the North West Atlantic. Data are 
     collected by trained fisheries observers and industry technicians. The program 
@@ -251,11 +251,11 @@ load_datasources <- function(db=NULL){
     -5Z Fixed Gear Survey
     -GEAC (Groundfish Enterprise Allocation Council) Juvenile and Forage Survey
     -Snow Crab Survey",
-    tables = c("ISSPECIESCODES","ISSPECIESSOUGHTCODES","ISOBSERVERCODES","ISGEARFEATURECLASSES","ISSETTYPECODES","ISVESSELS","ISTRIPTYPECODES","ISGEARFEATURECODES","ISGEARFEATURES","ISCATCHES","ISGEARCODES","ISSETPROFILE_WIDE","ISTRIPS","ISGEARS","ISFISHSETS","ISFISH","ISFISHMORPHS","ISMORPHCODES","ISMORPHVALUECODES"),
+    tables = c("ISSPECIESCODES","ISSPECIESSOUGHTCODES","ISOBSERVERCODES","ISGEARFEATURECLASSES","ISSETTYPECODES","ISVESSELS","ISTRIPTYPECODES","ISGEARFEATURECODES","ISGEARFEATURES","ISCATCHES","ISGEARCODES","ISSETPROFILE","ISTRIPS","ISGEARS","ISFISHSETS","ISFISH","ISFISHMORPHS","ISMORPHCODES","ISMORPHVALUECODES"),
     table_cat = "ISCATCHES",
     table_det = c("ISFISH", "ISFISHMORPHS", "ISMORPHCODES", "ISMORPHVALUECODES"),
     table_gear = c("ISGEARFEATURECLASSES","ISGEARFEATURECODES","ISGEARFEATURES"),
-    table_pos = "ISSETPROFILE_WIDE",
+    table_pos = "ISSETPROFILE",
     field_default = "EST_COMBINED_WT",
     field_drops = c('LAST_UPDATE_BY','LAST_UPDATE_DATE','CREATED_BY','CREATED_DATE','OWNER_GROUP','COMMENTS'),
     field_private = c('VESS_ID','VESSEL_NAME','CFV', 'LICENSE_NO', 'MARFIS_LICENSE_NO'),
@@ -275,7 +275,7 @@ load_datasources <- function(db=NULL){
                          fk_fields=c("GEAR_ID")),
         "ISSPECIESSOUGHTCODES" = list(pk_fields=c("SPECSCD_ID"),
                                       fk_fields=c("SPECSCD_ID")),
-        "ISSETPROFILE_WIDE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
+        "ISSETPROFILE" = list(pk_fields=c("FISHSET_ID","SET_NO"),
                                    fk_fields=c("FISHSET_ID","SET_NO")),
         # "ISCATCHES" = list(pk_fields=c("FISHSET_ID","SET_NO"),
         #                            fk_fields=c("FISHSET_ID","SET_NO")),
@@ -292,7 +292,7 @@ load_datasources <- function(db=NULL){
                                 fk_fields=c("SPECCD_ID")),
         combine = "ALL"
       ),
-      "ISSETPROFILE_WIDE" = list(
+      "ISSETPROFILE" = list(
         "ISFISHSETS" = list(pk_fields=c("FISHSET_ID","SET_NO"),
                             fk_fields=c("FISHSET_ID","SET_NO"))
       ),
@@ -442,7 +442,7 @@ load_datasources <- function(db=NULL){
                           filt_disp = c("NAFAREA_ID"),
                           filt_ord = 1
       ),
-      'By Year' = list(filt_tab = 'ISSETPROFILE_WIDE', 
+      'By Year' = list(filt_tab = 'ISSETPROFILE', 
                        filt_fields = c('YEAR'),
                        filt_disp = c('YEAR'), 
                        filt_ord = 1

@@ -7,15 +7,17 @@ Description: This package facilitates the extraction and handling of data from v
 Depends:
     R (>= 2.10)
 Imports:
-    lubridate,
-    stats,
-    geosphere, 
-    utils,
-    RColorBrewer,
     classInt,
     data.table,
+    dplyr,
+    geosphere, 
+    lubridate,
+    Mar.utils,
+    RColorBrewer,
     reshape2,
-    Mar.utils
+    stats,
+    tidyr,
+    utils
 Enhances:
     ROracle,
     RODBC,

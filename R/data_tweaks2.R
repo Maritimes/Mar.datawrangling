@@ -14,6 +14,175 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
   cat("\nApplying tweaks v.2 ...")
   if (db %in% c("ALL","isdb")){
     # ISDB ----------------------------------------------------------------------------------------------------------------------------------------------------
+    if (file.exists(file.path(data.dir,"ISCATCHES.RData")) & file.exists(file.path(data.dir,"ISFISHSETS.RData"))){
+      load(file.path(data.dir,"ISCATCHES.RData"))
+      load(file.path(data.dir,"ISFISHSETS.RData"))
+      if (!'S_EST_NUM_CAUGHT' %in% colnames(ISCATCHES)){
+        ISFISHSETS.directed=ISFISHSETS[c("FISHSET_ID","SPECSCD_ID")]  #keep only the field identifying the sought spp for each set
+        ISCATCHES.directed = merge(ISCATCHES,ISFISHSETS.directed, by.x=c("FISHSET_ID","SPECCD_ID"), by.y=c("FISHSET_ID","SPECSCD_ID")) #get the catches of directed for each set
+        ISCATCHES.directed = ISCATCHES.directed[c("FISHSET_ID", "SPECCD_ID", "EST_NUM_CAUGHT", "EST_KEPT_WT", "EST_DISCARD_WT", "EST_REDUCTION_WT", "EST_COMBINED_WT")] #keep some fields
+        names(ISCATCHES.directed) <- c("FISHSET_ID", "SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
+        ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID"), by.y=c("FISHSET_ID")) #get the catches of directed for each set
+        
+        save( ISCATCHES, file=file.path(data.dir, "ISCATCHES.RData"), compress=TRUE)
+        cat("\nISCATCHES: Added directed species catch numbers and weights onto each record......")
+      }
+      rm(ISCATCHES)
+      rm(ISFISHSETS)
+    }
+    if (file.exists(file.path(data.dir,"ISSETPROFILE.RData"))){
+      load(file.path(data.dir,"ISSETPROFILE.RData"))
+      if (!'YEAR' %in% colnames(ISSETPROFILE)){
+      # ISSETPROFILE$LONGITUDE <- ifelse(!is.na(ISSETPROFILE$LONGITUDE) & ISSETPROFILE$LONGITUDE > 0, -ISSETPROFILE$LONGITUDE, ISSETPROFILE$LONGITUDE)
+      CALC_DISTANCE <- function(lat1, lon1, lat2, lon2) {
+        haversine <- function(lat1, lon1, lat2, lon2) {
+          R <- 6371  # Earth's radius in kilometers
+          dlat <- (lat2 - lat1) * pi / 180
+          dlon <- (lon2 - lon1) * pi / 180
+          a <- sin(dlat/2)^2 + cos(lat1 * pi / 180) * cos(lat2 * pi / 180) * sin(dlon/2)^2
+          c <- 2 * atan2(sqrt(a), sqrt(1-a))
+          R * c
+        }
+        haversine(lat1, lon1, lat2, lon2)
+      }
+      ISSETPROFILE <- ISSETPROFILE |>
+        dplyr::mutate(
+          SETDATE = as.Date(SETDATE, format = "%Y-%m-%d"),
+          SETTIME = as.numeric(SETTIME),
+          DATE_TIME = as.POSIXct(paste(SETDATE, sprintf("%04d", SETTIME)), 
+                                 format = "%Y-%m-%d %H%M"),
+          LONGITUDE = -LONGITUDE
+        ) |>
+        dplyr::group_by(FISHSET_ID, SET_NO, PNTCD_ID) |>
+        dplyr::summarise(
+          DATE_TIME = dplyr::first(DATE_TIME),
+          LATITUDE = dplyr::first(LATITUDE),
+          LONGITUDE = dplyr::first(LONGITUDE),
+          DEPTH = dplyr::first(DEPTH),
+          VESSEL_SPEED = dplyr::first(VESSEL_SPEED),
+          AIR_TEMPERATURE = dplyr::first(AIR_TEMPERATURE),
+          NET_TEMPERATURE = dplyr::first(NET_TEMPERATURE),
+          WATER_TEMPERATURE = dplyr::first(WATER_TEMPERATURE),
+          BAR_PRESSURE = dplyr::first(BAR_PRESSURE),
+          .groups = 'drop'
+        ) |>
+        tidyr::pivot_wider(
+          names_from = PNTCD_ID,
+          values_from = c(DATE_TIME, LATITUDE, LONGITUDE, DEPTH, VESSEL_SPEED, 
+                          AIR_TEMPERATURE, NET_TEMPERATURE, WATER_TEMPERATURE, BAR_PRESSURE),
+          names_glue = "{.value}{PNTCD_ID}",  # Modified format to match your names
+          values_fill = list(
+            DATE_TIME = NA,
+            LATITUDE = NA_real_,
+            LONGITUDE = NA_real_,
+            DEPTH = NA_real_,
+            VESSEL_SPEED = NA_real_,
+            AIR_TEMPERATURE = NA_real_,
+            NET_TEMPERATURE = NA_real_,
+            WATER_TEMPERATURE = NA_real_,
+            BAR_PRESSURE = NA_real_
+          )
+        ) |>
+        # Rename columns to match original format
+        dplyr::rename(
+          # Date/time columns
+          DATE_TIME1 = DATE_TIME1, DATE_TIME2 = DATE_TIME2, 
+          DATE_TIME3 = DATE_TIME3, DATE_TIME4 = DATE_TIME4,
+          
+          # Latitude columns
+          LAT1 = LATITUDE1, LAT2 = LATITUDE2, 
+          LAT3 = LATITUDE3, LAT4 = LATITUDE4,
+          
+          # Longitude columns
+          LONG1 = LONGITUDE1, LONG2 = LONGITUDE2, 
+          LONG3 = LONGITUDE3, LONG4 = LONGITUDE4,
+          
+          # Depth columns
+          DEP1 = DEPTH1, DEP2 = DEPTH2, DEP3 = DEPTH3, DEP4 = DEPTH4,
+          
+          # Vessel speed columns
+          VESS_SPD1 = VESSEL_SPEED1, VESS_SPD2 = VESSEL_SPEED2, 
+          VESS_SPD3 = VESSEL_SPEED3, VESS_SPD4 = VESSEL_SPEED4,
+          
+          # Air temperature columns
+          AIR_TMP1 = AIR_TEMPERATURE1, AIR_TMP2 = AIR_TEMPERATURE2, 
+          AIR_TMP3 = AIR_TEMPERATURE3, AIR_TMP4 = AIR_TEMPERATURE4,
+          
+          # Net temperature columns
+          NET_TMP1 = NET_TEMPERATURE1, NET_TMP2 = NET_TEMPERATURE2, 
+          NET_TMP3 = NET_TEMPERATURE3, NET_TMP4 = NET_TEMPERATURE4,
+          
+          # Water temperature columns
+          WAT_TMP1 = WATER_TEMPERATURE1, WAT_TMP2 = WATER_TEMPERATURE2, 
+          WAT_TMP3 = WATER_TEMPERATURE3, WAT_TMP4 = WATER_TEMPERATURE4,
+          
+          # Barometric pressure columns
+          BAR_PRESS1 = BAR_PRESSURE1, BAR_PRESS2 = BAR_PRESSURE2, 
+          BAR_PRESS3 = BAR_PRESSURE3, BAR_PRESS4 = BAR_PRESSURE4
+        ) |>
+        # Add YEAR, LATITUDE, and LONGITUDE fields
+        dplyr::mutate(
+          # Year calculation 
+          YEAR = lubridate::year(dplyr::coalesce(DATE_TIME1, DATE_TIME2, DATE_TIME3, DATE_TIME4)),
+          
+          # First valid latitude (non-NA, non-zero)
+          LATITUDE = dplyr::case_when(
+            !is.na(LAT1) & LAT1 != 0 ~ LAT1,
+            !is.na(LAT2) & LAT2 != 0 ~ LAT2,
+            !is.na(LAT3) & LAT3 != 0 ~ LAT3,
+            !is.na(LAT4) & LAT4 != 0 ~ LAT4,
+            TRUE ~ NA_real_
+          ),
+          
+          # First valid longitude (non-NA, non-zero)
+          LONGITUDE = dplyr::case_when(
+            !is.na(LONG1) & LONG1 != 0 ~ LONG1,
+            !is.na(LONG2) & LONG2 != 0 ~ LONG2,
+            !is.na(LONG3) & LONG3 != 0 ~ LONG3,
+            !is.na(LONG4) & LONG4 != 0 ~ LONG4,
+            TRUE ~ NA_real_
+          ),
+          
+          # Calculate distances and durations
+          DUR_32 = ifelse(
+            is.na(DATE_TIME2) | is.na(DATE_TIME3), NA,
+            round(difftime(DATE_TIME3, DATE_TIME2, units = "mins"), 0)
+          ),
+          DUR_41 = ifelse(
+            is.na(DATE_TIME1) | is.na(DATE_TIME4), NA,
+            round(difftime(DATE_TIME4, DATE_TIME1, units = "mins"), 0)
+          ),
+          DISTNM_32 = ifelse(
+            is.na(LAT2) | is.na(LONG2) | is.na(LAT3) | is.na(LONG3), NA,
+            CALC_DISTANCE(LAT2, LONG2, LAT3, LONG3)
+          ),
+          DISTNM_41 = ifelse(
+            is.na(LAT1) | is.na(LONG1) | is.na(LAT4) | is.na(LONG4), NA,
+            CALC_DISTANCE(LAT1, LONG1, LAT4, LONG4)
+          )
+        ) |>
+        dplyr::select(
+          FISHSET_ID, SET_NO, 
+          DATE_TIME1, DATE_TIME2, DATE_TIME3, DATE_TIME4,
+          DUR_32, DUR_41, DISTNM_32, DISTNM_41,
+          LAT1, LONG1, LAT2, LONG2, LAT3, LONG3, LAT4, LONG4,
+          DEP1, DEP2, DEP3, DEP4,
+          VESS_SPD1, VESS_SPD2, VESS_SPD3, VESS_SPD4,
+          AIR_TMP1, AIR_TMP2, AIR_TMP3, AIR_TMP4,
+          NET_TMP1, NET_TMP2, NET_TMP3, NET_TMP4,
+          WAT_TMP1, WAT_TMP2, WAT_TMP3, WAT_TMP4,
+          BAR_PRESS1, BAR_PRESS2, BAR_PRESS3, BAR_PRESS4,
+          LATITUDE, LONGITUDE, YEAR
+        ) |>
+        dplyr::arrange(FISHSET_ID, SET_NO) |> 
+        as.data.frame()
+      
+      }
+      save( ISSETPROFILE, file=file.path(data.dir, "ISSETPROFILE.RData"), compress=TRUE)
+
+    }
+    rm(ISSETPROFILE)
+    
     if (file.exists(file.path(data.dir,"ISDB.ISCATCHES.RData")) & file.exists(file.path(data.dir,"ISDB.ISFISHSETS.RData"))){
       load(file.path(data.dir,"ISDB.ISCATCHES.RData"))
       load(file.path(data.dir,"ISDB.ISFISHSETS.RData"))
@@ -30,39 +199,39 @@ data_tweaks2 <- function(db="ALL", data.dir = NULL){
       rm(ISCATCHES)
       rm(ISFISHSETS)
     }
-    if (file.exists(file.path(data.dir,"ISDB.ISSETPROFILE_WIDE.RData"))){
-      load(file.path(data.dir,"ISDB.ISSETPROFILE_WIDE.RData"))
-      if (!'LATITUDE' %in% colnames(ISSETPROFILE_WIDE) | !'LONGITUDE' %in% colnames(ISSETPROFILE_WIDE)){
-        
-        ISSETPROFILE_WIDE$LATITUDE =
-          ifelse(is.na(ISSETPROFILE_WIDE$LAT1)| ISSETPROFILE_WIDE$LAT1 == 0,
-                 ifelse(is.na(ISSETPROFILE_WIDE$LAT2)| ISSETPROFILE_WIDE$LAT2 == 0,
-                        ifelse(is.na(ISSETPROFILE_WIDE$LAT3)| ISSETPROFILE_WIDE$LAT3 == 0,
-                               ISSETPROFILE_WIDE$LAT4, ISSETPROFILE_WIDE$LAT3),
-                        ISSETPROFILE_WIDE$LAT2),
-                 ISSETPROFILE_WIDE$LAT1)
-        
-        ISSETPROFILE_WIDE$LONGITUDE =
-          ifelse(is.na(ISSETPROFILE_WIDE$LONG1) | ISSETPROFILE_WIDE$LONG1 == 0,
-                 ifelse(is.na(ISSETPROFILE_WIDE$LONG2) | ISSETPROFILE_WIDE$LONG2 == 0,
-                        ifelse(is.na(ISSETPROFILE_WIDE$LONG3) | ISSETPROFILE_WIDE$LONG3 == 0,
-                               ISSETPROFILE_WIDE$LONG4, ISSETPROFILE_WIDE$LONG3),
-                        ISSETPROFILE_WIDE$LONG2),
-                 ISSETPROFILE_WIDE$LONG1)
-        
-        cat("\nISSETPROFILE_WIDE:  For convenience, added LONGITUDE and LATITUDE fields from first non-NA value from p1-p4 positions")
-      }
-      if (!'YEAR' %in% colnames(ISSETPROFILE_WIDE)){
-        ISSETPROFILE_WIDE$YEAR  =
-          lubridate::year(as.POSIXct(ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME1)>2500,
-                                            ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME2)>2500,
-                                                   ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME3)>2500,
-                                                          ISSETPROFILE_WIDE$DATE_TIME4, ISSETPROFILE_WIDE$DATE_TIME3), ISSETPROFILE_WIDE$DATE_TIME2), ISSETPROFILE_WIDE$DATE_TIME1), origin = "1970-01-01"))
-        cat("\nISSETPROFILE_WIDE:  For convenience, added YEAR fields from first non-NA value from p1-p4 positions")
-      }
-      save( ISSETPROFILE_WIDE, file=file.path(data.dir, "ISDB.ISSETPROFILE_WIDE.RData"), compress=TRUE)
-      rm(ISSETPROFILE_WIDE)
-    }
+    # if (file.exists(file.path(data.dir,"ISDB.ISSETPROFILE_WIDE.RData"))){
+    #   load(file.path(data.dir,"ISDB.ISSETPROFILE_WIDE.RData"))
+    #   if (!'LATITUDE' %in% colnames(ISSETPROFILE_WIDE) | !'LONGITUDE' %in% colnames(ISSETPROFILE_WIDE)){
+    #     
+    #     ISSETPROFILE_WIDE$LATITUDE =
+    #       ifelse(is.na(ISSETPROFILE_WIDE$LAT1)| ISSETPROFILE_WIDE$LAT1 == 0,
+    #              ifelse(is.na(ISSETPROFILE_WIDE$LAT2)| ISSETPROFILE_WIDE$LAT2 == 0,
+    #                     ifelse(is.na(ISSETPROFILE_WIDE$LAT3)| ISSETPROFILE_WIDE$LAT3 == 0,
+    #                            ISSETPROFILE_WIDE$LAT4, ISSETPROFILE_WIDE$LAT3),
+    #                     ISSETPROFILE_WIDE$LAT2),
+    #              ISSETPROFILE_WIDE$LAT1)
+    #     
+    #     ISSETPROFILE_WIDE$LONGITUDE =
+    #       ifelse(is.na(ISSETPROFILE_WIDE$LONG1) | ISSETPROFILE_WIDE$LONG1 == 0,
+    #              ifelse(is.na(ISSETPROFILE_WIDE$LONG2) | ISSETPROFILE_WIDE$LONG2 == 0,
+    #                     ifelse(is.na(ISSETPROFILE_WIDE$LONG3) | ISSETPROFILE_WIDE$LONG3 == 0,
+    #                            ISSETPROFILE_WIDE$LONG4, ISSETPROFILE_WIDE$LONG3),
+    #                     ISSETPROFILE_WIDE$LONG2),
+    #              ISSETPROFILE_WIDE$LONG1)
+    #     
+    #     cat("\nISSETPROFILE_WIDE:  For convenience, added LONGITUDE and LATITUDE fields from first non-NA value from p1-p4 positions")
+    #   }
+    #   if (!'YEAR' %in% colnames(ISSETPROFILE_WIDE)){
+    #     ISSETPROFILE_WIDE$YEAR  =
+    #       lubridate::year(as.POSIXct(ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME1)>2500,
+    #                                         ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME2)>2500,
+    #                                                ifelse(lubridate::year(ISSETPROFILE_WIDE$DATE_TIME3)>2500,
+    #                                                       ISSETPROFILE_WIDE$DATE_TIME4, ISSETPROFILE_WIDE$DATE_TIME3), ISSETPROFILE_WIDE$DATE_TIME2), ISSETPROFILE_WIDE$DATE_TIME1), origin = "1970-01-01"))
+    #     cat("\nISSETPROFILE_WIDE:  For convenience, added YEAR fields from first non-NA value from p1-p4 positions")
+    #   }
+    #   save( ISSETPROFILE_WIDE, file=file.path(data.dir, "ISDB.ISSETPROFILE_WIDE.RData"), compress=TRUE)
+    #   rm(ISSETPROFILE_WIDE)
+    # }
   }
   if (db %in% c("ALL","rv")){
     # GROUNDFISH ----------------------------------------------------------------------------------------------------------------------------------------------
