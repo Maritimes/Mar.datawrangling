@@ -34,7 +34,7 @@ save_data <- function(db = NULL, df= NULL, filename = NULL, df.crs = "EPSG:4326"
 #   if (req.coords == FALSE & 'gpkg' %in% formats) warning("\n","Since req.coords = FALSE, not all of the
 # records necessarily have positions and will not be visible in your shapefile")
   if (is.null(df)) {
-    df = summarize_catches(db=ds_all[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env, drop.na.cols = F)
+    df = summarize_catches(db=get_ds_all()[[.GlobalEnv$db]]$db, valid.coords = req.coords, env=env, drop.na.cols = F)
     if (is.null(df)){
       cat("\n","No records to save")
       return(NULL)

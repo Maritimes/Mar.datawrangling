@@ -33,16 +33,16 @@ self_filter <-
            env = .GlobalEnv,
            keep_nullsets = TRUE,
            quiet= FALSE) {
-    if (is.null(db)) db = ds_all[[.GlobalEnv$db]]$db
+    if (is.null(db)) db = get_ds_all()[[.GlobalEnv$db]]$db
     loopagain = TRUE
     loopLast = FALSE
     if (!quiet) cat("\n","Filtering...")
     
     timer.start = proc.time()
     prefix = toupper(db)
-    catchTable = ds_all[[.GlobalEnv$db]]$table_cat
+    catchTable = get_ds_all()[[.GlobalEnv$db]]$table_cat
     
-    posTable = ds_all[[.GlobalEnv$db]]$table_pos
+    posTable = get_ds_all()[[.GlobalEnv$db]]$table_pos
     
     if (!quiet) cat("\n","Records remaining in each table after each loop:","\n")
     get_joiner = function(combine) {
@@ -54,30 +54,30 @@ self_filter <-
     }
     while (loopagain == TRUE) {
       count.pre = sum(sapply(sapply(catchTable, get, env), NROW))
-      count.pre.all = sapply(sapply(ds_all[[.GlobalEnv$db]]$tables, get, env), NROW)
+      count.pre.all = sapply(sapply(get_ds_all()[[.GlobalEnv$db]]$tables, get, env), NROW)
       precnt = sum(count.pre.all)
       if (!quiet) print(count.pre.all)
-      for (i in 1:length(ds_all[[.GlobalEnv$db]]$joins)) {
+      for (i in 1:length(get_ds_all()[[.GlobalEnv$db]]$joins)) {
         nullSetFlag = F
-        tab_prim = names(ds_all[[.GlobalEnv$db]]$joins)[i]
+        tab_prim = names(get_ds_all()[[.GlobalEnv$db]]$joins)[i]
         p_stuff = NULL
         f_stuff = NULL
         p_stuff_ns = NULL
         f_stuff_ns = NULL
         combine = NULL
 
-        for (j in 1:length(names(ds_all[[.GlobalEnv$db]]$joins[[i]])[names(ds_all[[.GlobalEnv$db]]$joins[[i]]) != "combine"])) {
-          if (j > 1) combine = ds_all[[.GlobalEnv$db]]$joins[[i]]$combine
-          tab_foreign = names(ds_all[[.GlobalEnv$db]]$joins[[i]][j])
+        for (j in 1:length(names(get_ds_all()[[.GlobalEnv$db]]$joins[[i]])[names(get_ds_all()[[.GlobalEnv$db]]$joins[[i]]) != "combine"])) {
+          if (j > 1) combine = get_ds_all()[[.GlobalEnv$db]]$joins[[i]]$combine
+          tab_foreign = names(get_ds_all()[[.GlobalEnv$db]]$joins[[i]][j])
           if (nrow(get(tab_prim, envir = env)) == 0 & nrow(get(tab_foreign, envir = env)) == 0) {
             next
           }
-          if (length(ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields) > 1) {
-            p_stuff1 = paste0("paste0(",paste0("env$", tab_prim, "$", ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields, collapse = ",'_'," ),")")
-            f_stuff1 = paste0("paste0(",paste0("env$", tab_foreign, "$", ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$fk_fields, collapse = ",'_',"),")")
+          if (length(get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields) > 1) {
+            p_stuff1 = paste0("paste0(",paste0("env$", tab_prim, "$", get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields, collapse = ",'_'," ),")")
+            f_stuff1 = paste0("paste0(",paste0("env$", tab_foreign, "$", get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$fk_fields, collapse = ",'_',"),")")
           } else{
-            p_stuff1 = c(paste0("env$", tab_prim, "$", ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields))
-            f_stuff1 = c(paste0("env$", tab_foreign, "$", ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$fk_fields))
+            p_stuff1 = c(paste0("env$", tab_prim, "$", get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields))
+            f_stuff1 = c(paste0("env$", tab_foreign, "$", get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$fk_fields))
           }
           if (tab_prim == catchTable & tab_foreign == posTable) {
             if (!keep_nullsets) nullSetFlag = T
@@ -101,7 +101,7 @@ self_filter <-
           tab_prim_n_0 = nrow(get(tab_prim, env))
         }
         if (ncol(get(tab_prim, env)) == 1) {
-          theName = ds_all[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields
+          theName = get_ds_all()[[.GlobalEnv$db]]$joins[[i]][[j]]$pk_fields
           assign(tab_prim, as.data.frame(get(tab_prim, env)[eval(parse(text = filt)), ]), env)
           tmp_tab_prim <- get(tab_prim, env)
           colnames(tmp_tab_prim) <- theName
@@ -131,7 +131,7 @@ self_filter <-
         filt2 = NULL
       }
       
-      count.post.all = sapply(sapply(ds_all[[.GlobalEnv$db]]$tables, get, env), NROW)
+      count.post.all = sapply(sapply(get_ds_all()[[.GlobalEnv$db]]$tables, get, env), NROW)
       postcnt = sum(count.post.all)
       count.post = sum(sapply(sapply(catchTable, get, env), NROW))
       if (postcnt == 0)

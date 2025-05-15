@@ -4,10 +4,6 @@
 #' access to the tables to extract them.
 #' @param schema default is \code{NULL}. This is the schema you want to access 
 #' a additional tables from.
-#' @param data.dir  The default is your working directory. If you are hoping to load existing data,
-#' this folder should contain a data folder containing your rdata files. If you are extracting data,
-#' a data folder will be created under this folder.
-#' extracted files to go.
 #' @param tables The default value is \code{NULL}.  This is a vector of table 
 #' names you want to extract that exist in the database specified by \code{db}.
 #' @param usepkg default is \code{oracle_cxn$usepkg}. This indicates whether the 
@@ -41,7 +37,6 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 get_data_custom<-function(schema=NULL,
-                          data.dir = file.path(getwd(), 'data'),
                           tables = NULL,
                           cxn = NULL,
                           usepkg = 'rodbc', 
@@ -54,16 +49,17 @@ get_data_custom<-function(schema=NULL,
   Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
                               fn.oracle.password = fn.oracle.password, 
                               fn.oracle.dsn = fn.oracle.dsn)
-  
-  try_load <- function(tables, data.dir, thisenv = env) {
-    loadit <- function(x, data.dir) {
+  .Deprecated(old = "get_data_custom",new = "Mar.utils::get_data_tables", package="Mar.utils")
+
+  try_load <- function(tables, thisenv = env) {
+    loadit <- function(x) {
       this = paste0(x, ".RData")
-      thisP = file.path(data.dir, this)
+      thisP = file.path(get_pesd_dw_dir(), this)
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "MARFISSCI",replacement ="MARFIS",ignore.case = T))) thisP = gsub(x= thisP,pattern = "MARFISSCI",replacement ="MARFIS",ignore.case = T)
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T))) thisP = gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T)
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T))) thisP = gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T)
       
-      load(file = thisP,envir = env)
+      Mar.utils::load_encrypted(file = thisP,envir = env)
       if (!quiet) cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 0)
@@ -73,7 +69,7 @@ get_data_custom<-function(schema=NULL,
     }
     if (!quiet) cat("\nLoading data...")
     timer.start = proc.time()
-    sapply(tables, simplify = TRUE, loadit, data.dir)
+    sapply(tables, simplify = TRUE, loadit)
     elapsed = timer.start - proc.time()
     if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
   }
@@ -81,7 +77,7 @@ get_data_custom<-function(schema=NULL,
   reqd = toupper(paste0(schema, ".", tables))
   loadsuccess = tryCatch(
     {
-      try_load(reqd, data.dir)
+      try_load(reqd)
     }, 
     warning = function(w) {
       print()
@@ -117,7 +113,7 @@ get_data_custom<-function(schema=NULL,
         qry = paste0("SELECT * from ", theschema, ".",table_naked)
         res = thecmd(cxn, qry, rows_at_time = 1)
         assign(table_naked, res)
-        save(list = table_naked1, file = file.path(data.dir, paste0(prefix,".",tables[i],".RData")))
+        Mar.utils::save_encrypted(list = table_naked1, file = file.path(get_pesd_dw_dir(), paste0(prefix,".",tables[i],".RData")))
         if (!quiet) cat(paste("\n","Got", tables[i]))
         assign(x = tables[i],value = get(table_naked), envir = env)
         if (!quiet) cat(paste0("\n","Loaded ",tables[i]))

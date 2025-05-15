@@ -39,7 +39,7 @@ summarize_catches <- function(db=NULL,
                               drop.na.cols = TRUE,
                               debug=FALSE,
                               env=.GlobalEnv){
-  if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
+  if (is.null(db))db = get_ds_all()[[.GlobalEnv$db]]$db
   #create place to make a bunch of temporary duplicate data
   summ = new.env()
   drop_fields <- function(table.name, sens.fields){
@@ -47,25 +47,25 @@ summarize_catches <- function(db=NULL,
     assign(table.name,(table[,!(names(table) %in% sens.fields)]), envir = summ)
   }
   #drop certain fields from all tables
-  drops = ds_all[[.GlobalEnv$db]]$field_drops
-  sapply(ds_all[[.GlobalEnv$db]]$tables,drop_fields, drops)
-  tab_prim = ds_all[[.GlobalEnv$db]]$table_pos
-  tab_foreign = ds_all[[.GlobalEnv$db]]$joins[[tab_prim]][names(ds_all[[.GlobalEnv$db]]$joins[[tab_prim]]) !="combine"]
+  drops = get_ds_all()[[.GlobalEnv$db]]$field_drops
+  sapply(get_ds_all()[[.GlobalEnv$db]]$tables,drop_fields, drops)
+  tab_prim = get_ds_all()[[.GlobalEnv$db]]$table_pos
+  tab_foreign = get_ds_all()[[.GlobalEnv$db]]$joins[[tab_prim]][names(get_ds_all()[[.GlobalEnv$db]]$joins[[tab_prim]]) !="combine"]
   all_recs=summ[[tab_prim]]
-  joiners = ds_all[[.GlobalEnv$db]]$tables[!(ds_all[[.GlobalEnv$db]]$tables %in% c(names(tab_foreign), tab_prim))]
+  joiners = get_ds_all()[[.GlobalEnv$db]]$tables[!(get_ds_all()[[.GlobalEnv$db]]$tables %in% c(names(tab_foreign), tab_prim))]
   doMerge = function(this_tab_prim_data, this_tab_foreign, morph_dets, debug){
     
     this_tab_foreign_nm = names(this_tab_foreign)
-    if (!is.null(ds_all[[.GlobalEnv$db]]$table_det)){
-      if (morph_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_det) {
-        if (debug) cat(paste0("\nSkipping merge of ",ds_all[[.GlobalEnv$db]]$table_det))
+    if (!is.null(get_ds_all()[[.GlobalEnv$db]]$table_det)){
+      if (morph_dets == FALSE & this_tab_foreign_nm %in% get_ds_all()[[.GlobalEnv$db]]$table_det) {
+        if (debug) cat(paste0("\nSkipping merge of ",get_ds_all()[[.GlobalEnv$db]]$table_det))
         return(this_tab_prim_data)
       }else{
         
       }
     }
-    if (!is.null(ds_all[[.GlobalEnv$db]]$table_gear)){
-      if (gear_dets == FALSE & this_tab_foreign_nm %in% ds_all[[.GlobalEnv$db]]$table_gear) return(this_tab_prim_data)
+    if (!is.null(get_ds_all()[[.GlobalEnv$db]]$table_gear)){
+      if (gear_dets == FALSE & this_tab_foreign_nm %in% get_ds_all()[[.GlobalEnv$db]]$table_gear) return(this_tab_prim_data)
     }
     this_tab_foreign_dets = this_tab_foreign[[1]]
     this_tab_foreign = summ[[this_tab_foreign_nm]]
@@ -104,7 +104,7 @@ summarize_catches <- function(db=NULL,
   z=1
   while (length(joiners)>0 & z <= length(joiners)){
     
-    all = ds_all[[.GlobalEnv$db]]$joins[names(ds_all[[.GlobalEnv$db]]$joins) %in% joiners]
+    all = get_ds_all()[[.GlobalEnv$db]]$joins[names(get_ds_all()[[.GlobalEnv$db]]$joins) %in% joiners]
     all_names = names(sapply(all, names))
     if (length(setdiff(all_names, joiners))!=0) warning("The tables remaining to be joined do not match the join information in the data_sources.")
     
@@ -133,7 +133,7 @@ summarize_catches <- function(db=NULL,
         if (debug) {
           cat(paste0("\n\tAssessing merge(<all n=",nrow(all_recs),">, ",joinTable,", by.x='",paste(pk, collapse=","),"', by.y='",paste(fk, collapse=","), "')"))
         }
-        if (joinTable=="")browser()
+        if (joinTable=="")stop("uh oh!")
           all_recs = doMerge(all_recs, all_this, morph_dets, debug)
           joiners = joiners[!joiners %in% joinTable]
           z=1

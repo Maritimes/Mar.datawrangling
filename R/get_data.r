@@ -4,9 +4,6 @@
 #' global environment.  If some are missing, it will offer to re-extract them.  If the user chooses
 #' to re-extract, it will get their oracle credentials and verify that the user has access to all of
 #' the required tables prior to attempting an extraction.
-#' @param data.dir  The default is your working directory. If you are hoping to 
-#' load existing data, this folder should identify the folder containing your 
-#' *.rdata files.
 #' @param cxn A valid Oracle connection object. This parameter allows you to 
 #' pass an existing connection, reducing the need to establish a new connection 
 #' within the function. If provided, it takes precedence over the connection-
@@ -58,36 +55,26 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FALSE, 
-                     data.dir = file.path(getwd(), "data"), fn.oracle.username = "_none_", 
+                     fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
                      env = .GlobalEnv, quiet = FALSE) {
   Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
                               fn.oracle.password = fn.oracle.password, 
                               fn.oracle.dsn = fn.oracle.dsn,
                               usepkg = usepkg)
-  if (substring(data.dir, nchar(data.dir)) == "/") data.dir = substr(data.dir, 1, nchar(data.dir) - 1)
-  if (is.null(db)) {
-    ds_nms = data.frame(list(names = unlist(lapply(ds_all, "[[", "name")), db = names(unlist(lapply(ds_all,  "[[", "db"))), desc = unlist(lapply(ds_all, "[[", "desc"))))
-    db_choice = utils::select.list(c(as.character(ds_nms$names), "Cancel"), multiple = F, graphics = T, title = "Please select a data source")
-    if (db_choice == "Cancel") {
-      cat("\nCancelled at user request")
-      return(NULL)
-    }
-    assign("db", ds_nms[ds_nms$names == db_choice, ]$db, envir = .GlobalEnv)
-  } else {
-    assign("db", tolower(db), envir = .GlobalEnv)
-  }
+  assign("db", tolower(db), envir = .GlobalEnv)
+  
   local_table_status_check <- function(db = .GlobalEnv$db) {
-    reqdTables.clean = gsub("*.*?\\.", "", paste0(toupper(db), ".", ds_all[[.GlobalEnv$db]]$tables))
+    reqdTables.clean = gsub("*.*?\\.", "", paste0(toupper(db), ".", get_ds_all()[[.GlobalEnv$db]]$tables))
     
-    vers <- c(toupper(db), toupper(ds_all[[.GlobalEnv$db]]$schema))
+    vers <- c(toupper(db), toupper(get_ds_all()[[.GlobalEnv$db]]$schema))
     vers <- vers[!is.na(vers)]
     
     locTables.clean <- NA 
     
     for (v in 1:length(vers)) {
-      these <- gsub("*.*?\\.", "", gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", list.files(path = data.dir, pattern = paste0("^", vers[v], ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE))))
-      if(vers[v] == "ISDB") these <- gsub(".RData", "", gsub(paste0(data.dir, .Platform$file.sep), "", list.files(path = data.dir, pattern = paste0("^", "[^\\.]+\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)))
+      these <- gsub("*.*?\\.", "", gsub(".RData", "", gsub(paste0(get_pesd_dw_dir(), .Platform$file.sep), "", list.files(path = get_pesd_dw_dir(), pattern = paste0("^", vers[v], ".*\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE))))
+      if(vers[v] == "ISDB") these <- gsub(".RData", "", gsub(paste0(get_pesd_dw_dir(), .Platform$file.sep), "", list.files(path = get_pesd_dw_dir(), pattern = paste0("^", "[^\\.]+\\.rdata$"), full.names = T, ignore.case = TRUE, recursive = FALSE)))
 
     }
 
@@ -117,8 +104,8 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       } else if (action == "extract") {
         if (!quiet) cat(paste0("\nExtracting ", tables, "... "))
         add.where = "1=1"
-        if (tables %in% names(ds_all[[.GlobalEnv$db]]$table_err_roracle)) {
-          this = ds_all[[.GlobalEnv$db]]$table_err_roracle[[tables]]
+        if (tables %in% names(get_ds_all()[[.GlobalEnv$db]]$table_err_roracle)) {
+          this = get_ds_all()[[.GlobalEnv$db]]$table_err_roracle[[tables]]
           badvalues = paste(unlist(gsub("(.*)", "\\1", 
                                         this$badvalues)), sep = "", collapse = ",")
           add.where = paste0(this$field, " NOT IN (", badvalues, ")")
@@ -134,7 +121,12 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
         res = thecmd(cxn, qry, rows_at_time = 1)
         
         assign(table_naked, res)
-        save(list = table_naked1, file = file.path(data.dir, paste0(tables, ".RData")))
+
+        if(is.na(theschema)| theschema == "MARFISSCI" | theschema == "comland" | theschema == "MFD_STOMACH"){
+        Mar.utils::save_encrypted(list = table_naked1, file = file.path(get_pesd_dw_dir(), paste0(tables, ".RData")))
+        }else{
+          save(list = table_naked1, file = file.path(get_pesd_dw_dir(), paste0(tables, ".RData")))
+        }
         if (!quiet) cat(paste("Got", tables))
       }
     }
@@ -142,32 +134,32 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       thecmd = Mar.utils::connectionCheck(cxn)
       
       verified = sapply(tables, oracle_activity, cxn, thecmd, 
-                        ds_all[[.GlobalEnv$db]]$schema, 
+                        get_ds_all()[[.GlobalEnv$db]]$schema, 
                         toupper(db), "verify_access")
       
       if (!all(verified)) 
         stop("You do not have access to all of the required tables.\n      \nPlease ask the db custodian to grant you access to the tables listed above, and try again.\n\n      ")
-      dir.create(data.dir, recursive = TRUE, showWarnings = FALSE)
+      dir.create(get_pesd_dw_dir(), recursive = TRUE, showWarnings = FALSE)
       if (!quiet) cat("\n\nStarting extractions... ")
       timer.start = proc.time()
       sapply(tables, oracle_activity, cxn, thecmd,
-             ds_all[[.GlobalEnv$db]]$schema, toupper(db), "extract")
+             get_ds_all()[[.GlobalEnv$db]]$schema, toupper(db), "extract")
       elapsed = timer.start - proc.time()
       if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 0) * -1, "seconds"))
-      data_tweaks2(db = .GlobalEnv$db, data.dir = data.dir)
+      data_tweaks2(db = .GlobalEnv$db)
     }
-    try_load <- function(tables, data.dir, thisenv = env) {
+    try_load <- function(tables, thisenv = env) {
       
-      loadit <- function(x, data.dir) {
+      loadit <- function(x) {
         this = paste0(x, ".RData")
-        thisP = file.path(data.dir, this)
+        thisP = file.path(get_pesd_dw_dir(), this)
         
         if (db=="isdb" & !file.exists(thisP)){
           thisP <- gsub("ISDB\\.", "", thisP)
           x <- sub("\\.[^.]*$", "", basename(thisP))
         }
 
-        load(file = thisP, envir = env)
+        Mar.utils::load_encrypted(file = thisP, envir = env)
         if (!quiet) cat(paste0("\nLoaded ", x, "... "))
         fileAge = file.info(thisP)$mtime
         fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
@@ -179,27 +171,27 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       }
       if (!quiet) cat("\nLoading data...")
       timer.start = proc.time()
-      sapply(tables, simplify = TRUE, loadit, data.dir)
+      sapply(tables, simplify = TRUE, loadit)
       elapsed = timer.start - proc.time()
       if (!quiet) cat(paste0("\n\n", round(elapsed[3], 0) * -1, " seconds to load..."))
     }
     prefix = toupper(.GlobalEnv$db)
     if (prefix == "RV")     prefix = "GROUNDFISH"
     if (prefix == "MARFIS") prefix = "MARFISSCI"
-      reqd = paste0(prefix, ".", ds_all[[.GlobalEnv$db]]$tables)
+      reqd = paste0(prefix, ".", get_ds_all()[[.GlobalEnv$db]]$tables)
 
-    if (dir.exists(data.dir) == TRUE) {
+    if (dir.exists(get_pesd_dw_dir()) == TRUE) {
  
       status = local_table_status_check()
       if (length(status) == 0 & force.extract == F) {
-        try_load(reqd, data.dir)
+        try_load(reqd, get_pesd_dw_dir())
       } else if (length(status) == 0 & force.extract == T) {
         try_extract(cxn, reqd)
-        try_load(reqd, data.dir)
+        try_load(reqd, get_pesd_dw_dir())
       } else {
-        if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(ds_all[[.GlobalEnv$db]]$schema,".",status)
+        if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(get_ds_all()[[.GlobalEnv$db]]$schema,".",status)
         if (toupper(.GlobalEnv$db)=="ISDB") status = status #paste0("ISDB.",status)
-        message(paste0("\nLooked in '", data.dir, "' for required *.rdata files, but you are missing the following:"))
+        message(paste0("\nLooked in '", get_pesd_dw_dir(), "' for required *.rdata files, but you are missing the following:"))
         if (toupper(.GlobalEnv$db)=="ISDB")message("(Note that recent changes to the ISDB schema require a re-extraction of a fresh copy of that data)")
         cat("\n",status)
         choice = toupper(readline(prompt = "\nPress 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
@@ -208,24 +200,24 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
           stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
         } else if (toupper(choice) == "A") {
           try_extract(cxn, reqd)
-          try_load(reqd, data.dir)
+          try_load(reqd, get_pesd_dw_dir())
         } else {
           try_extract(cxn, status)
-          try_load(reqd, data.dir)
+          try_load(reqd, get_pesd_dw_dir())
         }
       }
     }
     else {
-      cat(paste0("\nWarning: The specified data.dir ('", data.dir, "') does not exist."))
+      cat(paste0("\nWarning: The specified get_pesd_dw_dir() ('", get_pesd_dw_dir(), "') does not exist."))
       goahead = toupper(readline(prompt = "\nType 'y' to create this folder and extract the data into it.  Press any other key to cancel the operation."))
       print(goahead)
       if (toupper(goahead) != "Y") {
         stop("Cancelled.")
       }
       else {
-        dir.create(data.dir)
+        dir.create(get_pesd_dw_dir())
         try_extract(usepkg, reqd)
-        try_load(reqd, data.dir)
+        try_load(reqd, get_pesd_dw_dir())
       }
     }
   }

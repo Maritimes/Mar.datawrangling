@@ -6,7 +6,6 @@
 \usage{
 get_data_custom(
   schema = NULL,
-  data.dir = file.path(getwd(), "data"),
   tables = NULL,
   cxn = NULL,
   usepkg = "rodbc",
@@ -20,11 +19,6 @@ get_data_custom(
 \arguments{
 \item{schema}{default is \code{NULL}. This is the schema you want to access 
 a additional tables from.}
-
-\item{data.dir}{The default is your working directory. If you are hoping to load existing data,
-this folder should contain a data folder containing your rdata files. If you are extracting data,
-a data folder will be created under this folder.
-extracted files to go.}
 
 \item{tables}{The default value is \code{NULL}.  This is a vector of table 
 names you want to extract that exist in the database specified by \code{db}.}

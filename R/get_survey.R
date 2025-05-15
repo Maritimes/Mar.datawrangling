@@ -18,62 +18,23 @@
 #' }
 #' @param keepBadSets default is \code{FALSE}.  This determines whether or not both type 1 and 3 
 #' sets are returned, or just type 1. Type 3 sets indicate an invalid tow.
-#' @param data.dir The default is NULL. This should be a path to a folder containing your rdata files. 
 #' @param quiet default is \code{TRUE}.  If TRUE, no output messages will be shown.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL, quiet=TRUE, env=.GlobalEnv){
+get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, quiet=TRUE, env=.GlobalEnv){
   setTypes = 1
   if (keepBadSets) setTypes <- c(setTypes,3)
-  if (is.null(db))db = ds_all[[.GlobalEnv$db]]$db
+  if (is.null(db))db = get_ds_all()[[.GlobalEnv$db]]$db
   if(db !='rv'){
     cat(paste0("\n","This function currently only works for the rv database"))
     return(NULL)
   }
   
-  chooseSurvey <- function(db=NULL){
-    rvSurvs <- c("4X", 
-                 "GEORGES",
-                 "SPRING",
-                 "4VSW",
-                 "SUMMER",
-                 "FALL")
-    isdbSurvs <- c("<COMMERCIAL/OBSERVER>", 
-                   '4VN SENTINEL SURVEY',
-                   '4VSW SENTINEL PROGRAM',
-                   '4VWX HALIBUT PORT SAMPLE',
-                   '4VWX SKATE SURVEY',
-                   '4X MOBILE GEAR SURVEY',
-                   '4X MONKFISH SURVEY',
-                   '5Z FIXED GEAR SURVEY',
-                   'FSRS - ECO - EXPERIMENTAL',
-                   'GEAC JUV. AND FORAGE SURVEY',
-                   'GULF RESEARCH SURVEY',
-                   'HALIBUT LONGLINE SURVEY',
-                   'LOBSTER SURVEY',
-                   'LOBSTER TAG REPLACEMENT',
-                   'N. ATL. BLUEFIN SURVEY',
-                   'SCALLOP RESEARCH',
-                   'SNOWCRAB SURVEY',
-                   'FSRS - ECO - AT SEA SAMPLING')
-    thisSurv <- switch(db,
-                       "rv" = rvSurvs,
-                       "isdb" = isdbSurvs
-    )
-    survey = utils::select.list(thisSurv,
-                                multiple = F,
-                                graphics = T,
-                                title = paste("Select a standard survey")
-    )
-    return(survey)
-  }
-  if (is.null(survey)){
-    survey = chooseSurvey(db)
-  }
-  get_data(db=db, data.dir = data.dir, quiet=quiet, env=env)
+
+  get_data(db=db, quiet=quiet, env=env)
   if (db == 'rv'){
     #ensure that we only resturn missions that had type 1 sets - don't want exploratory, etc
     env$GSMISSIONS <- env$GSMISSIONS[env$GSMISSIONS$MISSION %in% unique(env$GSINF[env$GSINF$TYPE ==1, "MISSION"]),]
@@ -148,84 +109,8 @@ get_survey<- function(db=NULL, survey=NULL, keepBadSets = FALSE, data.dir = NULL
            "SUMMER" = doSUMMER(),
            "FALL" = doFALL()
     )
-    
-    # } else if (db=='isdb'){
-    #   doCOMM <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID <7010 | obs_TRIPS_all$TRIPCD_ID == 7099,]
-    #   }
-    #   do4VN <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7052,]
-    #   }
-    #   do4VSW <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7050,]
-    #     }
-    #   do4VWXHAL <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7058,]
-    #   }
-    #   do4VWXSKAT <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7054,]
-    #   }
-    #   do4XMOB <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7051,]
-    #   }
-    #   do4XMONK <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7053,]
-    #   }
-    #   do5Z <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7055,]
-    #   }
-    #   doATSEA <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7010,]
-    #   }
-    #   doEXP <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7011,]
-    #   }
-    #   doGEAC <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7060,]
-    #   }
-    #   doGULF <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==8998,]
-    #   }
-    #   doHAL <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7057,]
-    #   }
-    #   doLOBS <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7065,]
-    #   }
-    #   doLOBSTAG <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7068,]
-    #   }
-    #   doBLUEFIN <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7059,]
-    #   }
-    #   doSCALL <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7062,]
-    #   }
-    #   doSNOWCRAB <- function(){
-    #     env$ISTRIPTYPECODES[env$ISTRIPTYPECODES$TRIPCD_ID==7061,]
-    #   }
-    #   switch(survey,
-    #          '<COMMERCIAL/OBSERVER>'= doCOMM(),
-    #          '4VN SENTINEL SURVEY'= do4VN(),
-    #          '4VSW SENTINEL PROGRAM'= do4VSW(),
-    #          '4VWX HALIBUT PORT SAMPLE'= do4VWXHAL(),
-    #          '4VWX SKATE SURVEY'= do4VWXSKAT(),
-    #          '4X MOBILE GEAR SURVEY'= do4XMOB(),
-    #          '4X MONKFISH SURVEY'= do4XMONK(),
-    #          '5Z FIXED GEAR SURVEY'= do5Z(),
-    #          'FSRS - ECO - AT SEA SAMPLING'= doATSEA(),
-    #          'FSRS - ECO - EXPERIMENTAL'= doEXP(),
-    #          'GEAC JUV. AND FORAGE SURVEY'= doGEAC(),
-    #          'GULF RESEARCH SURVEY'= doGULF(),
-    #          'HALIBUT LONGLINE SURVEY'= doHAL(),
-    #          'LOBSTER SURVEY'= doLOBS(),
-    #          'LOBSTER TAG REPLACEMENT'= doLOBSTAG(),
-    #          'N. ATL. BLUEFIN SURVEY'= doBLUEFIN(),
-    #          'SCALLOP RESEARCH'= doSCALL(),
-    #          'SNOWCRAB SURVEY'= doSNOWCRAB()
-    #   )
   }
-  self_filter(db = ds_all[[.GlobalEnv$db]]$db, quiet=quiet, env=env)
+  self_filter(db = get_ds_all()[[.GlobalEnv$db]]$db, quiet=quiet, env=env)
 }
 
 

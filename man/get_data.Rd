@@ -9,7 +9,6 @@ get_data(
   cxn = NULL,
   usepkg = "rodbc",
   force.extract = FALSE,
-  data.dir = file.path(getwd(), "data"),
   fn.oracle.username = "_none_",
   fn.oracle.password = "_none_",
   fn.oracle.dsn = "_none_",
@@ -48,10 +47,6 @@ roracle will extract data ~ 5x faster.Deprecated; use \code{cxn} instead.}
 \item{force.extract}{The default value is FALSE.  By default, existing data will be loaded.  If
 \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 data.}
-
-\item{data.dir}{The default is your working directory. If you are hoping to 
-load existing data, this folder should identify the folder containing your 
-*.rdata files.}
 
 \item{fn.oracle.username}{Default is \code{'_none_'}. This is your username 
 for accessing Oracle objects. If you have a value for \code{oracle.username} 

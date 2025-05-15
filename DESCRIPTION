@@ -1,20 +1,15 @@
 Package: Mar.datawrangling
 Title: A suite of tools for extracting, filtering and aggregating data from the Maritimes fisheries science databases
-Version: 2025.03.27
+Version: 2025.05.13
 Authors@R: c( person("Mike", "McMahon", email="Mike.McMahon@dfo-mpo.gc.ca", role=c("aut", "cre")) )
 Maintainer: Mike McMahon <Mike.McMahon@dfo-mpo.gc.ca>
 Description: This package facilitates the extraction and handling of data from various Maritimes databases.
 Depends:
-    R (>= 2.10)
+    R (>= 4.1.0)
 Imports:
-    classInt,
-    data.table,
     dplyr,
-    geosphere, 
     lubridate,
     Mar.utils,
-    RColorBrewer,
-    reshape2,
     stats,
     tidyr,
     utils

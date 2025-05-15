@@ -4,15 +4,11 @@
 \alias{get_isdb_trip_set}
 \title{get_isdb_trip_set}
 \usage{
-get_isdb_trip_set(FS_ID = NULL, data.dir = NULL)
+get_isdb_trip_set(FS_ID = NULL)
 }
 \arguments{
 \item{FS_ID}{default is \code{NULL}. This is one or more FISHSET_IDs for 
 which you want the associated trip name and set number.}
-
-\item{data.dir}{default is \code{NULL}. This is the folder that contains the
-extracted RData files for ISDB.  Specifically, it should contain both 
-ISDB.ISTRIPS.RData and ISDB.ISFISHSETS.RData.}
 }
 \value{
 DataFrame

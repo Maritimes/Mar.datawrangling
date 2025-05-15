@@ -4,14 +4,11 @@
 \alias{data_tweaks2}
 \title{data_tweaks2}
 \usage{
-data_tweaks2(db = "ALL", data.dir = NULL)
+data_tweaks2(db = "ALL")
 }
 \arguments{
 \item{db}{default is \code{"ALL"}. This identifies the dataset you are working 
 with.}
-
-\item{data.dir}{The default is a "data" folder within your working directory. This is the path to where you want the
-extracted files to go.}
 }
 \description{
 After the initial extraction, this function is called to do minor housekeeping
