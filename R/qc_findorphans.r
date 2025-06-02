@@ -10,7 +10,7 @@
 #' causes each filter to be printed out.
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-qc_findorphans<-function(db = NULL, usepkg = 'rodbc', debug=F){
+qc_findorphans<-function(db = NULL, debug=F){
   
   if (is.null(db)) stop("Please supply a value for db")
   
