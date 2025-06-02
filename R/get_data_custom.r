@@ -39,16 +39,9 @@
 get_data_custom<-function(schema=NULL,
                           tables = NULL,
                           cxn = NULL,
-                          usepkg = 'rodbc', 
-                          fn.oracle.username ="_none_",
-                          fn.oracle.password="_none_",
-                          fn.oracle.dsn="_none_",
                           env=.GlobalEnv,
                           quiet=F){
-  # Deprecation check
-  Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
-                              fn.oracle.password = fn.oracle.password, 
-                              fn.oracle.dsn = fn.oracle.dsn)
+
   .Deprecated(old = "get_data_custom",new = "Mar.utils::get_data_tables", package="Mar.utils")
 
   try_load <- function(tables, thisenv = env) {

@@ -59,10 +59,6 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
                      fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
                      env = .GlobalEnv, quiet = FALSE, ...) {
-  Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
-                              fn.oracle.password = fn.oracle.password, 
-                              fn.oracle.dsn = fn.oracle.dsn,
-                              usepkg = usepkg)
   assign("db", tolower(db), envir = .GlobalEnv)
   
   local_table_status_check <- function(db = .GlobalEnv$db) {

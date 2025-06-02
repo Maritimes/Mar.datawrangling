@@ -11,10 +11,6 @@
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 qc_findorphans<-function(db = NULL, usepkg = 'rodbc', debug=F){
-  Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
-                   fn.oracle.password = fn.oracle.password, 
-                   fn.oracle.dsn = fn.oracle.dsn,
-                   usepkg = usepkg)
   
   if (is.null(db)) stop("Please supply a value for db")
   

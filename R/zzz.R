@@ -21,7 +21,6 @@ get_ds_all <- function() {
 "Protected B data extracted by this package (i.e. MARFIS;ISDB;COMLAND;MFD_STOMACH) has been found on unrestricted network drives, which violates security protocols. These datasets carry responsibilities that were agreed to when your account was granted permissions.",
 "\nKey changes implemented:",
 "1) 'data.dir' is now deprecated; all extracted data will be stored in 'C:\\DFO-MPO\\PESDData\\MarDatawrangling'",
-"\t(Any existing data can be moved to this folder to avoid re-extraction)",
 "2) Protected B data will now be encrypted when extracted (unclassified data will remain unencrypted)",
 "\nTo access Protected B Rdata files as a different user or on a different computer than the one that performed the extraction, you will need:",
 "\t'extract_user': The original extractor's username (from Sys.info()['user'])",
