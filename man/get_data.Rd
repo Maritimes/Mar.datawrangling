@@ -13,7 +13,8 @@ get_data(
   fn.oracle.password = "_none_",
   fn.oracle.dsn = "_none_",
   env = .GlobalEnv,
-  quiet = FALSE
+  quiet = FALSE,
+  ...
 )
 }
 \arguments{
@@ -72,6 +73,8 @@ default value is \code{.GlobalEnv}.}
 
 \item{quiet}{default is \code{FALSE}.  If True, no text describing progress
 will be shown.}
+
+\item{...}{other paremeters sent to methods}
 }
 \description{
 This function contains the logic for deciding whether to extract or load data.  It
