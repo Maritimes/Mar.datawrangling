@@ -51,13 +51,14 @@
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
 #' will be shown.
+#' @param ... other paremeters sent to methods
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FALSE, 
                      fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
-                     env = .GlobalEnv, quiet = FALSE) {
+                     env = .GlobalEnv, quiet = FALSE, ...) {
   Mar.utils::deprecationCheck(fn.oracle.username = fn.oracle.username, 
                               fn.oracle.password = fn.oracle.password, 
                               fn.oracle.dsn = fn.oracle.dsn,
@@ -131,7 +132,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
       }
     }
     try_extract <- function(cxn, tables) {
-      thecmd = Mar.utils::connectionCheck(cxn)
+        thecmd = Mar.utils::connectionCheck(cxn)
       
       verified = sapply(tables, oracle_activity, cxn, thecmd, 
                         get_ds_all()[[.GlobalEnv$db]]$schema, 
@@ -159,7 +160,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
           x <- sub("\\.[^.]*$", "", basename(thisP))
         }
 
-        Mar.utils::load_encrypted(file = thisP, envir = env)
+        Mar.utils::load_encrypted(file = thisP, envir = env, ...)
         if (!quiet) cat(paste0("\nLoaded ", x, "... "))
         fileAge = file.info(thisP)$mtime
         fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 

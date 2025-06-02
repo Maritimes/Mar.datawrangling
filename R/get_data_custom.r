@@ -59,7 +59,7 @@ get_data_custom<-function(schema=NULL,
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T))) thisP = gsub(x= thisP,pattern = "GROUNDFISH",replacement ="RV",ignore.case = T)
       if (!file.exists(thisP) & file.exists(gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T))) thisP = gsub(x= thisP,pattern = "OBSERVER",replacement ="ISDB",ignore.case = T)
       
-      Mar.utils::load_encrypted(file = thisP,envir = env)
+      Mar.utils::load_encrypted(file = thisP,envir = env, ...)
       if (!quiet) cat(paste0("\nLoaded ", x, "... "))
       fileAge = file.info(thisP)$mtime
       fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 0)
