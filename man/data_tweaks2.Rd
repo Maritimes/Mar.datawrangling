@@ -4,11 +4,19 @@
 \alias{data_tweaks2}
 \title{data_tweaks2}
 \usage{
-data_tweaks2(db = "ALL")
+data_tweaks2(db = "ALL", extract_user = NULL, extract_computer = NULL)
 }
 \arguments{
 \item{db}{default is \code{"ALL"}. This identifies the dataset you are working 
 with.}
+
+\item{extract_user}{default is \code{NULL}.  This parameter can be used with
+\code{extract_computer} to load encypted data files extracted by another user 
+and/or computer}
+
+\item{extract_computer}{default is \code{NULL}.  This parameter can be used with
+\code{extract_user} to load encypted data files extracted by another user 
+and/or computer}
 }
 \description{
 After the initial extraction, this function is called to do minor housekeeping

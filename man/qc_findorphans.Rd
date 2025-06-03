@@ -4,18 +4,18 @@
 \alias{qc_findorphans}
 \title{qc_findorphans}
 \usage{
-qc_findorphans(db = NULL, usepkg = "rodbc", debug = F)
+qc_findorphans(db = NULL, debug = F)
 }
 \arguments{
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
 with.}
 
+\item{debug}{default = \code{FALSE}.  This is passed to self_filter() which 
+causes each filter to be printed out.}
+
 \item{usepkg}{default is \code{'rodbc'}. This indicates whether the connection to Oracle should
 use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
 roracle will extract data ~ 5x faster. Deprecated; use \code{cxn} instead.}
-
-\item{debug}{default = \code{FALSE}.  This is passed to self_filter() which 
-causes each filter to be printed out.}
 }
 \description{
 This function creates zzz_orph_* tables with records that don't

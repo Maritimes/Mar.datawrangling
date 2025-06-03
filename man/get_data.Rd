@@ -14,7 +14,8 @@ get_data(
   fn.oracle.dsn = "_none_",
   env = .GlobalEnv,
   quiet = FALSE,
-  ...
+  extract_user = NULL,
+  extract_computer = NULL
 )
 }
 \arguments{
@@ -74,6 +75,14 @@ default value is \code{.GlobalEnv}.}
 \item{quiet}{default is \code{FALSE}.  If True, no text describing progress
 will be shown.}
 
+\item{extract_user}{default is \code{NULL}.  This parameter can be used with
+\code{extract_computer} to load encypted data files extracted by another user 
+and/or computer}
+
+\item{extract_computer}{default is \code{NULL}.  This parameter can be used with
+\code{extract_user} to load encypted data files extracted by another user 
+and/or computer}
+
 \item{...}{other paremeters sent to methods}
 }
 \description{
@@ -85,7 +94,6 @@ the required tables prior to attempting an extraction.
 }
 \seealso{
 Other dfo_extractions: 
-\code{\link{get_data_custom}()},
 \code{\link{get_survey}()},
 \code{\link{self_filter}()},
 \code{\link{summarize_catches}()}

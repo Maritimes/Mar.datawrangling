@@ -3,7 +3,6 @@
 export(cleanup)
 export(data_tweaks2)
 export(get_data)
-export(get_data_custom)
 export(get_isdb_trip_set)
 export(get_survey)
 export(load_datasources)
