@@ -7,11 +7,9 @@ Description: This package facilitates the extraction and handling of data from v
 Depends:
     R (>= 4.1.0)
 Imports:
-    dplyr,
     lubridate,
     Mar.utils,
     stats,
-    tidyr,
     utils
 Enhances:
     ROracle,

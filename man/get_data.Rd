@@ -82,8 +82,6 @@ and/or computer}
 \item{extract_computer}{default is \code{NULL}.  This parameter can be used with
 \code{extract_user} to load encypted data files extracted by another user 
 and/or computer}
-
-\item{...}{other paremeters sent to methods}
 }
 \description{
 This function contains the logic for deciding whether to extract or load data.  It

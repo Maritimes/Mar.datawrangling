@@ -3,20 +3,23 @@
 #' appear to be linked to the other tables (within Mar.datawrangling)
 #' @param db default is \code{NULL}. This identifies the dataset you are working
 #' with.
-#' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
-#' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
-#' roracle will extract data ~ 5x faster. Deprecated; use \code{cxn} instead.
+#' @param extract_user default is \code{NULL}.  This parameter can be used with
+#' \code{extract_computer} to load encypted data files extracted by another user 
+#' and/or computer
+#' @param extract_computer  default is \code{NULL}.  This parameter can be used with
+#' \code{extract_user} to load encypted data files extracted by another user 
+#' and/or computer
 #' @param debug default = \code{FALSE}.  This is passed to self_filter() which 
 #' causes each filter to be printed out.
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-qc_findorphans<-function(db = NULL, debug=F){
+qc_findorphans<-function(db = NULL, extract_user= NULL,  extract_computer = NULL, debug=F){
   
   if (is.null(db)) stop("Please supply a value for db")
   
   prefix = toupper(db)
   name_prefix = "zzz_orph_"
-  get_data(db, usepkg = usepkg)
+  get_data(db, extract_user = extract_user, extract_computer = extract_computer)
   self_filter(db, looponce=TRUE, debug = debug)
   cat("\n","Orphans within code tables are generally expected.
 This will take a moment...")
@@ -33,7 +36,8 @@ This will take a moment...")
   for (i in 1:length(these.tables.prefixed)){
     this = paste0(these.tables.prefixed[i],".RData")
     thisP = file.path(get_pesd_dw_dir(),this)
-    load(file =thisP, envir = orig)
+    Mar.utils::load_encrypted(file =thisP, envir = orig, 
+                              extract_user = extract_user, extract_computer = extract_computer)
   }
   sapply(get_ds_all()[[db]]$tables, get_orphans)
   return(invisible())

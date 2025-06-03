@@ -51,7 +51,6 @@
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
 #' will be shown.
-#' @param ... other paremeters sent to methods
 #' @param extract_user default is \code{NULL}.  This parameter can be used with
 #' \code{extract_computer} to load encypted data files extracted by another user 
 #' and/or computer
