@@ -52,13 +52,19 @@
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
 #' will be shown.
 #' @param ... other paremeters sent to methods
+#' @param extract_user default is \code{NULL}.  This parameter can be used with
+#' \code{extract_computer} to load encypted data files extracted by another user 
+#' and/or computer
+#' @param extract_computer  default is \code{NULL}.  This parameter can be used with
+#' \code{extract_user} to load encypted data files extracted by another user 
+#' and/or computer
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
 get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FALSE, 
                      fn.oracle.username = "_none_", 
                      fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
-                     env = .GlobalEnv, quiet = FALSE, ...) {
+                     env = .GlobalEnv, quiet = FALSE, extract_user = NULL, extract_computer = NULL) {
   assign("db", tolower(db), envir = .GlobalEnv)
   
   local_table_status_check <- function(db = .GlobalEnv$db) {
@@ -143,7 +149,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
              get_ds_all()[[.GlobalEnv$db]]$schema, toupper(db), "extract")
       elapsed = timer.start - proc.time()
       if (!quiet) cat(paste("\n\nExtraction completed in", round(elapsed[3], 0) * -1, "seconds"))
-      data_tweaks2(db = .GlobalEnv$db)
+      data_tweaks2(db = .GlobalEnv$db, extract_user = extract_user, extract_computer = extract_computer)
     }
     try_load <- function(tables, thisenv = env) {
       
@@ -156,7 +162,7 @@ get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FA
           x <- sub("\\.[^.]*$", "", basename(thisP))
         }
 
-        Mar.utils::load_encrypted(file = thisP, envir = env, ...)
+        Mar.utils::load_encrypted(file = thisP, envir = env, extract_user = extract_user, extract_computer = extract_computer)
         if (!quiet) cat(paste0("\nLoaded ", x, "... "))
         fileAge = file.info(thisP)$mtime
         fileAge = round(difftime(Sys.time(), fileAge, units = "days"), 
