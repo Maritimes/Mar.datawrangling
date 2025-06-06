@@ -9,33 +9,22 @@ get_ds_all <- function() {
 }
 
 .onAttach <- function(libname, pkgname) {
-  #onAttach is for interactive sessions
+  # Load datasources (CRITICAL - do not change this)
+  .pkgenv$ds_all <- load_datasources()
   assign("ds_all", get_ds_all(), envir = .GlobalEnv)
   
+  # Check for updates
   Mar.utils::updateCheck(gitPkg = 'Maritimes/Mar.datawrangling')
+  
+  # Temporary breaking changes warning (remove after users adapt)
   localVer = utils::packageDescription('Mar.datawrangling')$Version
-  msg <- paste(
-    #paste0("Version: ", localVer),
-"Timezone set to 'America/Halifax' to match data",
-"\n\n!! IMPORTANT:  Security Update - Protected B Data Encryption !!!",
-"Protected B data extracted by this package (i.e. MARFIS;ISDB;COMLAND;MFD_STOMACH) has been found on unrestricted network drives, which violates security protocols. These datasets carry responsibilities that were agreed to when your account was granted permissions.",
-"\nKey changes implemented:",
-"1) 'data.dir' is now deprecated; all extracted data will be stored in 'C:\\DFO-MPO\\PESDData\\MarDatawrangling'",
-"2) Protected B data will now be encrypted when extracted (unclassified data will remain unencrypted)",
-"\nTo access Protected B Rdata files as a different user or on a different computer than the one that performed the extraction, you will need:",
-"\t'extract_user': The original extractor's username (from Sys.info()['user'])",
-"\t'extract_computer': The original computer name (from Sys.info()['nodename'])",
-"\nExamples:",
-"\tget_data(..., extract_user='McMahonM', extract_computer='WLNSXXX9999999')",
-"\tMar.utils::load_encrypted(..., extract_user='McMahonM', extract_computer='WLNSXXX9999999')",
-"\nWARNING: Any unencrypted Protected B data extracted by this package found on unsecured network drives will be deleted immediately.",
-"For questions or assistance, please contact Mike.McMahon@dfo-mpo.gc.ca",
-    sep = "\n"
-  )
-  
-  .pkgenv$ds_all <- load_datasources()
-  
-  packageStartupMessage(msg)
+  if (localVer >= "2025.06.06") {
+    packageStartupMessage(
+      "BREAKING CHANGES in this version! See README.md or NEWS.md for details.\n",
+      "Key changes: Oracle connections required, data.dir removed, data encrypted.\n",
+      "Timezone set to 'America/Halifax' to match data"
+    )
+  }
 }
 
 .onLoad <- function(libname, pkgname){

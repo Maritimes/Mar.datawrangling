@@ -28,25 +28,6 @@
 #' \item \code{meso_gully} - Mesopelagic Gully Database
 #' \item \code{juvesh} - Juvenile Silver Hake Database
 #' }
-#' @param usepkg default is \code{'rodbc'}. This indicates whether the connection to Oracle should
-#' use \code{'rodbc'} or \code{'roracle'} to connect.  rodbc is slightly easier to setup, but
-#' roracle will extract data ~ 5x faster.Deprecated; use \code{cxn} instead.
-#' @param fn.oracle.username Default is \code{'_none_'}. This is your username 
-#' for accessing Oracle objects. If you have a value for \code{oracle.username} 
-#' stored in your environment (e.g., from an rprofile file), this can be left 
-#' out and that value will be used. If a value for this is provided, it will 
-#' take priority over your existing value. Deprecated; use \code{cxn} instead.
-#' @param fn.oracle.password Default is \code{'_none_'}. This is your password 
-#' for accessing Oracle objects. If you have a value for \code{oracle.password} 
-#' stored in your environment (e.g., from an rprofile file), this can be left 
-#' out and that value will be used. If a value for this is provided, it will 
-#' take priority over your existing value. Deprecated; use \code{cxn} instead.
-#' @param fn.oracle.dsn Default is \code{'_none_'}. This is your DSN/ODBC 
-#' identifier for accessing Oracle objects. If you have a value 
-#' for \code{oracle.dsn} stored in your environment (e.g., from an rprofile 
-#' file), this can be left out and that value will be used. If a value for this 
-#' is provided, it will take priority over your existing value. Deprecated; use 
-#' \code{cxn} instead.
 #' @param env This the the environment you want this function to work in.  The 
 #' default value is \code{.GlobalEnv}.
 #' @param quiet default is \code{FALSE}.  If True, no text describing progress
@@ -60,9 +41,7 @@
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_data <- function(db = NULL, cxn = NULL, usepkg = "rodbc", force.extract = FALSE, 
-                     fn.oracle.username = "_none_", 
-                     fn.oracle.password = "_none_", fn.oracle.dsn = "_none_", 
+get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, 
                      env = .GlobalEnv, quiet = FALSE, extract_user = NULL, extract_computer = NULL) {
   assign("db", tolower(db), envir = .GlobalEnv)
   

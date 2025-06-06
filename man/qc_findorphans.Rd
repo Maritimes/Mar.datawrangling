@@ -5,6 +5,7 @@
 \title{qc_findorphans}
 \usage{
 qc_findorphans(
+  cxn = NULL,
   db = NULL,
   extract_user = NULL,
   extract_computer = NULL,
@@ -12,6 +13,11 @@ qc_findorphans(
 )
 }
 \arguments{
+\item{cxn}{A valid Oracle connection object. This parameter allows you to 
+pass an existing connection, reducing the need to establish a new connection 
+within the function. If provided, it takes precedence over the connection-
+related parameters.}
+
 \item{db}{default is \code{NULL}. This identifies the dataset you are working
 with.}
 

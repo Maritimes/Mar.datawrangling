@@ -1,46 +1,11 @@
-Mar.datawrangling 
-==============
+CHANGES IN Mar.datawrangling VERSION 2.0.0
 
-Changes:
-2019.12.10
-* ensures parameter quiet is passed to make_oracle_cxn
-2019.11.06
-* removes UNITS and TYPE for both Lengths and Weights from GSCAT
-* turns all empty TOTNO, TOTWGT and SAMPWGT to 0
-2019.11.06
-* removes units from GSCAT as they are often unreliable (always kg)
-* removes get_std_rv() which needs work
-2019.10.22
-* adds size classes within a set to prevent confusion
-* removes FGP_TOWS_NW2 as a required table
-2019.10.02
-* fixes issue with data_tweaks() that caused it to fail
-* forces use of Halifax time zone to match data
-2019.07.29
-* removes @importFrom from all functions - ensures full reference everywhere (i.e. package::function())
-2019.07.05
-* adds total_fishing_picture(), with other related additions
-2019.03.11
-* moves "keep_nullsets" variable to self_filter
-* removes case-sensitivity of datasources
-* incorporates a new updateCheck() function from Mar.utils
-2019.01.08
-* fixes joins within comland67 and comland86
-2018.10.29
-* adds ability to specify environment; facilitating use of functions within 
-other functions
-2018.09.21
-* added USNEFSC data
-2018.09.19
-* MARFIS filters fixed so that PRO_SPC_INFO tolerates NA areas, and is not 
- filtered by changes in LOG_EFRT_STD_ID
-2018.05.14
-* Adds inshore survey data
-* Adds meso survey data
-* Adds meso_gully survey data
-2018.04.27
-* Adds function to extract other tables from known dbs
-* Fixes issues with using custom data directory
-* Removes poorlyconceived activity_log
-2018.01.18 
-* Added stomach database
+  BREAKING CHANGES:
+
+  o Removed username and password parameters from all functions
+  o New requirement to pass existing Oracle connection via 'cxn' parameter
+  o Removed data.dir parameter - extractions now go to C:\DFO-MPO\PESDData\MarDatawrangling
+  o Protected B RData files are now encrypted when extracted
+  o Cannot easily share extractions without original extractor details
+  o See README.md for migration guide and examples
+
