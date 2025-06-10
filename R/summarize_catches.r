@@ -148,6 +148,15 @@ summarize_catches <- function(db=NULL,
       print(joiners, sep=" ", collapse = NULL)
     }
   }
+  if (morph_dets){
+  all_recs$ADJUST <- 1
+  valid_weights <- !is.na(all_recs$SAMPWGT) & !is.na(all_recs$TOTWGT) & all_recs$SAMPWGT > 0 & all_recs$TOTWGT > 0
+  all_recs$ADJUST[valid_weights] <- all_recs$TOTWGT[valid_weights] / all_recs$SAMPWGT[valid_weights]
+  all_recs$CLEN_ADJ <- NA
+  valid_clen <- !is.na(all_recs$CLEN)
+  all_recs$CLEN_ADJ[valid_clen] <- round(all_recs$CLEN[valid_clen] * all_recs$ADJUST[valid_clen],3)
+  all_recs$ADJUST <- NULL
+  }
   rm(summ)
   gc()
   if (drop.na.cols) all_recs[sapply(all_recs, function(x) all(is.na(x)))] <- NULL
