@@ -42,7 +42,7 @@ install_github('Maritimes/Mar.datawrangling')
 library(Mar.datawrangling)
 
 # 1. Establish Oracle connection first (NEW REQUIREMENT)
-cxn <- ROracle::dbConnect(DBI::dbDriver("Oracle"), "<oracle.username>", "<oracle.password>"", "PTRAN")
+cxn <- ROracle::dbConnect(DBI::dbDriver("Oracle"), "<oracle.username>", "<oracle.password>", "PTRAN")
 
 # 2. Extract data (first time will prompt for extraction)
 get_data(db = 'rv', cxn = cxn)
@@ -53,7 +53,7 @@ GSMISSIONS <- GSMISSIONS[GSMISSIONS$YEAR >= 2020,]  # Recent years
 self_filter()  # Apply filters to all related tables
 
 # 4. Create analysis-ready dataset
-my_data <- summarize_data()
+my_data <- summarize_catches()
 ```
 
 ## Key Functions
@@ -62,12 +62,11 @@ my_data <- summarize_data()
 - `get_data()` - Extract database tables locally
 
 ### Data Filtering  
-- `clip_by_poly()` - Filter data to geographic area
-- `get_survey()`- Simplifies extraction of particulars survey (from the `rv` databas
+- `get_survey()`- Simplifies extraction of particular survey (from the `rv` database)
 - `self_filter()` - Apply filters programmatically
 
 ### Data Export
-- `summarize_data()` - Combine all tables into single dataframe
+- `summarize_catches()` - Combine all tables into single dataframe
 - `save_data()` - Export as CSV or shapefile
 
 ### Utilities
@@ -92,7 +91,7 @@ self_filter()
 
 # Create summary and export
 cod_data <- summarize_data()
-save_data(cod_data, formats = c('csv','shp'), filename = 'cod_summer_2020plus')
+summarize_catches(cod_data)
 ```
 
 ## Full Database List
