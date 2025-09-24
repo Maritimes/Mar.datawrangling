@@ -23,4 +23,4 @@ Encoding: UTF-8
 License: MIT + file LICENSE
 LazyData: true
 URL: https://github.com/Maritimes/Mar.datawrangling/
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3

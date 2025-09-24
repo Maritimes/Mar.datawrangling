@@ -8,6 +8,7 @@ get_data(
   db = NULL,
   cxn = NULL,
   force.extract = FALSE,
+  reextract.override = F,
   env = .GlobalEnv,
   quiet = FALSE,
   extract_user = NULL,
@@ -41,6 +42,12 @@ related parameters.}
 \item{force.extract}{The default value is FALSE.  By default, existing data will be loaded.  If
 \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 data.}
+
+\item{reextract.override}{default is \code{FALSE}. By default, if data is 
+missing, the script will ask the user the script will ask the user whether
+to download all of the data again or just the missing data.  If set to \code{TRUE},
+all of the data will be downloaded without prompting the user for anything.  
+This supports running the script automatically.}
 
 \item{env}{This the the environment you want this function to work in.  The 
 default value is \code{.GlobalEnv}.}

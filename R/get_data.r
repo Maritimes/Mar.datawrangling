@@ -11,6 +11,11 @@
 #' @param force.extract The default value is FALSE.  By default, existing data will be loaded.  If
 #' \code{force.extract ==TRUE}, than a full extraction will take place, overwriting any existing
 #' data.
+#' @param reextract.override default is \code{FALSE}. By default, if data is 
+#' missing, the script will ask the user the script will ask the user whether
+#' to download all of the data again or just the missing data.  If set to \code{TRUE},
+#' all of the data will be downloaded without prompting the user for anything.  
+#' This supports running the script automatically.
 #' @param db default is \code{NULL}. This identifies the dataset you are working
 #' with. Valid values include the following (assuming you have Oracle access)
 #' \itemize{
@@ -41,7 +46,7 @@
 #' @family dfo_extractions
 #' @author  Mike McMahon, \email{Mike.McMahon@@dfo-mpo.gc.ca}
 #' @export
-get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, 
+get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, reextract.override = F,
                      env = .GlobalEnv, quiet = FALSE, extract_user = NULL, extract_computer = NULL) {
   assign("db", tolower(db), envir = .GlobalEnv)
   
@@ -175,8 +180,12 @@ get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE,
         message(paste0("\nLooked in '", get_pesd_dw_dir(), "' for required *.rdata files, but you are missing the following:"))
         if (toupper(.GlobalEnv$db)=="ISDB")message("(Note that recent changes to the ISDB schema require a re-extraction of a fresh copy of that data)")
         cat("\n",status)
+        if(reextract.override){
+          choice <- "A"
+        }else{
         choice = toupper(readline(prompt = "\nPress 'c' to (c)ancel this request, 'a' to re-extract (a)ll of the tables for\nthis datasource, or any other key to extract the missing data only\n(case-insensitive)"))
         print(choice)
+        }
         if (toupper(choice) == "C") {
           stop("Cancelled.   (Maybe check that your working directory is set to the folder *containing* your data folder and try again)")
         } else if (toupper(choice) == "A") {
