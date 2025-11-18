@@ -1,9 +1,12 @@
 .pkgenv <- new.env(parent = emptyenv())
-
+#' @keywords internal
+#' @export
 get_pesd_dw_dir <- function() {
   file.path("C:", "DFO-MPO", "PESDData","MarDatawrangling")
 }
 
+#' @keywords internal
+#' @export
 get_ds_all <- function() {
   .pkgenv$ds_all
 }

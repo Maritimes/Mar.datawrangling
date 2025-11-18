@@ -12,7 +12,7 @@ save_tables <- function(db=NULL){
     cat("\nNothing saved.  Please specify the db.")
   } else{
     .pkgenv$dw <- new.env()
-    sapply(get_ds_all()[[db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
+    sapply(get_ds_all()[[.GlobalEnv$db]]$tables, USE.NAMES = F, simplify = TRUE, function(x) {
       assign(paste0("tmp_", x), value = get(x), envir = .pkgenv$dw)
     }
     ) 

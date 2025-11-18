@@ -41,9 +41,7 @@ self_filter <-
     timer.start = proc.time()
     prefix = toupper(db)
     catchTable = get_ds_all()[[.GlobalEnv$db]]$table_cat
-    
     posTable = get_ds_all()[[.GlobalEnv$db]]$table_pos
-    
     if (!quiet) cat("\n","Records remaining in each table after each loop:","\n")
     get_joiner = function(combine) {
       if (is.null(combine)) combine = "missing"

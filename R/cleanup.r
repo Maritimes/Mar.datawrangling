@@ -17,8 +17,8 @@ cleanup <- function(db=NULL, var.like = NULL, env=.GlobalEnv){
   } 
   if (!is.null(db)) {
     db = tolower(db)
-    tables = get_ds_all()[[db]]$tables
-    if (exists(as.character(paste0("zzz_orph_",get_ds_all()[[db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[db]]$tables))
+    tables = get_ds_all()[[.GlobalEnv$db]]$tables
+    if (exists(as.character(paste0("zzz_orph_",get_ds_all()[[.GlobalEnv$db]]$tables[1]))))tables = c(tables, paste0("zzz_orph_",ds_all[[db]]$tables))
     rm(list = tables, envir = env)
   }
   

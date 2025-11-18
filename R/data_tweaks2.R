@@ -28,7 +28,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         names(ISCATCHES.directed) <- c("FISHSET_ID", "SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
         ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID"), by.y=c("FISHSET_ID")) #get the catches of directed for each set
         
-        Mar.utils::save_encrypted( ISCATCHES, file=file.path(get_pesd_dw_dir(), "ISCATCHES.RData"), compress=TRUE)
+        Mar.utils::save_encrypted( ISCATCHES, file=file.path(get_pesd_dw_dir(), "ISCATCHES.RData"))
         cat("\nISCATCHES: Added directed species catch numbers and weights onto each record......")
       }
       rm(ISCATCHES)
@@ -37,7 +37,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
     if (file.exists(file.path(get_pesd_dw_dir(),"ISSETPROFILE.RData"))){
       Mar.utils::load_encrypted(file.path(get_pesd_dw_dir(),"ISSETPROFILE.RData"), extract_user = extract_user, extract_computer = extract_computer)
       ISSETPROFILE <- Mar.utils::ISSETPROFILE_enwidener(ISSETPROFILE)
-      Mar.utils::save_encrypted( ISSETPROFILE, file=file.path(get_pesd_dw_dir(), "ISSETPROFILE.RData"), compress=TRUE)
+      Mar.utils::save_encrypted( ISSETPROFILE, file=file.path(get_pesd_dw_dir(), "ISSETPROFILE.RData"))
     rm(ISSETPROFILE)
     }
     
@@ -51,7 +51,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         names(ISCATCHES.directed) <- c("FISHSET_ID", "SPECSCD_ID","S_EST_NUM_CAUGHT","S_EST_KEPT_WT","S_EST_DISCARD_WT","S_EST_REDUCTION_WT","S_EST_COMBINED_WT") #rename to reflect sought nature
         ISCATCHES = merge(ISCATCHES, ISCATCHES.directed, all.x=T, by.x=c("FISHSET_ID"), by.y=c("FISHSET_ID")) #get the catches of directed for each set
         
-        Mar.utils::save_encrypted( ISCATCHES, file=file.path(get_pesd_dw_dir(), "ISDB.ISCATCHES.RData"), compress=TRUE)
+        Mar.utils::save_encrypted( ISCATCHES, file=file.path(get_pesd_dw_dir(), "ISDB.ISCATCHES.RData"))
         cat("\nISCATCHES: Added directed species catch numbers and weights onto each record......")
       }
       rm(ISCATCHES)
@@ -115,7 +115,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         HAIL_IN_CALLS$CDATE <- NULL
         HAIL_IN_CALLS$UUSER <- NULL
         HAIL_IN_CALLS$UDATE <- NULL
-        Mar.utils::save_encrypted(HAIL_IN_CALLS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.HAIL_IN_CALLS.RData"), compress=TRUE)
+        Mar.utils::save_encrypted(HAIL_IN_CALLS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.HAIL_IN_CALLS.RData"))
       }
       rm(HAIL_IN_CALLS)
     }
@@ -126,7 +126,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         LOG_SPC_STD_INFO$CDATE <- NULL
         LOG_SPC_STD_INFO$UUSER <- NULL
         LOG_SPC_STD_INFO$UDATE <- NULL
-        Mar.utils::save_encrypted(LOG_SPC_STD_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.LOG_SPC_STD_INFO.RData"), compress=TRUE)
+        Mar.utils::save_encrypted(LOG_SPC_STD_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.LOG_SPC_STD_INFO.RData"))
       }
       rm(LOG_SPC_STD_INFO)
     }
@@ -137,7 +137,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         MON_DOCS$CDATE <- NULL
         MON_DOCS$UUSER <- NULL
         MON_DOCS$UDATE <- NULL
-        Mar.utils::save_encrypted(MON_DOCS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.MON_DOCS.RData"), compress=TRUE)
+        Mar.utils::save_encrypted(MON_DOCS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.MON_DOCS.RData"))
       }
       rm(MON_DOCS)
     }
@@ -164,7 +164,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700] = lubridate::year(as.POSIXct(PRO_SPC_INFO$LANDED_DATE[PRO_SPC_INFO$SPECIES_CODE==700], origin = "1970-01-01"))
         PRO_SPC_INFO$YEAR_LANDED[PRO_SPC_INFO$SPECIES_CODE==700] = PRO_SPC_INFO$YEAR[PRO_SPC_INFO$SPECIES_CODE==700]
         cat("\nPRO_SPC_INFO: Ensured correct year for lobster data (i.e. LANDED_DATE)")
-        Mar.utils::save_encrypted( PRO_SPC_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.PRO_SPC_INFO.RData"), compress=TRUE)
+        Mar.utils::save_encrypted( PRO_SPC_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.PRO_SPC_INFO.RData"))
       }
       rm(PRO_SPC_INFO)
     }
@@ -178,7 +178,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         GEARS$UUSER <- NULL
         GEARS$UDATE <- NULL
       }
-      Mar.utils::save_encrypted(GEARS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.GEARS.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(GEARS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.GEARS.RData"))
       rm(GEARS)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.SPECIES.RData"))){
@@ -195,7 +195,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         SPECIES$UUSER <- NULL
         SPECIES$UDATE <- NULL
       }
-      Mar.utils::save_encrypted(SPECIES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.SPECIES.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(SPECIES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.SPECIES.RData"))
       rm(SPECIES)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.CATCH_USAGES.RData"))){
@@ -210,13 +210,13 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         CATCH_USAGES$UUSER <- NULL
         CATCH_USAGES$UDATE <- NULL
       }
-      Mar.utils::save_encrypted(CATCH_USAGES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.CATCH_USAGES.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(CATCH_USAGES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.CATCH_USAGES.RData"))
       rm(CATCH_USAGES)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.SPECIES_CATEGORIES.RData"))){
       Mar.utils::load_encrypted(file.path(get_pesd_dw_dir(),"MARFISSCI.SPECIES_CATEGORIES.RData"), extract_user = extract_user, extract_computer = extract_computer)
       if (!"SPECIES_CATEGORY" %in% names(SPECIES_CATEGORIES)) names(SPECIES_CATEGORIES)[names(SPECIES_CATEGORIES) == "DESC_ENG"] <- "SPECIES_CATEGORY"
-      Mar.utils::save_encrypted(SPECIES_CATEGORIES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.SPECIES_CATEGORIES.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(SPECIES_CATEGORIES, file=file.path(get_pesd_dw_dir(), "MARFISSCI.SPECIES_CATEGORIES.RData"))
       rm(SPECIES_CATEGORIES)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.AREAS.RData"))){
@@ -228,7 +228,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         AREAS$UUSER <- NULL
         AREAS$UDATE <- NULL
       }
-      Mar.utils::save_encrypted(AREAS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.AREAS.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(AREAS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.AREAS.RData"))
       rm(AREAS)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.NAFO_UNIT_AREAS.RData"))){
@@ -240,7 +240,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         NAFO_UNIT_AREAS$UUSER <- NULL
         NAFO_UNIT_AREAS$UDATE <- NULL
       }
-      Mar.utils::save_encrypted(NAFO_UNIT_AREAS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.NAFO_UNIT_AREAS.RData"), compress=TRUE)
+      Mar.utils::save_encrypted(NAFO_UNIT_AREAS, file=file.path(get_pesd_dw_dir(), "MARFISSCI.NAFO_UNIT_AREAS.RData"))
       rm(NAFO_UNIT_AREAS)
     }
     if (file.exists(file.path(get_pesd_dw_dir(),"MARFISSCI.LOG_EFRT_STD_INFO.RData"))){
@@ -262,7 +262,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
         LOG_EFRT_STD_INFO$LONGITUDE_EFRT = ifelse(is.na(LOG_EFRT_STD_INFO$ENT_LONGITUDE),LOG_EFRT_STD_INFO$DET_LONGITUDE,LOG_EFRT_STD_INFO$ENT_LONGITUDE)
         
         cat(paste("\nLOG_EFRT_STD_INFO:  Converted DDMM coordinates to DDDD.DD and added coord fields..."))
-        Mar.utils::save_encrypted( LOG_EFRT_STD_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.LOG_EFRT_STD_INFO.RData"), compress=TRUE)
+        Mar.utils::save_encrypted( LOG_EFRT_STD_INFO, file=file.path(get_pesd_dw_dir(), "MARFISSCI.LOG_EFRT_STD_INFO.RData"))
       }
       rm(LOG_EFRT_STD_INFO)
     }
@@ -290,7 +290,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
       Mar.utils::load_encrypted(file.path(get_pesd_dw_dir(),"STOMACH.SDINF.RData"), extract_user = extract_user, extract_computer = extract_computer)
       if (!'YEAR' %in% colnames(SDINF)){
         SDINF$YEAR = lubridate::year(SDINF$SDATE)
-        Mar.utils::save_encrypted(SDINF, file=file.path(get_pesd_dw_dir(), "STOMACH.SDINF.RData"), compress=TRUE)
+        Mar.utils::save_encrypted(SDINF, file=file.path(get_pesd_dw_dir(), "STOMACH.SDINF.RData"))
         cat("\nSDINF:  For convenience, added a YEAR field")
       }
       rm(SDINF)
@@ -505,7 +505,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
       if(is.integer(PROVINCES$PROV_CODE)){
         PROVINCES$PROV_CODE <- as.character(PROVINCES$PROV_CODE)
       cat("\nPROVINCES: Changed provinces codes to characters so they can be used in filtering")
-      Mar.utils::save_encrypted( PROVINCES, file=file.path(get_pesd_dw_dir(), "COMLAND86.PROVINCES.RData"), compress=TRUE)
+      Mar.utils::save_encrypted( PROVINCES, file=file.path(get_pesd_dw_dir(), "COMLAND86.PROVINCES.RData"))
     }
     rm(PROVINCES)
     }
@@ -517,7 +517,7 @@ data_tweaks2 <- function(db="ALL", extract_user = NULL, extract_computer = NULL)
       if(is.integer(PROVINCES$PROV_CODE)){
         PROVINCES$PROV_CODE <- as.character(PROVINCES$PROV_CODE)
       cat("\nPROVINCES: Changed provinces codes to characters so they can be used in filtering")
-      Mar.utils::save_encrypted( PROVINCES, file=file.path(get_pesd_dw_dir(), "COMLAND67.PROVINCES.RData"), compress=TRUE)
+      Mar.utils::save_encrypted( PROVINCES, file=file.path(get_pesd_dw_dir(), "COMLAND67.PROVINCES.RData"))
     }
     rm(PROVINCES)
     }
