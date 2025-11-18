@@ -49,9 +49,9 @@
 get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, reextract.override = F,
                      env = .GlobalEnv, quiet = FALSE, extract_user = NULL, extract_computer = NULL) {
   db_lower <- tolower(db)
+  #allow user to submit "marfissci" instead of "marfis"
   db_key <- switch(db_lower,
                    "marfissci" = "marfis",
-                   "observer" = "isdb",
                    db_lower
   )
   assign("db", db_key, envir = .GlobalEnv)
