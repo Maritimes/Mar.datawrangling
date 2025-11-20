@@ -109,8 +109,7 @@ get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, reextract.ove
       res = thecmd(cxn, qry, rows_at_time = 1)
       
       assign(table_naked, res)
-      
-      if(is.na(theschema)| theschema == "MARFISSCI" | theschema == "comland" | theschema == "MFD_STOMACH"){
+      if(is.na(theschema)| theschema == "MARFISSCI" | theschema == "COMLAND" | theschema == "MFD_STOMACH"){
         Mar.utils::save_encrypted(list = table_naked1, file = file.path(get_pesd_dw_dir(), paste0(tables, ".RData")))
       }else{
         save(list = table_naked1, file = file.path(get_pesd_dw_dir(), paste0(tables, ".RData")))
@@ -175,8 +174,15 @@ get_data <- function(db = NULL, cxn = NULL, force.extract = FALSE, reextract.ove
       try_extract(cxn, reqd)
       try_load(reqd, get_pesd_dw_dir())
     } else {
-      if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) status = paste0(get_ds_all()[[.GlobalEnv$db]]$schema,".",status)
-      if (toupper(.GlobalEnv$db)=="ISDB") status = status #paste0("ISDB.",status)
+      
+      if (toupper(.GlobalEnv$db) %in% c("RV", "MARFIS")) {
+        status = paste0(get_ds_all()[[.GlobalEnv$db]]$schema,".",status)
+      }else if (toupper(.GlobalEnv$db)=="ISDB") {
+        status = status #paste0("ISDB.",status)
+      }else{
+        status = paste0(db,".",status)
+      }      
+      
       message(paste0("\nLooked in '", get_pesd_dw_dir(), "' for required *.rdata files, but you are missing the following:"))
       if (toupper(.GlobalEnv$db)=="ISDB")message("(Note that recent changes to the ISDB schema require a re-extraction of a fresh copy of that data)")
       cat("\n",status)
