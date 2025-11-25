@@ -8,7 +8,7 @@ get_data(
   db = NULL,
   cxn = NULL,
   force.extract = FALSE,
-  reextract.override = F,
+  reextract.override = FALSE,
   env = .GlobalEnv,
   quiet = FALSE,
   extract_user = NULL,
