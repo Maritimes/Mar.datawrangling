@@ -127,7 +127,7 @@ load_datasources <- function(db=NULL){
     a number of fish and invertebrate species. This information is then used along 
     with fisheries catch data to assess the status of commercial species such as 
     cod, haddock, pollock, halibut, offshore lobster, shrimp etc.",
-    tables = c("GSCAT","GSINF","GSDET","GSMISSIONS","GSSTRATUM","GSXTYPE","GSSPECIES"), #,"FGP_TOWS_NW2"),
+    tables = c("GSCAT","GSINF","GSDET","GSMISSIONS","GSSTRATUM","GSXTYPE","GSSPECIES", "STOMACH_DATA_VW"), #,"FGP_TOWS_NW2"),
     table_cat = "GSCAT",
     table_det = "GSDET",
     table_pos = "GSINF",
@@ -139,10 +139,14 @@ load_datasources <- function(db=NULL){
                        fk_fields=c("SPEC")),
         "GSDET" = list(pk_fields=c("CODE"),
                        fk_fields=c("SPEC")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("SPEC"),
+                                fk_fields=c("SPEC")),
         combine = "OR"
       ),
       "GSMISSIONS" = list(
         "GSINF" = list(pk_fields=c("MISSION"),
+                       fk_fields=c("MISSION")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION"),
                        fk_fields=c("MISSION"))
       ),
       "GSCAT" = list(
@@ -150,6 +154,8 @@ load_datasources <- function(db=NULL){
                        fk_fields=c("MISSION","SETNO")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
                            fk_fields=c("CODE")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO"),
+                                 fk_fields=c("MISSION","SETNO")),
         combine = "ALL"
       ),
       "GSDET" = list(
@@ -157,6 +163,8 @@ load_datasources <- function(db=NULL){
                        fk_fields=c("MISSION","SETNO","SPEC")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
                            fk_fields=c("CODE")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO","SPEC"),
+                                 fk_fields=c("MISSION","SETNO","SPEC")),
         combine = "ALL"
       ),
       "GSINF" = list(
@@ -166,21 +174,30 @@ load_datasources <- function(db=NULL){
                            fk_fields=c("STRAT")),
         "GSXTYPE" = list(pk_fields=c("TYPE"),
                          fk_fields=c("XTYPE")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION", "SETNO"),
+                                 fk_fields=c("MISSION", "SETNO")),
         combine = "ALL"
       ),
       "GSSTRATUM" = list(
         "GSINF" = list(pk_fields=c("STRAT"),
-                       fk_fields=c("STRAT"))
+                       fk_fields=c("STRAT")),
+        "STOMACH_DATA_VW" = list(pk_fields=c("STRAT"),
+                                 fk_fields=c("STRAT"))
       ),
       "GSXTYPE" = list(
         "GSINF" = list(pk_fields=c("XTYPE"),
                        fk_fields=c("TYPE"))
+      ),
+      "STOMACH_DATA_VW" = list(
+        "GSINF" = list(pk_fields=c("MISSION","SETNO"),
+                       fk_fields=c("MISSION","SETNO")),
+        "GSSTRATUM" = list(pk_fields=c("STRAT"),
+                           fk_fields=c("STRAT")),
+        "GSCAT" = list(pk_fields=c("MISSION","SETNO","SPEC"),
+                       fk_fields=c("MISSION","SETNO","SPEC")),
+        "GSDET" = list(pk_fields=c("MISSION","SETNO","SPEC", "FSHNO"),
+                       fk_fields=c("MISSION","SETNO","SPEC", "FSHNO"))
       )
-      # ,
-      # "FGP_TOWS_NW2" = list(
-      #   "GSCAT" = list(pk_fields=c("MISSION","SETNUMBER","SPECIES"),
-      #                  fk_fields=c("MISSION","SETNO","SPEC"))
-      # )
     ),
     filters = list(
       "Mission Name" = list(filt_tab = "GSMISSIONS",

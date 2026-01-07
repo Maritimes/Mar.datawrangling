@@ -1,5 +1,9 @@
 # Mar.datawrangling NEWS
 
+## Mar.datawrangling 2.0.3
+
+Stomach data ("STOMACH_DATA_VW") is now one of the included data tables.
+
 ## Mar.datawrangling 2.0.0
 
 ### BREAKING CHANGES
