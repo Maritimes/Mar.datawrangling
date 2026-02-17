@@ -145,17 +145,18 @@ load_datasources <- function(db=NULL){
       ),
       "GSMISSIONS" = list(
         "GSINF" = list(pk_fields=c("MISSION"),
-                       fk_fields=c("MISSION")),
-        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION"),
                        fk_fields=c("MISSION"))
+        #,
+        #"STOMACH_DATA_VW" = list(pk_fields=c("MISSION"),
+        #               fk_fields=c("MISSION"))
       ),
       "GSCAT" = list(
         "GSINF" = list(pk_fields=c("MISSION","SETNO"),
                        fk_fields=c("MISSION","SETNO")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
                            fk_fields=c("CODE")),
-        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO"),
-                                 fk_fields=c("MISSION","SETNO")),
+        #"STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO"),
+         #                        fk_fields=c("MISSION","SETNO")),
         combine = "ALL"
       ),
       "GSDET" = list(
@@ -163,8 +164,8 @@ load_datasources <- function(db=NULL){
                        fk_fields=c("MISSION","SETNO","SPEC")),
         "GSSPECIES" = list(pk_fields=c("SPEC"),
                            fk_fields=c("CODE")),
-        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO","SPEC"),
-                                 fk_fields=c("MISSION","SETNO","SPEC")),
+        #"STOMACH_DATA_VW" = list(pk_fields=c("MISSION","SETNO","SPEC"),
+        #                         fk_fields=c("MISSION","SETNO","SPEC")),
         combine = "ALL"
       ),
       "GSINF" = list(
@@ -174,16 +175,16 @@ load_datasources <- function(db=NULL){
                            fk_fields=c("STRAT")),
         "GSXTYPE" = list(pk_fields=c("TYPE"),
                          fk_fields=c("XTYPE")),
-        "STOMACH_DATA_VW" = list(pk_fields=c("MISSION", "SETNO"),
-                                 fk_fields=c("MISSION", "SETNO")),
+        #"STOMACH_DATA_VW" = list(pk_fields=c("MISSION", "SETNO"),
+        #                         fk_fields=c("MISSION", "SETNO")),
         combine = "ALL"
       ),
-      "GSSTRATUM" = list(
-        "GSINF" = list(pk_fields=c("STRAT"),
-                       fk_fields=c("STRAT")),
-        "STOMACH_DATA_VW" = list(pk_fields=c("STRAT"),
-                                 fk_fields=c("STRAT"))
-      ),
+       "GSSTRATUM" = list(
+         "GSINF" = list(pk_fields=c("STRAT"),
+                        fk_fields=c("STRAT"))
+      #  #"STOMACH_DATA_VW" = list(pk_fields=c("STRAT"),
+      # #                           fk_fields=c("STRAT"))
+       ),
       "GSXTYPE" = list(
         "GSINF" = list(pk_fields=c("XTYPE"),
                        fk_fields=c("TYPE"))
