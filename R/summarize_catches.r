@@ -39,7 +39,7 @@ summarize_catches <- function(db=NULL,
                               drop.na.cols = TRUE,
                               debug=FALSE,
                               env=.GlobalEnv){
-  if (is.null(db))db = get_ds_all()[[db]]$db
+  if (is.null(db))db = get_ds_all()[[.GlobalEnv$db]]$db
   #create place to make a bunch of temporary duplicate data
   summ = new.env()
   drop_fields <- function(table.name, sens.fields){
