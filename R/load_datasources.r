@@ -197,7 +197,7 @@ load_datasources <- function(db=NULL){
         "GSCAT" = list(pk_fields=c("MISSION","SETNO","SPEC"),
                        fk_fields=c("MISSION","SETNO","SPEC")),
         "GSDET" = list(pk_fields=c("MISSION","SETNO","SPEC", "FSHNO"),
-                       fk_fields=c("MISSION","SETNO","SPEC", "FSHNO"))
+                       fk_fields=c("MISSION","SETNO","SPEC", "FSHNO")), combine = "ANY"
       )
     ),
     filters = list(
